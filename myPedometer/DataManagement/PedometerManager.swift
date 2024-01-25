@@ -11,6 +11,10 @@ import CoreData
 
 protocol PedometerDataProvider {
     func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void)
+    
+    func startPedometerUpdates(updateHandler: @escaping (Int) -> Void)
+    
+    func fetchHourlySteps(for date: Date, completion: @escaping ([Int]) -> Void)
 }
 
 class PedometerManager: ObservableObject, PedometerDataProvider {
@@ -24,6 +28,34 @@ class PedometerManager: ObservableObject, PedometerDataProvider {
         self.dateManager = dateManager
         startOfDay = Calendar.current.startOfDay(for: dateManager.selectedDate)
     }
+    
+    func fetchHourlySteps(for date: Date, completion: @escaping ([Int]) -> Void) {
+            guard CMPedometer.isStepCountingAvailable() else {
+                completion([])
+                return
+            }
+
+            var hourlySteps: [Int] = Array(repeating: 0, count: 24)
+            let group = DispatchGroup()
+
+            for hour in 0..<24 {
+                group.enter()
+                let startDate = Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: date)!
+                let endDate = Calendar.current.date(byAdding: .hour, value: 1, to: startDate)!
+
+                pedometer.queryPedometerData(from: startDate, to: endDate) { data, error in
+                    defer { group.leave() }
+                    
+                    if let data = data, error == nil {
+                        hourlySteps[hour] = data.numberOfSteps.intValue
+                    }
+                }
+            }
+
+            group.notify(queue: .main) {
+                completion(hourlySteps)
+            }
+        }
     
     func startPedometerUpdates(updateHandler: @escaping (Int) -> Void) {
         if CMPedometer.isStepCountingAvailable() {

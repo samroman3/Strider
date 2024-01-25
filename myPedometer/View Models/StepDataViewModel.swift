@@ -11,19 +11,47 @@ import CoreMotion
 class StepDataViewModel: ObservableObject {
     @Published var liveStepCount: Int = 0
     @Published var stepDataList: [DailyLog] = []
+    @Published var goalAchievementStatus: GoalAchievementStatus = .notAchieved(goal: 10000) // Example goal
+    @Published var hourlySteps: [Int] = Array(repeating: 0, count: 24)
 
-    var pedometerManager: PedometerManager
+    var pedometerManager: PedometerDataProvider
     var dataStore: PedometerDataStore
-    var dateManager: DateManager
     let calendar = Calendar.current
+    
+    enum GoalAchievementStatus {
+            case achieved
+            case notAchieved(goal: Int)
+        }
 
-    init(pedometerManager: PedometerManager, dataStore: PedometerDataStore, dateManager: DateManager) {
-        self.pedometerManager = pedometerManager
+    init(pedometerDataProvider: PedometerDataProvider, dataStore: PedometerDataStore) {
+        self.pedometerManager = pedometerDataProvider
         self.dataStore = dataStore
-        self.dateManager = dateManager
         startLiveStepUpdates()
         fetchStepData()
     }
+    
+    func fetchHourlyStepData(for date: Date) {
+            pedometerManager.fetchHourlySteps(for: date) { [weak self] hourlyData in
+                DispatchQueue.main.async {
+                    self?.hourlySteps = hourlyData
+                }
+            }
+        }
+    
+    func weeklyAverageSteps() -> Int {
+            let totalSteps = stepDataList.reduce(0) { $0 + Int($1.totalSteps) }
+            return totalSteps / stepDataList.count
+        }
+    
+    func checkGoalAchievement(for date: Date) {
+            let dailyGoal = dataStore.retrieveDailyGoal()
+            let totalStepsForDay = stepDataList.first(where: { $0.date == date })?.totalSteps ?? 0
+            if totalStepsForDay >= dailyGoal {
+                goalAchievementStatus = .achieved
+            } else {
+                goalAchievementStatus = .notAchieved(goal: dailyGoal)
+            }
+        }
 
     private func startLiveStepUpdates() {
         pedometerManager.startPedometerUpdates { [weak self] stepCount in

@@ -12,6 +12,7 @@ class DayDetailViewModel: ObservableObject {
     
     private let dataStore: PedometerDataStore
     var dailyLog: DailyLog
+    
     @Published var hourlySteps: [Int] = Array(repeating: 0, count: 24) // For each hour of the day
     
     init(dailyLog: DailyLog, dataStore: PedometerDataStore) {

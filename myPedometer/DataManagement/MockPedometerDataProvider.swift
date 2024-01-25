@@ -7,13 +7,49 @@
 
 import Foundation
 class MockPedometerDataProvider: PedometerDataProvider {
-    private var baseStepCount: Int = 5000 // Starting step count for the simulation
-    private var stepVariation: Int = 1000  // Variation in step count
-
     private var mockData: [Date: Int] = [:]
+    private var timer: Timer?
+    private var baseStepCount: Int = 5000 // Starting step count for the simulation
+    private var stepVariation: Int = 1000
+    
+    private var stepCount: Int {
+            didSet {
+                UserDefaults.standard.set(stepCount, forKey: "mockStepCount")
+            }
+        }
+    
+    init() {
+            // Retrieve the stored step count when the provider is initialized
+            stepCount = UserDefaults.standard.integer(forKey: "mockStepCount")
+        }
+    
+    func fetchHourlySteps(for date: Date, completion: @escaping ([Int]) -> Void) {
+           let simulatedHourlyData = (0..<24).map { _ in Int.random(in: 100...500) } // Random data for simulation
+           completion(simulatedHourlyData)
+       }
+    
+    func startPedometerUpdates(updateHandler: @escaping (Int) -> Void) {
+           timer?.invalidate()  // Invalidate any existing timer
+           timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+               guard let self = self else { return }
+               self.stepCount += 3  // Increment steps
+               updateHandler(self.stepCount)
+           }
+       }
+
+       func stopPedometerUpdates() {
+           timer?.invalidate()
+           timer = nil
+       }
+
+       // Deinitializer to ensure the timer is invalidated if the provider is deallocated
+       deinit {
+           timer?.invalidate()
+       }
 
     func setMockData(steps: Int, for date: Date) {
         let startOfDay = Calendar.current.startOfDay(for: date) // Normalize the date
+        UserDefaults.standard.set(steps, forKey: "mockData-\(startOfDay.timeIntervalSince1970)")
         mockData[startOfDay] = steps
     }
 
