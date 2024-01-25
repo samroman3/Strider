@@ -11,35 +11,56 @@ import CoreData
 
 class PedometerDataStore: ObservableObject {
     private let context: NSManagedObjectContext
-    let pedometerManager: PedometerManager
+    let pedometerManager: PedometerDataProvider
+    
 
-    init(context: NSManagedObjectContext, pedometerManager: PedometerManager) {
+    init(context: NSManagedObjectContext, pedometerManager: PedometerDataProvider) {
         self.context = context
         self.pedometerManager = pedometerManager
     }
+    
+    func storeDailyGoal(_ goal: Int) {
+         UserDefaults.standard.set(goal, forKey: "dailyStepGoal")
+     }
+
+     // Method to retrieve the daily step goal
+     func retrieveDailyGoal() -> Int {
+         return UserDefaults.standard.integer(forKey: "dailyStepGoal")
+     }
 
     // Fetch last seven days of step data
-    func fetchLastSevenDaysData() {
+    func fetchLastSevenDaysData(completion: @escaping ([DailyLog]) -> Void) {
+        var fetchedLogs = [DailyLog]()
+
         for daysBack in 0..<7 {
             let date = Calendar.current.date(byAdding: .day, value: -daysBack, to: Date())!
             fetchOrCreateDailyLog(for: date) { dailyLog in
                 if dailyLog.totalSteps == 0 {
                     // If steps are not recorded, query the pedometer
                     self.pedometerManager.fetchSteps(for: date) { steps, error in
-                        guard error == nil else {
-                            print("Error fetching steps: \(error!)")
-                            return
-                        }
-
                         DispatchQueue.main.async {
-                            dailyLog.totalSteps = Int32(steps)
-                            self.saveContext()
+                            if error == nil {
+                                dailyLog.totalSteps = Int32(steps)
+                                self.saveContext()
+                            }
+                            fetchedLogs.append(dailyLog)
+                            if fetchedLogs.count == 7 {
+                                completion(fetchedLogs)
+                            }
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        fetchedLogs.append(dailyLog)
+                        if fetchedLogs.count == 7 {
+                            completion(fetchedLogs)
                         }
                     }
                 }
             }
         }
     }
+
 
      func fetchOrCreateDailyLog(for date: Date, completion: @escaping (DailyLog) -> Void) {
         let startOfDay = Calendar.current.startOfDay(for: date)

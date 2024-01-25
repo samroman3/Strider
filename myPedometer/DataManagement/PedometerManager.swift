@@ -9,7 +9,11 @@ import Foundation
 import CoreMotion
 import CoreData
 
-class PedometerManager: ObservableObject {
+protocol PedometerDataProvider {
+    func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void)
+}
+
+class PedometerManager: ObservableObject, PedometerDataProvider {
     let pedometer = CMPedometer()
     var dateManager: DateManager
     private var context: NSManagedObjectContext
@@ -20,6 +24,7 @@ class PedometerManager: ObservableObject {
         self.dateManager = dateManager
         startOfDay = Calendar.current.startOfDay(for: dateManager.selectedDate)
     }
+    
     func startPedometerUpdates(updateHandler: @escaping (Int) -> Void) {
         if CMPedometer.isStepCountingAvailable() {
             pedometer.startUpdates(from: startOfDay) { data, error in
@@ -49,33 +54,5 @@ class PedometerManager: ObservableObject {
                completion(stepCount, nil)
            }
        }
-    
-    func fetchLastSevenDaysData(completion: @escaping ([CMPedometerData]?, Error?) -> Void) {
-            guard CMPedometer.isStepCountingAvailable() else {
-                completion(nil, NSError(domain: "CMPedometer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Step counting not available."]))
-                return
-            }
-
-            let endDate = Date() // Current date
-            let calendar = Calendar.current
-            let startDate = calendar.date(byAdding: .day, value: -7, to: endDate)!
-
-            pedometer.queryPedometerData(from: startDate, to: endDate) { data, error in
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-                
-                if let data = data {
-                    var dailyData = [CMPedometerData]()
-                    // Process the data to break it down into daily segments if necessary
-                    // ...
-                    completion(dailyData, nil)
-                } else {
-                    completion(nil, NSError(domain: "CMPedometer", code: 1, userInfo: [NSLocalizedDescriptionKey: "No data returned."]))
-                }
-            }
-        }
-    
     
 }

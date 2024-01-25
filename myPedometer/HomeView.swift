@@ -9,7 +9,6 @@ import SwiftUI
 
 struct HomeView: View {
     @ObservedObject var viewModel: StepDataViewModel
-    @ObservedObject var liveStepViewModel: LiveStepViewModel
 
     var body: some View {
         NavigationView {
@@ -17,7 +16,7 @@ struct HomeView: View {
                 List {
                     ForEach(viewModel.stepDataList.sorted(by: { $0.date! > $1.date! }), id: \.self) { log in
                         NavigationLink(destination: DetailView(dayLog: log)) {
-                            DayCardView(log: log, liveStepCount: liveStepViewModel.isToday() ? liveStepViewModel.liveStepCount : nil)
+                            DayCardView(log: log, liveStepCount: viewModel.isToday() ? viewModel.liveStepCount : nil)
                         }
                     }
                 }

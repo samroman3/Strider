@@ -40,16 +40,31 @@ struct DayCardView: View {
                             .font(.title)
                             .fontWeight(.semibold)
                     }
+                    if (liveStepCount ?? 0) >= dailyStepGoal {
+                        VStack{
+                            Image(systemName: "checkmark.circle")
+                                .font(.system(size: 40))
+                                .foregroundColor(.green )
+                            Text("Goal Reached")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.green)
+                        }
+                    }
                     ProgressCircleView(percentage: Double(liveStepCount ?? 0) / Double(dailyStepGoal))
                 }
             } else {
-                GoalStatusView(steps: Int(log.totalSteps), goal: dailyStepGoal)
-                Text("\(Int(log.totalSteps)) steps")
-                    .font(.title)
-                    .fontWeight(.semibold)
-                Text("\(log.date ?? Date(), formatter: itemFormatter)")
-                    .font(.subheadline)
-                    .opacity(0.7)
+                HStack {
+                    VStack{
+                        Text("\(Int(log.totalSteps)) steps")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                        Text("\(log.date ?? Date(), formatter: itemFormatter)")
+                            .font(.subheadline)
+                            .opacity(0.7)
+                    }
+                    GoalStatusView(steps: Int(log.totalSteps), goal: dailyStepGoal)
+                }
             }
             Spacer()
         }
@@ -70,12 +85,12 @@ struct GoalStatusView: View {
     var goal: Int
 
     var body: some View {
-        HStack {
-            Image(systemName: steps >= goal ? "checkmark.circle.fill" : "xmark.circle.fill")
-                .font(.system(size: 40))
+        VStack {
+            Image(systemName: steps >= goal ? "checkmark.circle" : "xmark.circle")
+                .font(.system(size: 20))
                 .foregroundColor(steps >= goal ? .green : .red)
             Text(steps >= goal ? "Goal Reached" : "Goal Not Reached")
-                .font(.title3)
+                .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(steps >= goal ? .green : .red)
         }
