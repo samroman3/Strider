@@ -12,3 +12,11 @@ let itemFormatter: DateFormatter = {
     formatter.dateStyle = .long
     return formatter
 }()
+
+extension Date {
+    func isToday() -> Bool {
+        return Calendar.current.isDateInToday(self)
+    }
+}
+
+

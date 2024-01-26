@@ -2,7 +2,7 @@
 //  DailyLog+CoreDataProperties.swift
 //  myPedometer
 //
-//  Created by Sam Roman on 1/24/24.
+//  Created by Sam Roman on 1/25/24.
 //
 //
 
@@ -17,9 +17,27 @@ extension DailyLog {
     }
 
     @NSManaged public var date: Date?
-    @NSManaged public var totalSteps: Int32
     @NSManaged public var flightsAscended: Int32
     @NSManaged public var flightsDescended: Int32
+    @NSManaged public var totalSteps: Int32
+    @NSManaged public var hourlyStepData: NSSet?
+
+}
+
+// MARK: Generated accessors for hourlyStepData
+extension DailyLog {
+
+    @objc(addHourlyStepDataObject:)
+    @NSManaged public func addToHourlyStepData(_ value: HourlyStepData)
+
+    @objc(removeHourlyStepDataObject:)
+    @NSManaged public func removeFromHourlyStepData(_ value: HourlyStepData)
+
+    @objc(addHourlyStepData:)
+    @NSManaged public func addToHourlyStepData(_ values: NSSet)
+
+    @objc(removeHourlyStepData:)
+    @NSManaged public func removeFromHourlyStepData(_ values: NSSet)
 
 }
 

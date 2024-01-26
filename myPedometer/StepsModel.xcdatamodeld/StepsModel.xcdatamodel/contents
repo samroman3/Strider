@@ -5,5 +5,12 @@
         <attribute name="flightsAscended" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="flightsDescended" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="totalSteps" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hourlyStepData" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="HourlyStepData" inverseName="dailyLog" inverseEntity="HourlyStepData"/>
+    </entity>
+    <entity name="HourlyStepData" representedClassName="HourlyStepData" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="stepCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="dailyLog" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DailyLog" inverseName="hourlyStepData" inverseEntity="DailyLog"/>
     </entity>
 </model>

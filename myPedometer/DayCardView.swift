@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct DayCardView: View {
+    var liveDataManager: LiveDataManager?
     var log: DailyLog
-    var liveStepCount: Int?
-    let calendar = Calendar.current
     
     @State private var showMotion: Bool = false
     let animationDuration = 0.5
@@ -18,10 +17,14 @@ struct DayCardView: View {
     // Retrieve the goal from UserDefaults, with a default value
     let dailyStepGoal = UserDefaults.standard.integer(forKey: "dailyStepGoal") == 0 ? 1000 : UserDefaults.standard.integer(forKey: "dailyStepGoal")
 
+    private var isToday: Bool {
+        Calendar.current.isDateInToday(log.date ?? Date())
+    }
+
     var body: some View {
         VStack {
             Spacer()
-            if isToday(log.date) {
+            if liveDataManager != nil {
                 HStack {
                     Text("Today")
                         .font(.title3)
@@ -36,11 +39,11 @@ struct DayCardView: View {
                             .font(.system(size: 60))
                             .animation(.easeInOut(duration: animationDuration))
                             .onAppear { self.showMotion.toggle() }
-                        Text("\(liveStepCount ?? 0) steps")
+                        Text("\(liveDataManager?.liveStepCount ?? 0) steps")
                             .font(.title)
                             .fontWeight(.semibold)
                     }
-                    if (liveStepCount ?? 0) >= dailyStepGoal {
+                    if (liveDataManager?.liveStepCount ?? 0) >= dailyStepGoal {
                         VStack{
                             Image(systemName: "checkmark.circle")
                                 .font(.system(size: 40))
@@ -51,7 +54,7 @@ struct DayCardView: View {
                                 .foregroundColor(.green)
                         }
                     }
-                    ProgressCircleView(percentage: Double(liveStepCount ?? 0) / Double(dailyStepGoal))
+                    ProgressCircleView(percentage: Double(liveDataManager?.liveStepCount ?? 0) / Double(dailyStepGoal))
                 }
             } else {
                 HStack {
@@ -74,10 +77,6 @@ struct DayCardView: View {
         .shadow(color: .gray.opacity(0.3), radius: 10, x: 0, y: 10)
         .padding(.vertical)
     }
-    
-    func isToday(_ date: Date?) -> Bool {
-        return calendar.isDateInToday(date ?? Date())
-    }
 }
 
 struct GoalStatusView: View {
@@ -96,7 +95,3 @@ struct GoalStatusView: View {
         }
     }
 }
-
-//#Preview {
-//    DayCardView()
-//}

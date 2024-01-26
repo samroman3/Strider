@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3ABAB32D2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */; };
+		3ABAB32E2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */; };
+		3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */; };
+		3ABAB3322B62C3C800E174D3 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB3312B62C3C800E174D3 /* DetailViewModel.swift */; };
+		3ABAFB7A2B62E97200BC0C9F /* LiveDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAFB792B62E97200BC0C9F /* LiveDataManager.swift */; };
+		3ABAFB7C2B63133600BC0C9F /* DetailData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAFB7B2B63133600BC0C9F /* DetailData.swift */; };
 		3AD6F91B2B618FA700923DFC /* myPedometerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F91A2B618FA700923DFC /* myPedometerApp.swift */; };
 		3AD6F91D2B618FA700923DFC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F91C2B618FA700923DFC /* ContentView.swift */; };
 		3AD6F9212B618FA900923DFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3AD6F9202B618FA900923DFC /* Assets.xcassets */; };
@@ -15,12 +21,10 @@
 		3AD6F9382B618FA900923DFC /* myPedometerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9372B618FA900923DFC /* myPedometerUITests.swift */; };
 		3AD6F93A2B618FA900923DFC /* myPedometerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9392B618FA900923DFC /* myPedometerUITestsLaunchTests.swift */; };
 		3AD6F9472B618FF900923DFC /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9462B618FF900923DFC /* PersistenceController.swift */; };
-		3AD6F9492B61900200923DFC /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9482B61900200923DFC /* DateManager.swift */; };
 		3AD6F94B2B61901300923DFC /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F94A2B61901300923DFC /* HomeView.swift */; };
 		3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F94C2B61902800923DFC /* DetailView.swift */; };
 		3AD6F94F2B61903F00923DFC /* PedometerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F94E2B61903F00923DFC /* PedometerManager.swift */; };
 		3AD6F9522B6190AC00923DFC /* StepDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */; };
-		3AD6F9542B6190DF00923DFC /* DayDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9532B6190DF00923DFC /* DayDetailViewModel.swift */; };
 		3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9552B61943E00923DFC /* StepsModel.xcdatamodeld */; };
 		3AD6F95A2B61983500923DFC /* DailyLog+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9582B61983500923DFC /* DailyLog+CoreDataClass.swift */; };
 		3AD6F95B2B61983500923DFC /* DailyLog+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9592B61983500923DFC /* DailyLog+CoreDataProperties.swift */; };
@@ -28,8 +32,6 @@
 		3AD6F9612B619C4A00923DFC /* ItemFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9602B619C4A00923DFC /* ItemFormatter.swift */; };
 		3AD6F9672B61AC7800923DFC /* PedometerDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9662B61AC7800923DFC /* PedometerDataStore.swift */; };
 		3AD6F9692B61E6D700923DFC /* ProgressCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9682B61E6D700923DFC /* ProgressCircleView.swift */; };
-		3AD6F96C2B61F15700923DFC /* TopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F96B2B61F15700923DFC /* TopBarView.swift */; };
-		3AD6F96E2B61F34700923DFC /* DateSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F96D2B61F34700923DFC /* DateSelectorView.swift */; };
 		3AD6F9712B62029900923DFC /* MockPedometerDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9702B62029900923DFC /* MockPedometerDataProvider.swift */; };
 		3AD6F9732B62059800923DFC /* PedometerProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9722B62059800923DFC /* PedometerProviderTests.swift */; };
 		3AD6F9752B62079200923DFC /* PedometerDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9742B62079200923DFC /* PedometerDataStoreTests.swift */; };
@@ -53,6 +55,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlySteps.swift; sourceTree = "<group>"; };
+		3ABAB3312B62C3C800E174D3 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		3ABAFB792B62E97200BC0C9F /* LiveDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDataManager.swift; sourceTree = "<group>"; };
+		3ABAFB7B2B63133600BC0C9F /* DetailData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailData.swift; sourceTree = "<group>"; };
 		3AD6F9172B618FA700923DFC /* myPedometer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myPedometer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AD6F91A2B618FA700923DFC /* myPedometerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myPedometerApp.swift; sourceTree = "<group>"; };
 		3AD6F91C2B618FA700923DFC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -64,12 +72,10 @@
 		3AD6F9372B618FA900923DFC /* myPedometerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myPedometerUITests.swift; sourceTree = "<group>"; };
 		3AD6F9392B618FA900923DFC /* myPedometerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myPedometerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		3AD6F9462B618FF900923DFC /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-		3AD6F9482B61900200923DFC /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		3AD6F94A2B61901300923DFC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		3AD6F94C2B61902800923DFC /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		3AD6F94E2B61903F00923DFC /* PedometerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerManager.swift; sourceTree = "<group>"; };
 		3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepDataViewModel.swift; sourceTree = "<group>"; };
-		3AD6F9532B6190DF00923DFC /* DayDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailViewModel.swift; sourceTree = "<group>"; };
 		3AD6F9562B61943E00923DFC /* StepsModel.xcdatamodel */ = {isa = PBXFileReference; explicitFileType = wrapper.xcdatamodel; path = StepsModel.xcdatamodel; sourceTree = "<group>"; };
 		3AD6F9582B61983500923DFC /* DailyLog+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyLog+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3AD6F9592B61983500923DFC /* DailyLog+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyLog+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -77,8 +83,6 @@
 		3AD6F9602B619C4A00923DFC /* ItemFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFormatter.swift; sourceTree = "<group>"; };
 		3AD6F9662B61AC7800923DFC /* PedometerDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerDataStore.swift; sourceTree = "<group>"; };
 		3AD6F9682B61E6D700923DFC /* ProgressCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCircleView.swift; sourceTree = "<group>"; };
-		3AD6F96B2B61F15700923DFC /* TopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBarView.swift; sourceTree = "<group>"; };
-		3AD6F96D2B61F34700923DFC /* DateSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectorView.swift; sourceTree = "<group>"; };
 		3AD6F9702B62029900923DFC /* MockPedometerDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPedometerDataProvider.swift; sourceTree = "<group>"; };
 		3AD6F9722B62059800923DFC /* PedometerProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerProviderTests.swift; sourceTree = "<group>"; };
 		3AD6F9742B62079200923DFC /* PedometerDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerDataStoreTests.swift; sourceTree = "<group>"; };
@@ -112,6 +116,8 @@
 		3AD6F90E2B618FA700923DFC = {
 			isa = PBXGroup;
 			children = (
+				3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */,
+				3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */,
 				3AD6F9582B61983500923DFC /* DailyLog+CoreDataClass.swift */,
 				3AD6F9592B61983500923DFC /* DailyLog+CoreDataProperties.swift */,
 				3AD6F9192B618FA700923DFC /* myPedometer */,
@@ -139,8 +145,6 @@
 				3AD6F94A2B61901300923DFC /* HomeView.swift */,
 				3AD6F95D2B619BB200923DFC /* DayCardView.swift */,
 				3AD6F94C2B61902800923DFC /* DetailView.swift */,
-				3AD6F96B2B61F15700923DFC /* TopBarView.swift */,
-				3AD6F96D2B61F34700923DFC /* DateSelectorView.swift */,
 				3AD6F96A2B61EF2B00923DFC /* StatisticViews */,
 				3AD6F95C2B61988800923DFC /* View Models */,
 				3AD6F9502B61904600923DFC /* DataManagement */,
@@ -186,7 +190,9 @@
 				3AD6F9462B618FF900923DFC /* PersistenceController.swift */,
 				3AD6F94E2B61903F00923DFC /* PedometerManager.swift */,
 				3AD6F9662B61AC7800923DFC /* PedometerDataStore.swift */,
-				3AD6F9482B61900200923DFC /* DateManager.swift */,
+				3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */,
+				3ABAFB7B2B63133600BC0C9F /* DetailData.swift */,
+				3ABAFB792B62E97200BC0C9F /* LiveDataManager.swift */,
 			);
 			path = DataManagement;
 			sourceTree = "<group>";
@@ -194,8 +200,8 @@
 		3AD6F95C2B61988800923DFC /* View Models */ = {
 			isa = PBXGroup;
 			children = (
-				3AD6F9532B6190DF00923DFC /* DayDetailViewModel.swift */,
 				3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */,
+				3ABAB3312B62C3C800E174D3 /* DetailViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -346,22 +352,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3ABAB32E2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift in Sources */,
 				3AD6F91D2B618FA700923DFC /* ContentView.swift in Sources */,
 				3AD6F94F2B61903F00923DFC /* PedometerManager.swift in Sources */,
-				3AD6F9492B61900200923DFC /* DateManager.swift in Sources */,
-				3AD6F9542B6190DF00923DFC /* DayDetailViewModel.swift in Sources */,
+				3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */,
 				3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */,
 				3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */,
 				3AD6F9522B6190AC00923DFC /* StepDataViewModel.swift in Sources */,
+				3ABAFB7C2B63133600BC0C9F /* DetailData.swift in Sources */,
 				3AD6F91B2B618FA700923DFC /* myPedometerApp.swift in Sources */,
+				3ABAB3322B62C3C800E174D3 /* DetailViewModel.swift in Sources */,
 				3AD6F95B2B61983500923DFC /* DailyLog+CoreDataProperties.swift in Sources */,
 				3AD6F9612B619C4A00923DFC /* ItemFormatter.swift in Sources */,
-				3AD6F96C2B61F15700923DFC /* TopBarView.swift in Sources */,
+				3ABAB32D2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift in Sources */,
+				3ABAFB7A2B62E97200BC0C9F /* LiveDataManager.swift in Sources */,
 				3AD6F9472B618FF900923DFC /* PersistenceController.swift in Sources */,
 				3AD6F94B2B61901300923DFC /* HomeView.swift in Sources */,
 				3AD6F9672B61AC7800923DFC /* PedometerDataStore.swift in Sources */,
 				3AD6F9692B61E6D700923DFC /* ProgressCircleView.swift in Sources */,
-				3AD6F96E2B61F34700923DFC /* DateSelectorView.swift in Sources */,
 				3AD6F95E2B619BB200923DFC /* DayCardView.swift in Sources */,
 				3AD6F95A2B61983500923DFC /* DailyLog+CoreDataClass.swift in Sources */,
 				3AD6F9712B62029900923DFC /* MockPedometerDataProvider.swift in Sources */,

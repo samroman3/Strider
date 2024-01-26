@@ -23,7 +23,16 @@ class MockPedometerDataProvider: PedometerDataProvider {
             stepCount = UserDefaults.standard.integer(forKey: "mockStepCount")
         }
     
-    func fetchHourlySteps(for date: Date, completion: @escaping ([Int]) -> Void) {
+    func fetchFlights(for date: Date, completion: @escaping (Int32, Int32, Error?) -> Void) {
+            // Simulate fetching flights data
+            let simulatedFlightsAscended = Int32.random(in: 0...10)  // Randomly simulate flights ascended
+            let simulatedFlightsDescended = Int32.random(in: 0...10) // Randomly simulate flights descended
+
+            // Call completion handler with simulated data
+            completion(simulatedFlightsAscended, simulatedFlightsDescended, nil)
+        }
+    
+    func fetchHourlyStepData(for date: Date, completion: @escaping ([Int]) -> Void) {
            let simulatedHourlyData = (0..<24).map { _ in Int.random(in: 100...500) } // Random data for simulation
            completion(simulatedHourlyData)
        }
