@@ -13,9 +13,25 @@ struct myPedometerApp: App {
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
-        WindowGroup {
+        let context = persistenceController.container.viewContext
+        let dataStore = PedometerDataStore(context: context)
+
+        let pedometerDataProvider: PedometerDataProvider
+        #if targetEnvironment(simulator)
+        pedometerDataProvider = MockPedometerDataProvider()
+        #else
+        pedometerDataProvider = PedometerManager(context: context, dataStore: dataStore)
+        #endif
+
+        let providerWrapper = PedometerProviderWrapper(provider: pedometerDataProvider)
+
+        return WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, context)
+                .environmentObject(dataStore)
+                .environmentObject(providerWrapper) // Pass the provider wrapper
         }
     }
 }
+
+

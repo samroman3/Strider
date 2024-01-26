@@ -7,55 +7,43 @@
 
 import Foundation
 import CoreMotion
+import Combine
 
 class StepDataViewModel: ObservableObject {
     @Published var stepDataList: [DailyLog] = []
     @Published var weeklyAverageSteps: Int = 0
-    @Published var selectedDate = Date()
-    var liveDataManager: LiveDataManager
-    var dataStore: PedometerDataStore
-    let calendar = Calendar.current
-    
     @Published var todayLog: DailyLog?
+    @Published var dailyGoal: Int = 1000
+    var pedometerDataProvider: PedometerDataProvider
 
-    
-    
-    init(pedometerDataProvider: PedometerDataProvider, dataStore: PedometerDataStore) {
-        self.liveDataManager = LiveDataManager(pedometerDataProvider: pedometerDataProvider, dataStore: dataStore)
-        self.dataStore = dataStore
-        loadInitialData()
-        loadTodayLog()
-    }
+    private var cancellables = Set<AnyCancellable>()
 
-    private func loadInitialData() {
-        dataStore.fetchLastSevenDaysData { [weak self] dailyLogs in
-            DispatchQueue.main.async {
-                self?.stepDataList = dailyLogs.filter { log in
-                    guard let logDate = log.date else { return false }
-                    return !logDate.isToday()
-                }
-                self?.calculateWeeklyAverageSteps()
+    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
+        self.pedometerDataProvider = pedometerDataProvider
+        self.dailyGoal = pedometerDataProvider.retrieveDailyGoal()
+        pedometerDataProvider.stepDataListPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.stepDataList, on: self)
+            .store(in: &cancellables)
+
+        pedometerDataProvider.todayLogPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.todayLog, on: self)
+            .store(in: &cancellables)
+
+        // Calculate weekly average steps whenever stepDataList changes
+        $stepDataList
+            .map { logs in
+                let totalSteps = logs.reduce(0) { $0 + Int($1.totalSteps) }
+                return totalSteps / max(logs.count, 1)
             }
-        }
-    }
-    
-    private func loadTodayLog() {
-           let today = Calendar.current.startOfDay(for: Date())
-           dataStore.fetchOrCreateDailyLog(for: today) { [weak self] log in
-               DispatchQueue.main.async {
-                   self?.todayLog = log
-               }
-           }
-       }
-
-    private func calculateWeeklyAverageSteps() {
-        let totalSteps = stepDataList.reduce(0) { $0 + Int($1.totalSteps) }
-        weeklyAverageSteps = totalSteps / max(stepDataList.count, 1)
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.weeklyAverageSteps, on: self)
+            .store(in: &cancellables)
     }
 
     func isToday() -> Bool {
-                let calendar = Calendar.current
-                return calendar.isDateInToday(Date())
+        let calendar = Calendar.current
+        return calendar.isDateInToday(Date())
     }
-
 }

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct DayCardView: View {
-    var liveDataManager: LiveDataManager?
-    var log: DailyLog
+    @ObservedObject var log: DailyLog
+    var isToday: Bool
     
     @State private var showMotion: Bool = false
     let animationDuration = 0.5
@@ -17,14 +17,10 @@ struct DayCardView: View {
     // Retrieve the goal from UserDefaults, with a default value
     let dailyStepGoal = UserDefaults.standard.integer(forKey: "dailyStepGoal") == 0 ? 1000 : UserDefaults.standard.integer(forKey: "dailyStepGoal")
 
-    private var isToday: Bool {
-        Calendar.current.isDateInToday(log.date ?? Date())
-    }
-
     var body: some View {
         VStack {
             Spacer()
-            if liveDataManager != nil {
+            if isToday {
                 HStack {
                     Text("Today")
                         .font(.title3)
@@ -39,11 +35,11 @@ struct DayCardView: View {
                             .font(.system(size: 60))
                             .animation(.easeInOut(duration: animationDuration))
                             .onAppear { self.showMotion.toggle() }
-                        Text("\(liveDataManager?.liveStepCount ?? 0) steps")
+                        Text("\(log.totalSteps) steps")
                             .font(.title)
                             .fontWeight(.semibold)
                     }
-                    if (liveDataManager?.liveStepCount ?? 0) >= dailyStepGoal {
+                    if (log.totalSteps) >= dailyStepGoal {
                         VStack{
                             Image(systemName: "checkmark.circle")
                                 .font(.system(size: 40))
@@ -54,7 +50,7 @@ struct DayCardView: View {
                                 .foregroundColor(.green)
                         }
                     }
-                    ProgressCircleView(percentage: Double(liveDataManager?.liveStepCount ?? 0) / Double(dailyStepGoal))
+                    ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal))
                 }
             } else {
                 HStack {

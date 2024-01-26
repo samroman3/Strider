@@ -7,6 +7,18 @@
 
 import Foundation
 class MockPedometerDataProvider: PedometerDataProvider {
+    func retrieveDailyGoal() -> Int {
+        return 100
+    }
+    
+    func storeDailyGoal(_ goal: Int) {
+        return
+    }
+    
+    func getDetailData(for date: Date, completion: @escaping (DetailData) -> Void) {
+        completion(DetailData(hourlySteps: [], flightsAscended: 0, flightsDescended: 0, goalAchievementStatus: .achieved, dailySteps: 2, dailyGoal: 2))
+    }
+    
     private var mockData: [Date: Int] = [:]
     private var timer: Timer?
     private var baseStepCount: Int = 5000 // Starting step count for the simulation
