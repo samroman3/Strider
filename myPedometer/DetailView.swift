@@ -49,12 +49,12 @@ struct DetailView: View {
                         .font(.footnote)
                         .foregroundColor(.secondary)
                 }.padding(.horizontal)
+                VStack(alignment: .center) {
                     Text("\(viewModel.dailySteps) steps")
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.orange)
                         .padding(.leading)
-                VStack(alignment: .center) {
                     if isToday {
                         if !viewModel.isGoalAchieved {
                             // Today and goal not achieved: blue progress bar

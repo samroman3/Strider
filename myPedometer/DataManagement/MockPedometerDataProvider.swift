@@ -17,12 +17,16 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     @Published var stepDataList: [DailyLog] = []
     var stepDataListPublisher: Published<[DailyLog]>.Publisher { $stepDataList }
     var todayLogPublisher: Published<DailyLog?>.Publisher { $todayLog }
-
+    
+    private var timer: Timer?
+    
     init(context: NSManagedObjectContext) {
         self.context = context
         setupInitialMockData()
+        loadTodayLog()
+        startPedometerUpdates()
     }
-
+    
     private func setupInitialMockData() {
         let today = Date()
         for dayBack in 0..<7 {
@@ -30,30 +34,68 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
                 createMockDailyLog(for: date)
             }
         }
-        loadTodayLog()
     }
-
+    
     private func createMockDailyLog(for date: Date) {
         let dailyLog = DailyLog(context: context)
         dailyLog.date = date
         dailyLog.totalSteps = Int32.random(in: 1000...10000)
         dailyLog.flightsAscended = Int32.random(in: 0...20)
         dailyLog.flightsDescended = Int32.random(in: 0...20)
-
+        
         for hour in 0..<24 {
             let hourlyData = HourlyStepData(context: context)
             hourlyData.hour = Int16(hour)
             hourlyData.stepCount = Int32.random(in: 100...500)
             dailyLog.addToHourlyStepData(hourlyData)
         }
-
+        
         stepDataList.append(dailyLog)
     }
-
-    func loadTodayLog() {
-        let today = Calendar.current.startOfDay(for: Date())
-        todayLog = stepDataList.first { $0.date == today }
+    
+    
+    func startPedometerUpdates() {
+        timer?.invalidate()  // Invalidate any existing timer
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+            self?.simulateStepIncrement()
+        }
     }
+
+    
+    private func simulateStepIncrement() {
+        guard let todayLog = todayLog else { return }
+        context.perform { // Ensure we're on the correct thread for the context
+            todayLog.totalSteps += 3  // Increment steps by 3
+            self.updateTodayLogInList()
+            self.saveContextIfNeeded() // Save the changes
+        }
+    }
+
+    private func updateTodayLogInList() {
+        guard let todayLog = todayLog else { return }
+        if let index = stepDataList.firstIndex(where: { $0.date == todayLog.date }) {
+            stepDataList[index] = todayLog
+            loadTodayLog()
+        }
+    }
+
+
+    private func saveContextIfNeeded() {
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                print("Error saving context: \(error)")
+            }
+        }
+    }
+
+
+    private func loadTodayLog() {
+        let calendar = Calendar.current
+        todayLog = stepDataList.first { calendar.isDateInToday($0.date ?? Date()) }
+    }
+
 
     func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void) {
         let steps = stepDataList.first { $0.date == date }?.totalSteps ?? 0
@@ -115,6 +157,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     func storeDailyGoal(_ goal: Int) {
         UserDefaults.standard.set(goal, forKey: "dailyStepGoal")
     }
+
 }
 
 //class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable {
