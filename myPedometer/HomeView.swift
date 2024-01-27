@@ -5,6 +5,7 @@
 //  Created by Sam Roman on 1/24/24.
 //
 import SwiftUI
+
 struct HomeView: View {
     @ObservedObject var viewModel: StepDataViewModel
     
@@ -13,83 +14,104 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        dailyGoalViewIsPresented.toggle() // Toggle the State variable to show/hide the pop-up
-                    }) {
-                        Text("Set Daily Goal: \n \(viewModel.dailyGoal)")
-                        Image(systemName: viewModel.isGoalMet ? "flag.checkered.circle.fill" : "flag.checkered.circle") // Use "flag.fill" when the goal is met, "flag" otherwise
-                    }
-                }
                 List {
                     ForEach(viewModel.stepDataList, id: \.self) { log in
-                        NavigationLink(destination: Group {
-                            // Check if the provider conforms to both PedometerDataProvider and PedometerDataObservable
-                            if let pedometerManager = viewModel.pedometerDataProvider as? PedometerManager {
-                                LazyView { DetailView(viewModel: DetailViewModel(pedometerDataProvider: pedometerManager, date: log.date ?? Date(), weeklyAvg: viewModel.weeklyAverageSteps), log: log.date != viewModel.todayLog?.date ? viewModel.todayLog! : log) }
-                            } else {
-                                // Handle the case where the provider is not a PedometerManager (e.g., a mock provider)
-                                Text("Details not available")
-                            }
-                        }) {
-                            if log.date != viewModel.todayLog?.date {
-                                DayCardView(log: log, isToday: false)
-                            } else {
-                                DayCardView(log: viewModel.todayLog!, isToday: true)
-                            }
+                        NavigationLink(destination: DetailViewDestination(log: log)) {
+                            DayCardView(log: log, isToday: viewModel.isToday(log: log))
                         }
                     }
                 }
-                .navigationBarTitle("mySteps")
+                .navigationBarTitle("mySteps", displayMode: .inline)
+                .navigationBarItems(trailing: dailyGoalButton)
                 .sheet(isPresented: $dailyGoalViewIsPresented) {
-                    // Present the DailyGoalView as a pop-up sheet
-                    DailyGoalView(viewModel: viewModel)
+                    DailyGoalView(dailyGoal: $viewModel.dailyGoal, viewModel: viewModel)
                 }
             }
+        }
+    }
+    
+    private var dailyGoalButton: some View {
+        Button(action: { dailyGoalViewIsPresented.toggle() }) {
+            VStack{
+                Image(systemName:"flag.checkered.circle")
+                    .font(.title2)
+            }
+        }
+    }
+    
+    
+    @ViewBuilder
+    private func DetailViewDestination(log: DailyLog) -> some View {
+        if let pedometerManager = viewModel.pedometerDataProvider as? PedometerManager {
+            LazyView {
+                DetailView(viewModel:
+                            DetailViewModel(pedometerDataProvider: pedometerManager,
+                                            date: log.date ?? Date(),
+                                            weeklyAvg: viewModel.weeklyAverageSteps),
+                           log: log, isToday: viewModel.isToday(log: log))
+            }
+        } else if let mockProvider = viewModel.pedometerDataProvider as? MockPedometerDataProvider {
+            LazyView {
+                DetailView(viewModel:
+                            DetailViewModel(pedometerDataProvider: mockProvider,
+                                            date: log.date ?? Date(),
+                                            weeklyAvg: viewModel.weeklyAverageSteps),
+                           log: log, isToday: viewModel.isToday(log: log))
+            }
+        } else {
+            Text("Details not available")
         }
     }
 }
 
 struct DailyGoalView: View {
-    @ObservedObject var viewModel: StepDataViewModel
+    @Binding var dailyGoal: Int
+    @Environment(\.presentationMode) var presentationMode
     @State private var newGoal: String = ""
-    
+    var viewModel: StepDataViewModel
+
+    public init(dailyGoal: Binding<Int>, viewModel: StepDataViewModel) {
+        self.viewModel = viewModel
+        self._dailyGoal = dailyGoal
+    }
+
     var body: some View {
-        VStack {
-            Spacer()
-            Text("\(viewModel.dailyGoal)")
+        VStack(spacing: 20) {
+            Text("\(dailyGoal)")
                 .font(.title)
-            Image(systemName: "flag.fill") // Use "flag.fill" to represent a filled flag
-                .resizable()
-                .frame(width: 100, height: 100)
-                .foregroundColor(viewModel.isGoalMet ? .green : .gray) // Change the flag color based on the goal status
-            Text(viewModel.isGoalMet ? "Goal Met! 🎉" : "Goal Not Met 😔")
-                .font(.headline)
-                .foregroundColor(viewModel.isGoalMet ? .green : .red) // Change text color based on the goal status
-            Spacer()
+                .foregroundColor(.primary)
+
+            Image(systemName: viewModel.isGoalMet ? "flag.checkered.circle.fill" : "flag.checkered.circle")
             
-            Text("Set your daily goal here")
-                .font(.title3)
-                .padding()
+            Text("Set Daily Goal")
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.top)
+
             TextField("Enter your daily goal", text: $newGoal)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.numberPad)
-                .padding()
-            
-            Button(action: {
-                if let goal = Int(newGoal) {
-                    viewModel.pedometerDataProvider.storeDailyGoal(goal)
-                }
-                
-            }) {
+                .padding([.leading, .trailing, .bottom])
+
+            Button(action: updateGoal) {
                 Text("Confirm")
                     .padding()
+                    .frame(maxWidth: .infinity)
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
-            Spacer()
+            .padding(.bottom)
+        }
+        .padding()
+        .background(Color(.systemBackground))
+    }
+
+    private func updateGoal() {
+        if let goal = Int(newGoal) {
+            dailyGoal = goal
+            viewModel.pedometerDataProvider.storeDailyGoal(goal)
+            presentationMode.wrappedValue.dismiss()
         }
     }
 }

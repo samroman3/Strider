@@ -15,7 +15,7 @@ class StepDataViewModel: ObservableObject {
     
     @Published var todayLog: DailyLog?
     
-    @Published var dailyGoal: Int = 1000
+    @Published var dailyGoal: Int
     
     @Published private(set) var isGoalMet: Bool = false
     
@@ -28,6 +28,7 @@ class StepDataViewModel: ObservableObject {
         
         self.pedometerDataProvider = pedometerDataProvider
         self.dailyGoal = pedometerDataProvider.retrieveDailyGoal()
+        print(dailyGoal)
         //Set Subscribers
         pedometerDataProvider.stepDataListPublisher
             .receive(on: DispatchQueue.main)
@@ -58,8 +59,8 @@ class StepDataViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func isToday() -> Bool {
+    func isToday(log: DailyLog) -> Bool {
         let calendar = Calendar.current
-        return calendar.isDateInToday(Date())
+        return calendar.isDateInToday(log.date ?? Date())
     }
 }
