@@ -49,8 +49,9 @@ struct DayCardView: View {
                                 .fontWeight(.semibold)
                                 .foregroundColor(.green)
                         }
+                    } else {
+                        ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal))
                     }
-                    ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal))
                 }
             } else {
                 HStack {

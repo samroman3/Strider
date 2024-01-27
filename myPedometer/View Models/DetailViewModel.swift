@@ -14,12 +14,14 @@ enum GoalAchievementStatus {
 
 class DetailViewModel: ObservableObject {
     @Published var hourlySteps: [HourlySteps] = []
+    @Published var averageHourlySteps: [HourlySteps] = []
     @Published var flightsAscended: Int = 0
     @Published var flightsDescended: Int = 0
     @Published var goalAchievementStatus: GoalAchievementStatus = .notAchieved
     @Published var dailySteps: Int = 0
     @Published var weeklyAvg: Int = 0
     @Published var dailyGoal: Int = 0
+    @Published var todayLog: DailyLog?
     
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
     
@@ -41,7 +43,7 @@ class DetailViewModel: ObservableObject {
         if isToday {
             return "You’re walking less than you usually do by this point."
         } else {
-            return "Your activity summary for the selected day."
+            return "Your activity summary."
         }
     }
     
@@ -56,34 +58,10 @@ class DetailViewModel: ObservableObject {
         self.date = date
         self.dailyGoal = pedometerDataProvider.retrieveDailyGoal()
         self.weeklyAvg = weeklyAvg
+        self.averageHourlySteps = pedometerDataProvider.calculateWeeklyAverageHourlySteps(includeToday: false)
         loadData(for: date)
     }
-    
-        func subscribeToUpdates() {
-            pedometerDataProvider.todayLogPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] (log: DailyLog?) in
-                    if let log = log, Calendar.current.isDateInToday(log.date ?? Date()) {
-                        self?.updateView(with: log)
-                    }
-                }
-                .store(in: &cancellables)
-        }
-    
 
-    private func updateView(with log: DailyLog) {
-        if let hourlyData = log.hourlyStepData as? Set<HourlyStepData> {
-            let sortedHourlyData = hourlyData.sorted { $0.hour < $1.hour }
-            self.hourlySteps = sortedHourlyData.map { HourlySteps(hour: Int($0.hour), steps: Int($0.stepCount)) }
-        } else {
-            self.hourlySteps = []
-        }
-        print("log updated: \(log.totalSteps)")
-        self.flightsAscended = Int(log.flightsAscended)
-        self.flightsDescended = Int(log.flightsDescended)
-        self.dailySteps = Int(log.totalSteps)
-        self.goalAchievementStatus = isGoalAchieved ? .achieved : .notAchieved
-    }
     
     func loadData(for date: Date) {
         pedometerDataProvider.getDetailData(for: date) { detailData in

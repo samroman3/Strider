@@ -10,21 +10,16 @@ import CoreMotion
 import CoreData
 import Combine
 
-class PedometerProviderWrapper: ObservableObject {
-    var provider: PedometerDataProvider
-
-    init(provider: PedometerDataProvider) {
-        self.provider = provider
-    }
-}
 
 protocol PedometerDataProvider {
     func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void)
     func fetchHourlyStepData(for date: Date, completion: @escaping ([Int]) -> Void)
     func fetchFlights(for date: Date, completion: @escaping (Int32, Int32, Error?) -> Void)
     func getDetailData(for date: Date, completion: @escaping (DetailData) -> Void)
+    func calculateWeeklyAverageHourlySteps(includeToday: Bool) -> [HourlySteps] 
     func retrieveDailyGoal() -> Int
     func storeDailyGoal(_ goal: Int)
+    
 }
 
 protocol PedometerDataObservable {
@@ -78,6 +73,9 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                     guard let data = data, error == nil else { return }
                     print("\(data.numberOfSteps.intValue)")
                     self.todayLog?.totalSteps = data.numberOfSteps.int32Value
+                    self.todayLog?.flightsAscended = data.floorsAscended?.int32Value ?? 0
+                    self.todayLog?.flightsDescended = data.floorsDescended?.int32Value ?? 0
+                    
                 }
             } else {
                 // Step counting is not available on this device
@@ -326,6 +324,28 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 }
             }
         }
+    
+    func calculateWeeklyAverageHourlySteps(includeToday: Bool) -> [HourlySteps] {
+        var hourlyStepSums = Array(repeating: 0, count: 24)
+        var dayCount = 0
+
+        for dailyLog in stepDataList {
+            if !includeToday && Calendar.current.isDateInToday(dailyLog.date ?? Date()) {
+                continue
+            }
+
+            if let hourlyData = dailyLog.hourlyStepData as? Set<HourlyStepData> {
+                for data in hourlyData {
+                    hourlyStepSums[Int(data.hour)] += Int(data.stepCount)
+                }
+            }
+            dayCount += 1
+        }
+
+        guard dayCount > 0 else { return [] }
+
+        return hourlyStepSums.enumerated().map { HourlySteps(hour: $0.offset, steps: $0.element / dayCount) }
+    }
     
     
     

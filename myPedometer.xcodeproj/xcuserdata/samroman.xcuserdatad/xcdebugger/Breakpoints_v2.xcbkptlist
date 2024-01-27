@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "AE633445-737F-4BA8-9E15-ED45E9495016"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "myPedometer/DetailView.swift"
@@ -23,233 +23,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6B312597-C6C4-4B6F-9B65-ED11E9B90002"
-            shouldBeEnabled = "Yes"
+            uuid = "A671366E-DD4B-466B-80CA-EE189CB8B88E"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "myPedometer/DetailView.swift"
+            filePath = "myPedometer/DataManagement/MockPedometerDataProvider.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7783E41C-4BA0-4A5A-A04C-18B23BA39AFE"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "myPedometer/View Models/DetailViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
-            landmarkName = "subscribeToUpdates()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "7783E41C-4BA0-4A5A-A04C-18B23BA39AFE - 2f1a462c0aaee4a6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #3 (myPedometer.DailyLog) -&gt; (Swift.Int, Swift.Array&lt;myPedometer.HourlySteps&gt;, Swift.Int, Swift.Int) in myPedometer.DetailViewModel.init(pedometerDataProvider: myPedometer.PedometerDataObservable &amp; myPedometer.PedometerDataProvider, date: Foundation.Date, weeklyAvg: Swift.Int) -&gt; myPedometer.DetailViewModel"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "67"
-                  endingLineNumber = "67"
-                  offsetFromSymbolStart = "492">
-               </Location>
-               <Location
-                  uuid = "7783E41C-4BA0-4A5A-A04C-18B23BA39AFE - 8ef02f5b286c97a1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (myPedometer.HourlyStepData) -&gt; myPedometer.HourlySteps in closure #3 (myPedometer.DailyLog) -&gt; (Swift.Int, Swift.Array&lt;myPedometer.HourlySteps&gt;, Swift.Int, Swift.Int) in myPedometer.DetailViewModel.init(pedometerDataProvider: myPedometer.PedometerDataObservable &amp; myPedometer.PedometerDataProvider, date: Foundation.Date, weeklyAvg: Swift.Int) -&gt; myPedometer.DetailViewModel"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "67"
-                  endingLineNumber = "67"
-                  offsetFromSymbolStart = "56">
-               </Location>
-               <Location
-                  uuid = "7783E41C-4BA0-4A5A-A04C-18B23BA39AFE - c61cbc18e1ac3ddb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;myPedometer.DailyLog&gt;) -&gt; () in myPedometer.DetailViewModel.subscribeToUpdates() -&gt; ()"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "67"
-                  endingLineNumber = "67"
-                  offsetFromSymbolStart = "908">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "myPedometer/View Models/DetailViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "20"
-            endingLineNumber = "20"
-            landmarkName = "DetailViewModel"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - 44bd0f37d57e9813"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "property wrapper backing initializer of myPedometer.DetailViewModel.dailySteps : Swift.Int"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - 87a0a3519d6ecc39"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.dailySteps.getter : Swift.Int"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "28">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - 4e13f0699e8e02f9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.dailySteps.setter : Swift.Int"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "0">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - c7bc84f7b5e03388"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.dailySteps.modify : Swift.Int"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "0">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - d32e3261e6c72b54"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.dailySteps.modify : Swift.Int with unmangled suffix &quot;.resume.0&quot;"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/%3Ccompiler-generated%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - d97546f1df3e32e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.$dailySteps.getter : Combine.Published&lt;Swift.Int&gt;.Publisher"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "0">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - 2052ddc37e8dde7b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.$dailySteps.setter : Combine.Published&lt;Swift.Int&gt;.Publisher"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/%3Ccompiler-generated%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "36">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - 21c3a4afef50bc48"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.$dailySteps.modify : Combine.Published&lt;Swift.Int&gt;.Publisher"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/%3Ccompiler-generated%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "64">
-               </Location>
-               <Location
-                  uuid = "68CD5DA4-647F-4118-A4F9-36F0FE0DDA8C - 5b6307e869b1acff"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.DetailViewModel.$dailySteps.modify : Combine.Published&lt;Swift.Int&gt;.Publisher with unmangled suffix &quot;.resume.0&quot;"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/%3Ccompiler-generated%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "24">
-               </Location>
-            </Locations>
+            startingLineNumber = "148"
+            endingLineNumber = "148"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

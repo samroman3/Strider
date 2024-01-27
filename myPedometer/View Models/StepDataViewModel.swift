@@ -12,15 +12,23 @@ import Combine
 class StepDataViewModel: ObservableObject {
     @Published var stepDataList: [DailyLog] = []
     @Published var weeklyAverageSteps: Int = 0
+    
     @Published var todayLog: DailyLog?
+    
     @Published var dailyGoal: Int = 1000
+    
+    @Published private(set) var isGoalMet: Bool = false
+    
     var pedometerDataProvider: PedometerDataProvider
 
     private var cancellables = Set<AnyCancellable>()
 
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
+        
+        
         self.pedometerDataProvider = pedometerDataProvider
         self.dailyGoal = pedometerDataProvider.retrieveDailyGoal()
+        //Set Subscribers
         pedometerDataProvider.stepDataListPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.stepDataList, on: self)
@@ -30,8 +38,16 @@ class StepDataViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .assign(to: \.todayLog, on: self)
             .store(in: &cancellables)
-
         // Calculate weekly average steps whenever stepDataList changes
+         calculateWeeklySteps()
+        checkGoalStatus()
+    }
+    
+    private func checkGoalStatus() {
+            isGoalMet = todayLog?.totalSteps ?? 0 >= dailyGoal
+        }
+    
+    private func calculateWeeklySteps(){
         $stepDataList
             .map { logs in
                 let totalSteps = logs.reduce(0) { $0 + Int($1.totalSteps) }
