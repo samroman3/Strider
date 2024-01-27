@@ -29,7 +29,7 @@ protocol PedometerDataProvider {
 
 protocol PedometerDataObservable {
     var stepDataListPublisher: Published<[DailyLog]>.Publisher { get }
-     var todayLogPublisher: Published<DailyLog?>.Publisher { get }
+    var todayLogPublisher: Published<DailyLog?>.Publisher { get }
 }
 
 class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataObservable {
@@ -114,7 +114,6 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 self?.todayLog = log
             }
         }
-        getTodaysLiveSteps()
     }
     private func fetchOrCreateLog(for date: Date, completion: @escaping (DailyLog) -> Void) {
         dataStore.fetchOrCreateDailyLog(for: date) { [weak self] dailyLog in
@@ -323,7 +322,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                     }
                 } else {
                     // For today's data, fetch the latest from the pedometer
-                    self.fetchTodayData(dailyLog: dailyLog, dailyGoal: dailyStepGoal, completion: completion)
+                    self.fetchTodayData(dailyLog: todayLog!, dailyGoal: dailyStepGoal, completion: completion)
                 }
             }
         }

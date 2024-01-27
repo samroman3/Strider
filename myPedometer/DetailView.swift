@@ -107,6 +107,9 @@ struct DetailView: View {
                 .padding(.horizontal)
             }
         }
+        .onAppear {
+            viewModel.subscribeToUpdates()
+        }
         .navigationTitle("Steps")
         .navigationBarTitleDisplayMode(.inline)
     }
