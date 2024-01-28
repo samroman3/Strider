@@ -282,7 +282,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                     if let data = data, error == nil {
                         hourlySteps[hour] = data.numberOfSteps.intValue
                     }
-                    // Handle error if necessary
+                    // Handle error
                 }
             }
     

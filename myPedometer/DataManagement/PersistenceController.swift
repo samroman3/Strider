@@ -26,3 +26,11 @@ class PersistenceController {
     }
 }
 
+//Testing Context
+extension PersistenceController {
+    static func inMemoryContext() -> NSManagedObjectContext {
+        let controller = PersistenceController(inMemory: true)
+        return controller.container.viewContext
+    }
+}
+
