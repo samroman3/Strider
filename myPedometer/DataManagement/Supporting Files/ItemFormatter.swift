@@ -2,21 +2,37 @@
 //  ItemFormatter.swift
 //  myPedometer
 //
-//  Created by Sam Roman on 1/24/24.
+//  Created by Sam Roman on 1/27/24.
 //
 
 import Foundation
 
-let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .long
-    return formatter
-}()
+class DateFormatterService {
+    
+    static let shared = DateFormatterService()
 
-extension Date {
-    func isToday() -> Bool {
-        return Calendar.current.isDateInToday(self)
+    private init() {}
+
+    private let dateFormatter = DateFormatter()
+    
+    func getItemFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter
+    }
+
+    func format(date: Date, style: DateFormatter.Style) -> String {
+        dateFormatter.dateStyle = style
+        dateFormatter.timeStyle = .none
+        return dateFormatter.string(from: date)
+    }
+
+    func formatHour(_ hour: Int) -> String {
+        dateFormatter.dateFormat = "ha" // Example: "3PM"
+        guard let date = Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: Date()) else {
+            return ""
+        }
+        return dateFormatter.string(from: date)
     }
 }
-
-

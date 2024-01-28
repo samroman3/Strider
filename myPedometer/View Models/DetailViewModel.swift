@@ -30,8 +30,8 @@ class DetailViewModel: ObservableObject {
     var insights: [String] {
         var insightsArray = [String]()
         insightsArray.append("You walked an average of \(weeklyAvg) steps a day over the last 7 days.")
-        insightsArray.append("Most active hour: \(formatHour(mostActiveHour))")
-        insightsArray.append("Least active hour: \(formatHour(leastActiveHour))")
+        insightsArray.append("Most active hour: \(DateFormatterService.shared.formatHour(mostActiveHour))")
+        insightsArray.append("Least active hour: \(DateFormatterService.shared.formatHour(leastActiveHour))")
         insightsArray.append("Most active period of the day: \(mostActivePeriod)")
         insightsArray.append("Today's activity is \(todayVsWeeklyAverage) than the weekly average.")
         return insightsArray
@@ -50,7 +50,7 @@ class DetailViewModel: ObservableObject {
     }
     
     var dateTitle: String {
-        isToday ? "Today" : formatDate(date)
+        isToday ? "Today" : DateFormatterService.shared.format(date: date, style: .long)
     }
     
     private var cancellables = Set<AnyCancellable>()
@@ -62,7 +62,6 @@ class DetailViewModel: ObservableObject {
         self.weeklyAvg = weeklyAvg
         self.averageHourlySteps = pedometerDataProvider.calculateWeeklyAverageHourlySteps(includeToday: false)
         loadData(for: date)
-        calculateAdditionalInsights()
     }
     
     
@@ -74,22 +73,12 @@ class DetailViewModel: ObservableObject {
                 self.flightsDescended = detailData.flightsDescended
                 self.dailySteps = detailData.dailySteps
                 self.goalAchievementStatus = self.isGoalAchieved ? .achieved : .notAchieved
+                self.calculateAdditionalInsights()
             }
         }
     }
     
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        return formatter.string(from: date)
-    }
-    
-    private func formatHour(_ hour: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "ha" // Example: "3PM"
-        let date = Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: Date())!
-        return formatter.string(from: date)
-    }
+
     
     func calculateAdditionalInsights() {
         calculateMostAndLeastActiveHours()
@@ -98,7 +87,9 @@ class DetailViewModel: ObservableObject {
     }
     
     private func calculateMostAndLeastActiveHours() {
-        guard !hourlySteps.isEmpty else { return }
+        guard !hourlySteps.isEmpty else { 
+            
+            return }
         
         let sortedBySteps = hourlySteps.sorted { $0.steps > $1.steps }
         mostActiveHour = sortedBySteps.first?.hour ?? 0

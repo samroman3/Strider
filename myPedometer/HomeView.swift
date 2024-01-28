@@ -42,24 +42,9 @@ struct HomeView: View {
     
     @ViewBuilder
     private func DetailViewDestination(log: DailyLog) -> some View {
-        if let pedometerManager = viewModel.pedometerDataProvider as? PedometerManager {
-            LazyView {
-                DetailView(viewModel:
-                            DetailViewModel(pedometerDataProvider: pedometerManager,
-                                            date: log.date ?? Date(),
-                                            weeklyAvg: viewModel.weeklyAverageSteps),
-                           log: log, isToday: viewModel.isToday(log: log))
-            }
-        } else if let mockProvider = viewModel.pedometerDataProvider as? MockPedometerDataProvider {
-            LazyView {
-                DetailView(viewModel:
-                            DetailViewModel(pedometerDataProvider: mockProvider,
-                                            date: log.date ?? Date(),
-                                            weeklyAvg: viewModel.weeklyAverageSteps),
-                           log: log, isToday: viewModel.isToday(log: log))
-            }
-        } else {
-            Text("Details not available")
+        LazyView {
+            DetailView(viewModel:
+                        DetailViewModel(pedometerDataProvider: viewModel.pedometerDataProvider, date: log.date ?? Date(), weeklyAvg: viewModel.weeklyAverageSteps))
         }
     }
 }

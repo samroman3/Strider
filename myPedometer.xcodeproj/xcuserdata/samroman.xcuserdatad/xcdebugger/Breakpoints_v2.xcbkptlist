@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AE633445-737F-4BA8-9E15-ED45E9495016"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "myPedometer/DetailView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1"
-            endingLineNumber = "1"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "38246CF2-D768-40BE-99CF-D98DD3C30EDB"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -33,6 +17,85 @@
             startingLineNumber = "70"
             endingLineNumber = "70"
             landmarkName = "simulateStepIncrement()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5945D8F3-7FA8-4647-A149-B11491B6DBE5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/View Models/DetailViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "loadData(for:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5945D8F3-7FA8-4647-A149-B11491B6DBE5 - 14de6d843bc79bfb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (myPedometer.DetailData) -&gt; () in myPedometer.DetailViewModel.loadData(for: Foundation.Date) -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71"
+                  offsetFromSymbolStart = "224">
+               </Location>
+               <Location
+                  uuid = "5945D8F3-7FA8-4647-A149-B11491B6DBE5 - 1fb03f8716649ff1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (myPedometer.DetailData) -&gt; () in myPedometer.DetailViewModel.loadData(for: Foundation.Date) -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71"
+                  offsetFromSymbolStart = "68">
+               </Location>
+               <Location
+                  uuid = "5945D8F3-7FA8-4647-A149-B11491B6DBE5 - 1fb03f8716649ff1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (myPedometer.DetailData) -&gt; () in myPedometer.DetailViewModel.loadData(for: Foundation.Date) -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/View%20Models/DetailViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71"
+                  offsetFromSymbolStart = "80">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FA35EA02-D0B7-44F7-8223-701339AA0DC0"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/View Models/DetailViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "calculateMostAndLeastActiveHours()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

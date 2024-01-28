@@ -10,8 +10,7 @@ import Charts
 
 struct DetailView: View {
     @ObservedObject var viewModel: DetailViewModel
-    @ObservedObject var log: DailyLog
-    var isToday: Bool
+    
     
     var body: some View {
         ScrollView {
@@ -33,13 +32,15 @@ struct DetailView: View {
                         Text("Charts are not available on this version of iOS.")
                             .foregroundColor(.secondary)
                     }
+                }
                 }.padding(.horizontal)
+            VStack(alignment: .center, spacing: 10) {
                 //Chart Key
                 HStack(spacing: 2) {
                     Circle()
                         .fill(Color.orange)
                         .frame(width: 8, height: 8)
-                    Text(isToday ? "Today" : "This Day")
+                    Text(viewModel.isToday ? "Today" : "This Day")
                         .font(.footnote)
                         .foregroundColor(.secondary)
                     Circle()
@@ -49,37 +50,29 @@ struct DetailView: View {
                         .font(.footnote)
                         .foregroundColor(.secondary)
                 }.padding(.horizontal)
-                VStack(alignment: .center) {
-                    Text("\(viewModel.dailySteps) steps")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.orange)
-                        .padding(.leading)
-                    if isToday {
-                        if !viewModel.isGoalAchieved {
-                            // Today and goal not achieved: blue progress bar
-                            CustomProgressView(totalSteps: Int(log.totalSteps),
-                                               dailyGoal: viewModel.dailyGoal,
-                                               barColor: .blue)
-                        } else {
-                            // Today and goal achieved: show goal status and green progress bar
-                            GoalStatusView(steps: Int(log.totalSteps), goal: viewModel.dailyGoal)
-//                            CustomProgressView(totalSteps: Int(log.totalSteps),
-//                                               dailyGoal: viewModel.dailyGoal,
-//                                               barColor: .green)
-                        }
+                Text("\(viewModel.dailySteps) steps")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(.orange)
+                    .padding(.leading)
+                if viewModel.isToday {
+                    if !viewModel.isGoalAchieved {
+                        // Today and goal not achieved: blue progress bar
+                        CustomProgressView(totalSteps: Int(viewModel.dailySteps),
+                                           dailyGoal: viewModel.dailyGoal,
+                                           barColor: .blue).padding(.horizontal)
                     } else {
-                        // Not today: show goal status and progress bar in green or red
-                        GoalStatusView(steps: Int(log.totalSteps), goal: viewModel.dailyGoal)
-//                        CustomProgressView(totalSteps: Int(log.totalSteps),
-//                                           dailyGoal: viewModel.dailyGoal,
-//                                           barColor: viewModel.isGoalAchieved ? .green : .red)
+                        // Today and goal achieved:
+                        GoalStatusView(steps: Int(viewModel.dailySteps), goal: viewModel.dailyGoal)
                     }
+                } else {
+                    // Not today:
+                    GoalStatusView(steps: Int(viewModel.dailySteps), goal: viewModel.dailyGoal)
                     
-                }.padding(.horizontal)
+                }
                 // Flights Ascended and Descended
-                FlightsSection(log: log)
-                
+                FlightsSection(ascending: viewModel.flightsAscended, descending: viewModel.flightsDescended)
+            }
                 // Insights Section
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Insights")
@@ -94,7 +87,6 @@ struct DetailView: View {
                     }
                 }
             }
-        }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -115,12 +107,13 @@ struct CustomProgressView: View {
 }
 //MARK: FlightSection
 struct FlightsSection: View {
-    var log: DailyLog
+    var ascending: Int = 0
+    var descending: Int = 0
     
     var body: some View {
         HStack {
-            FlightInfoView(type: "Ascended", count: Int(log.flightsAscended), iconColor: .blue)
-            FlightInfoView(type: "Descended", count: Int(log.flightsDescended), iconColor: .red)
+            FlightInfoView(type: "Ascended", count: ascending, iconColor: .blue)
+            FlightInfoView(type: "Descended", count: descending, iconColor: .red)
         }
         .padding()
     }
@@ -149,6 +142,9 @@ struct HourlyStepsChart: View {
     let hourlySteps: [HourlySteps]
     let averageHourlySteps: [HourlySteps]
     
+    @State private var scale: CGFloat = 1.0
+    @GestureState private var gestureScale: CGFloat = 1.0
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             Chart {
@@ -168,6 +164,22 @@ struct HourlyStepsChart: View {
                 }
             }
             .chartXAxisLabel("Hour")
+            .chartScrollableAxes(.horizontal)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: 1)) { value in
+                    if let hour = value.as(Int.self) {
+                        AxisTick()
+                        switch hour {
+                        case 0, 24:
+                            AxisValueLabel("12AM")
+                        case 12:
+                            AxisValueLabel("12PM")
+                        default:
+                            AxisValueLabel("") // Empty for other hours
+                        }
+                    }
+                }
+            }
         }
     }
 }

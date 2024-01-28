@@ -19,7 +19,7 @@ class StepDataViewModel: ObservableObject {
     
     @Published private(set) var isGoalMet: Bool = false
     
-    var pedometerDataProvider: PedometerDataProvider
+    var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -62,5 +62,13 @@ class StepDataViewModel: ObservableObject {
     func isToday(log: DailyLog) -> Bool {
         let calendar = Calendar.current
         return calendar.isDateInToday(log.date ?? Date())
+    }
+    
+    func loadData(for date: Date) -> DetailData? {
+        var data: DetailData?
+        pedometerDataProvider.getDetailData(for: date) { detailData in
+            data = detailData
+        }
+        return data
     }
 }

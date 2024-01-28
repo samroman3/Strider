@@ -35,7 +35,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
         }
 
         // Set the last entry in stepDataList to have a specific number of steps
-        let specificStepsCount = 10000  // Set this to the number you want to test
+        let specificStepsCount = 10000
         stepDataList[stepDataList.count - 1].totalSteps = Int32(specificStepsCount)
     }
     
@@ -60,7 +60,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     
     func startPedometerUpdates() {
         timer?.invalidate()  // Invalidate any existing timer
-        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
             self?.simulateStepIncrement()
         }
     }

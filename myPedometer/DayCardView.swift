@@ -25,7 +25,7 @@ struct DayCardView: View {
                     Text("Today")
                         .font(.title3)
                         .bold()
-                    Text("\(log.date ?? Date(), formatter: itemFormatter)")
+                    Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
                         .font(.subheadline)
                         .opacity(0.7)
                 }
@@ -59,7 +59,7 @@ struct DayCardView: View {
                         Text("\(Int(log.totalSteps)) steps")
                             .font(.title)
                             .fontWeight(.semibold)
-                        Text("\(log.date ?? Date(), formatter: itemFormatter)")
+                        Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
                             .font(.subheadline)
                             .opacity(0.7)
                     }
