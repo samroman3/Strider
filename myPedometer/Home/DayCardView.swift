@@ -10,68 +10,96 @@ import SwiftUI
 struct DayCardView: View {
     @ObservedObject var log: DailyLog
     var isToday: Bool
+    let dailyStepGoal: Int
     
     @State private var showMotion: Bool = false
     let animationDuration = 0.5
-
-    // Retrieve the goal from UserDefaults, with a default value
-    let dailyStepGoal = UserDefaults.standard.integer(forKey: "dailyStepGoal") == 0 ? 1000 : UserDefaults.standard.integer(forKey: "dailyStepGoal")
 
     var body: some View {
         VStack {
             Spacer()
             if isToday {
-                HStack {
-                    Text("Today")
-                        .font(.title3)
-                        .bold()
-                    Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
-                        .font(.subheadline)
-                        .opacity(0.7)
-                }
-                HStack {
-                    VStack{
-                        Image(systemName: showMotion ? "figure.walk.motion" : "figure.walk")
-                            .font(.system(size: 60))
-                            .animation(.easeInOut(duration: animationDuration))
-                            .onAppear { self.showMotion.toggle() }
-                        Text("\(log.totalSteps) steps")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                    }
-                    if (log.totalSteps) >= dailyStepGoal {
-                        VStack{
-                            Image(systemName: "checkmark.circle")
-                                .font(.system(size: 40))
-                                .foregroundColor(.green )
-                            Text("Goal Reached")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.green)
-                        }
-                    } else {
-                        ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal))
-                    }
-                }
+                todayView
             } else {
-                HStack {
-                    VStack{
-                        Text("\(Int(log.totalSteps)) steps")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                        Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
-                            .font(.subheadline)
-                            .opacity(0.7)
-                    }
-                    GoalStatusView(steps: Int(log.totalSteps), goal: dailyStepGoal)
-                }
+                notTodayView
             }
             Spacer()
+        }
+        .onDisappear {
+            showMotion = false  // Reset the animation state 
         }
         .frame(maxWidth: .infinity, maxHeight: 400)
         .background(Color(.systemBackground))
         .cornerRadius(15)
         .shadow(color: .gray.opacity(0.3), radius: 10, x: 0, y: 10)
-        .padding(.vertical)
+    }
+
+    // MARK: - Subviews
+
+    private var todayView: some View {
+        VStack {
+            dateHeaderView
+            HStack {
+                VStack{
+                    animatedFigure
+                    stepsText
+                }
+                goalStatusIndicator
+            }
+        }
+    }
+
+    private var notTodayView: some View {
+        VStack(alignment: .center) {
+            dateText
+            stepsText
+            GoalStatusView(status: log.totalSteps >= dailyStepGoal ? .achieved : .notAchieved)
+        }
+        .padding(.horizontal)
+    }
+
+    // MARK: - Helper Views
+
+    private var dateHeaderView: some View {
+        HStack {
+            Text("Today")
+                .font(.title3)
+                .bold()
+                .foregroundColor(.primary)
+            dateText
+        }
+    }
+
+    private var animatedFigure: some View {
+        Image(systemName: showMotion ? "figure.walk.motion" : "figure.walk")
+            .font(.system(size: 60))
+            .foregroundColor(.primary)
+            .onAppear {
+                withAnimation(Animation.linear(duration: animationDuration).repeatCount(1)) {
+                    self.showMotion.toggle()
+                }
+            }
+    }
+
+    private var goalStatusIndicator: some View {
+        if (log.totalSteps) >= dailyStepGoal {
+            AnyView(GoalStatusView(status: .achieved))
+        } else {
+            AnyView(ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal)))
+        }
+    }
+
+    private var stepsText: some View {
+        Text("\(log.totalSteps) steps")
+            .font(.title)
+            .foregroundColor(.primary)
+            .fontWeight(.semibold)
+    }
+
+    private var dateText: some View {
+        Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
+            .font(.subheadline)
+            .foregroundColor(.primary)
+            .opacity(0.7)
     }
 }

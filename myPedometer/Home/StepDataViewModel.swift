@@ -10,44 +10,36 @@ import CoreMotion
 import Combine
 
 class StepDataViewModel: ObservableObject {
+    // Published properties to be observed by HomeView
     @Published var stepDataList: [DailyLog] = []
     @Published var weeklyAverageSteps: Int = 0
-    
     @Published var todayLog: DailyLog?
-    
     @Published var dailyGoal: Int
     
-    @Published private(set) var isGoalMet: Bool = false
-    
+    // The pedometer data provider (either real or mock)
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
 
+    // Storage for Combine subscribers
     private var cancellables = Set<AnyCancellable>()
 
+    // Initializer
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
-        
-        
         self.pedometerDataProvider = pedometerDataProvider
+        
+        // Retrieve and set the daily goal from the data provider
         self.dailyGoal = pedometerDataProvider.retrieveDailyGoal()
-        print(dailyGoal)
-        //Set Subscribers
+        
+        // Initialize stepDataList directly from the data provider
+        self.stepDataList = pedometerDataProvider.stepDataList
         pedometerDataProvider.stepDataListPublisher
-            .receive(on: DispatchQueue.main)
-            .assign(to: \.stepDataList, on: self)
-            .store(in: &cancellables)
-
-        pedometerDataProvider.todayLogPublisher
-            .receive(on: DispatchQueue.main)
-            .assign(to: \.todayLog, on: self)
-            .store(in: &cancellables)
-        // Calculate weekly average steps whenever stepDataList changes
-         calculateWeeklySteps()
-        checkGoalStatus()
+                  .receive(on: DispatchQueue.main)
+                  .assign(to: \.stepDataList, on: self)
+                  .store(in: &cancellables)
+        // Calculate weekly steps and check goal status
+        calculateWeeklySteps()
     }
-    
-    private func checkGoalStatus() {
-            isGoalMet = todayLog?.totalSteps ?? 0 >= dailyGoal
-        }
-    
+
+    //Calculate weekly average steps
     private func calculateWeeklySteps(){
         $stepDataList
             .map { logs in
@@ -58,17 +50,12 @@ class StepDataViewModel: ObservableObject {
             .assign(to: \.weeklyAverageSteps, on: self)
             .store(in: &cancellables)
     }
-
+    
+    //Check if log falls in today
     func isToday(log: DailyLog) -> Bool {
         let calendar = Calendar.current
         return calendar.isDateInToday(log.date ?? Date())
     }
     
-    func loadData(for date: Date) -> DetailData? {
-        var data: DetailData?
-        pedometerDataProvider.getDetailData(for: date) { detailData in
-            data = detailData
-        }
-        return data
-    }
+
 }
