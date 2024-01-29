@@ -6,35 +6,54 @@
 //
 
 import SwiftUI
-import Charts
+import SwiftUI
 
 struct DetailView: View {
     @ObservedObject var viewModel: DetailViewModel
-    
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Date Header
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text(viewModel.dateTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                    }.padding(.vertical)
-                    
-                    // Chart for Hourly Step Data
-                    if #available(iOS 16.0, *) {
-                        HourlyStepsChart(hourlySteps: viewModel.hourlySteps, averageHourlySteps: viewModel.averageHourlySteps)
-                            .frame(height: 200)
-                            .padding(.horizontal, 20) // Added padding
-                    } else {
-                        Text("Charts are not available on this version of iOS.")
-                            .foregroundColor(.secondary)
-                    }
-                }
-                }.padding(.horizontal)
-            VStack(alignment: .center, spacing: 10) {
+                // Date and Hourly Steps Chart
+                dateAndChartSection
+                
+                //Chart key, steps, and Goal Status
+                stepsAndGoalSection
+                
+                // Flights
+                FlightsSection(ascending: viewModel.flightsAscended, descending: viewModel.flightsDescended)
+                
+                // Insights
+                insightsSection
+            }
+        }
+        .navigationTitle("Details")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: Subviews
+
+    private var dateAndChartSection: some View {
+        VStack(alignment: .leading) {
+            Text(viewModel.dateTitle)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.vertical)
+            
+            if #available(iOS 16.0, *) {
+                HourlyStepsChart(hourlySteps: viewModel.hourlySteps, averageHourlySteps: viewModel.averageHourlySteps)
+                    .frame(height: 200)
+                    .padding(.horizontal, 20)
+            } else {
+                Text("Charts are not available on this version of iOS.")
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var stepsAndGoalSection: some View {
+        VStack(alignment: .center, spacing: 10) {
                 //Chart Key
                 HStack(spacing: 2) {
                     Circle()
@@ -56,56 +75,39 @@ struct DetailView: View {
                     .foregroundColor(.orange)
                     .padding(.leading)
                 if viewModel.isToday {
-                    if !viewModel.isGoalAchieved {
+                    if viewModel.goalAchievementStatus == .notAchieved {
                         // Today and goal not achieved: blue progress bar
                         CustomProgressView(totalSteps: Int(viewModel.dailySteps),
                                            dailyGoal: viewModel.dailyGoal,
                                            barColor: .blue).padding(.horizontal)
                     } else {
                         // Today and goal achieved:
-                        GoalStatusView(steps: Int(viewModel.dailySteps), goal: viewModel.dailyGoal)
+                        GoalStatusView(status: .achieved)
                     }
                 } else {
                     // Not today:
-                    GoalStatusView(steps: Int(viewModel.dailySteps), goal: viewModel.dailyGoal)
+                    GoalStatusView(status: viewModel.goalAchievementStatus)
                     
                 }
-                // Flights Ascended and Descended
-                FlightsSection(ascending: viewModel.flightsAscended, descending: viewModel.flightsDescended)
             }
-                // Insights Section
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Insights")
-                        .font(.headline)
-                        .padding(.horizontal)
-                    
-                    ForEach(viewModel.insights, id: \.self) { insight in
-                        Text(insight)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal)
-                    }
-                }
+    }
+
+    private var insightsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Insights")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            ForEach(viewModel.insights, id: \.self) { insight in
+                Text(insight)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
             }
-        .navigationTitle("Details")
-        .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 
-//MARK: CustomProgressView
-struct CustomProgressView: View {
-    var totalSteps: Int
-    var dailyGoal: Int
-    var barColor: Color
-    
-    var body: some View {
-        ProgressView(value: Double(min(totalSteps, dailyGoal)), total: Double(dailyGoal))
-            .progressViewStyle(LinearProgressViewStyle(tint: barColor))
-        Text("Goal: \(dailyGoal) steps")
-            .foregroundColor(barColor)
-    }
-}
-//MARK: FlightSection
 struct FlightsSection: View {
     var ascending: Int = 0
     var descending: Int = 0
@@ -137,45 +139,4 @@ struct FlightInfoView: View {
         .frame(maxWidth: .infinity)
     }
 }
-//MARK: HourlyStepsChart
-struct HourlyStepsChart: View {
-    let hourlySteps: [HourlySteps]
-    let averageHourlySteps: [HourlySteps]
-    
-    var body: some View {
-        if #available(iOS 16.0, *) {
-            Chart {
-                ForEach(hourlySteps, id: \.hour) { step in
-                    BarMark(
-                        x: .value("Hour", step.hour),
-                        y: .value("Today", step.steps)
-                    )
-                    .foregroundStyle(.orange)
-                }
-                ForEach(averageHourlySteps, id: \.hour) { step in
-                    BarMark(
-                        x: .value("Hour", step.hour),
-                        y: .value("Average", step.steps)
-                    )
-                    .foregroundStyle(.gray)
-                }
-            }
-            .chartXAxisLabel("Hour")
-            .chartXAxis {
-                AxisMarks(values: .stride(by: 1)) { value in
-                    if let hour = value.as(Int.self) {
-                        AxisTick()
-                        switch hour {
-                        case 0, 24:
-                            AxisValueLabel("12AM")
-                        case 12:
-                            AxisValueLabel("12PM")
-                        default:
-                            AxisValueLabel("")
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+

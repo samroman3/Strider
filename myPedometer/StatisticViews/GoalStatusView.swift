@@ -7,12 +7,33 @@
 
 import SwiftUI
 
+enum GoalAchievementStatus {
+    case achieved
+    case notAchieved
+}
+
 struct GoalStatusView: View {
+    var status: GoalAchievementStatus
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Image(systemName: status == .achieved ? "checkmark.circle" : "xmark.circle")
+                .font(.system(size: 20))
+                .foregroundColor(status == .achieved ? .green : .red)
+            Text(status == .achieved ? "Goal Reached" : "Goal Not Reached")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(status == .achieved ? .green : .red)
+        }
     }
 }
 
 #Preview {
-    GoalStatusView()
+    //Goal Not Reached
+    GoalStatusView(status: .notAchieved)
+}
+
+#Preview {
+    //Goal Reached
+    GoalStatusView(status: .achieved)
 }

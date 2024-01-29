@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct CustomProgressView: View {
+    var totalSteps: Int
+    var dailyGoal: Int
+    var barColor: Color
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ProgressView(value: Double(min(totalSteps, dailyGoal)), total: Double(dailyGoal))
+            .progressViewStyle(LinearProgressViewStyle(tint: barColor))
+        Text("Goal: \(dailyGoal) steps")
+            .foregroundColor(barColor)
     }
 }
 
 #Preview {
-    CustomProgressView()
+    CustomProgressView(totalSteps: 2500, dailyGoal: 5000, barColor: .blue)
 }
+

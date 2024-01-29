@@ -22,7 +22,6 @@ struct ProgressCircleView: View {
                 .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
                 .foregroundColor(Color.blue)
                 .rotationEffect(Angle(degrees: 270.0))
-                .animation(.linear)
 
             Text(String(format: "%.0f%%", min(self.percentage, 1.0) * 100.0))
                 .font(.title2)
@@ -30,5 +29,9 @@ struct ProgressCircleView: View {
         }
         .frame(width: 100, height: 100)
     }
+}
+
+#Preview {
+    ProgressCircleView(percentage: 0.75)
 }
 

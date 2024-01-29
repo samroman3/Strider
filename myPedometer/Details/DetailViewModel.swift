@@ -7,11 +7,6 @@
 import Foundation
 import Combine
 
-enum GoalAchievementStatus {
-    case achieved
-    case notAchieved
-}
-
 class DetailViewModel: ObservableObject {
     @Published var hourlySteps: [HourlySteps] = []
     @Published var averageHourlySteps: [HourlySteps] = []
@@ -25,6 +20,8 @@ class DetailViewModel: ObservableObject {
     @Published var leastActiveHour: Int = 0
     @Published var mostActivePeriod: String = ""
     @Published var todayVsWeeklyAverage: String = ""
+    
+    @Published var todayLog: DailyLog?
     
     
     var insights: [String] {
@@ -54,7 +51,7 @@ class DetailViewModel: ObservableObject {
     }
     
     private var cancellables = Set<AnyCancellable>()
-    
+        
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, date: Date, weeklyAvg: Int) {
         self.pedometerDataProvider = pedometerDataProvider
         self.date = date
@@ -62,6 +59,14 @@ class DetailViewModel: ObservableObject {
         self.weeklyAvg = weeklyAvg
         self.averageHourlySteps = pedometerDataProvider.calculateWeeklyAverageHourlySteps(includeToday: false)
         loadData(for: date)
+        pedometerDataProvider.todayLogPublisher
+                   .receive(on: DispatchQueue.main)
+                   .sink(receiveValue: { value in
+                       if self.isToday {
+                           self.dailySteps = Int(value?.totalSteps ?? 0)
+                       }
+                   })
+                   .store(in: &cancellables)
     }
     
     
