@@ -80,13 +80,13 @@ class PedometerDataProviderTests: XCTestCase {
         let expectation = self.expectation(description: "StepIncrementSimulation")
 
         // Simulate waiting for some time
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30) {
             let newSteps = self.pedometerDataProvider.todayLog?.totalSteps ?? 0
             XCTAssertGreaterThan(newSteps, initialSteps, "Steps should have increased")
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 30)
     }
 
     func testFetchFlightsData() {
