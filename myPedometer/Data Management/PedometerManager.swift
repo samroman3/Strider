@@ -18,12 +18,13 @@ protocol PedometerDataProvider {
     func calculateWeeklyAverageHourlySteps(includeToday: Bool) -> [HourlySteps]
     func retrieveDailyGoal() -> Int
     func storeDailyGoal(_ goal: Int)
+    var stepDataList: [DailyLog] { get }
     
 }
 
 protocol PedometerDataObservable {
-    var stepDataListPublisher: Published<[DailyLog]>.Publisher { get }
     var todayLogPublisher: Published<DailyLog?>.Publisher { get }
+    var stepDataListPublisher: Published<[DailyLog]>.Publisher { get }
 }
 
 class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataObservable {
@@ -55,7 +56,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     }
     
     
-    //MARK: Data Setup
+    //MARK: Initial Data Setup
     
     //Pedometer Start
     func startPedometerUpdates() {
@@ -90,8 +91,16 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         
         dispatchGroup.notify(queue: DispatchQueue.main) {
             self.stepDataList = fetchedLogs.sorted { $0.date ?? Date() > $1.date ?? Date() }
+            self.setDefaultDailyGoalIfNeeded()
         }
-        
+    }
+    
+    func setDefaultDailyGoalIfNeeded() {
+        let defaults = UserDefaults.standard
+        if defaults.object(forKey: "dailyStepGoal") == nil {
+            // Key does not exist, set the default value
+            defaults.set(8000, forKey: "dailyStepGoal")
+        }
     }
     
     func loadTodayLog() {
@@ -157,7 +166,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         }
     }
     
-    //Live Data Handling
+    //MARK: Live Data Handling
     private func updateTodayLog(steps: Int, flightsAscended: Int, flightsDescended: Int) {
         guard let todayLog = todayLog else { return }
         
@@ -285,13 +294,11 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     //MARK: DetailView Methods
     // Fetches or creates a DailyLog, then updates it with hourly steps, flights, and goal status.
     func getDetailData(for date: Date, completion: @escaping (DetailData) -> Void) {
-        let startOfDay = Calendar.current.startOfDay(for: date)
-        
         dataStore.fetchOrCreateDailyLog(for: date) { [weak self] dailyLog in
             guard let self = self else { return }
             
             // Retrieve the daily goal from user defaults or set a default value
-            let dailyStepGoal = UserDefaults.standard.integer(forKey: "dailyStepGoal") == 0 ? 1000 : UserDefaults.standard.integer(forKey: "dailyStepGoal")
+            let dailyStepGoal = self.retrieveDailyGoal() == 0 ? 8000 : self.retrieveDailyGoal()
             
             // If it's not today, we can use the data already in the dailyLog
             if !Calendar.current.isDateInToday(date) {

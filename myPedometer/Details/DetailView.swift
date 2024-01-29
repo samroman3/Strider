@@ -142,9 +142,6 @@ struct HourlyStepsChart: View {
     let hourlySteps: [HourlySteps]
     let averageHourlySteps: [HourlySteps]
     
-    @State private var scale: CGFloat = 1.0
-    @GestureState private var gestureScale: CGFloat = 1.0
-    
     var body: some View {
         if #available(iOS 16.0, *) {
             Chart {
@@ -164,7 +161,6 @@ struct HourlyStepsChart: View {
                 }
             }
             .chartXAxisLabel("Hour")
-            .chartScrollableAxes(.horizontal)
             .chartXAxis {
                 AxisMarks(values: .stride(by: 1)) { value in
                     if let hour = value.as(Int.self) {
@@ -175,7 +171,7 @@ struct HourlyStepsChart: View {
                         case 12:
                             AxisValueLabel("12PM")
                         default:
-                            AxisValueLabel("") // Empty for other hours
+                            AxisValueLabel("")
                         }
                     }
                 }

@@ -88,7 +88,7 @@ class PedometerDataStore: ObservableObject {
         }
     }
     
-    // New method to update DailyLog with hourly steps data
+    // Update DailyLog with hourly steps data
     func updateDailyLogWithHourlySteps(hourlySteps: [Int], for date: Date) {
         fetchOrCreateDailyLog(for: date) { dailyLog in
             DispatchQueue.main.async {

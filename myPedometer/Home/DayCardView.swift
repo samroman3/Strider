@@ -75,20 +75,3 @@ struct DayCardView: View {
         .padding(.vertical)
     }
 }
-
-struct GoalStatusView: View {
-    var steps: Int
-    var goal: Int
-
-    var body: some View {
-        VStack {
-            Image(systemName: steps >= goal ? "checkmark.circle" : "xmark.circle")
-                .font(.system(size: 20))
-                .foregroundColor(steps >= goal ? .green : .red)
-            Text(steps >= goal ? "Goal Reached" : "Goal Not Reached")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(steps >= goal ? .green : .red)
-        }
-    }
-}
