@@ -1,5 +1,5 @@
 //
-//  ItemFormatter.swift
+//  DateFormatterService.swift
 //  myPedometer
 //
 //  Created by Sam Roman on 1/27/24.
@@ -29,7 +29,7 @@ class DateFormatterService {
     }
 
     func formatHour(_ hour: Int) -> String {
-        dateFormatter.dateFormat = "ha" // Example: "3PM"
+        dateFormatter.dateFormat = "ha"
         guard let date = Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: Date()) else {
             return ""
         }
