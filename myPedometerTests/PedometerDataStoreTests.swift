@@ -17,7 +17,6 @@ class PedometerDataStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: Date())
         inMemoryContext = PersistenceController.inMemoryContext()
         mockPedometerDataProvider = MockPedometerDataProvider(context: inMemoryContext)
         dataStore = PedometerDataStore(context: inMemoryContext)

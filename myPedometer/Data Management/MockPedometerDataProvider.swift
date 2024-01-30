@@ -127,20 +127,14 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     
     func startPedometerUpdates() {
         timer?.invalidate() // Invalidate any existing timer
-        timer = Timer.scheduledTimer(withTimeInterval: 25.0, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
             self?.simulateStepIncrement()
         }
     }
     
     private func simulateStepIncrement() {
         guard let todayLog = todayLog else { return }
-        
-        // Create a new HourlyStepData instance and associate it with todayLog
-        let hourlyStepData = HourlyStepData(context: context)
-        hourlyStepData.date = Date()
-        hourlyStepData.stepCount = 3
-        hourlyStepData.dailyLog = todayLog
-        
+
         // Increment totalSteps of todayLog
         context.perform {
             todayLog.totalSteps += 3
