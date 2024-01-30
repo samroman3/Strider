@@ -60,7 +60,6 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     
     private func checkDateAndLoadData() {
         let currentDate = Calendar.current.startOfDay(for: Date())
-        let defaults = UserDefaults.standard
         if let lastOpenedDate = UserDefaultsHandler.shared.retrieveLastOpenedDate(),
            !Calendar.current.isDate(lastOpenedDate, inSameDayAs: currentDate) {
             loadStepData { logs, hourlyAvg, error in
@@ -137,7 +136,6 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     
     
     func setDefaultDailyGoalIfNeeded() {
-        let defaults = UserDefaults.standard
         if  UserDefaultsHandler.shared.retrieveDailyGoal() == nil {
             // Key does not exist, set the default value
             UserDefaultsHandler.shared.storeDailyGoal(8000)
