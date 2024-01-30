@@ -17,7 +17,7 @@ class StepDataViewModel: ObservableObject {
     @Published var todayLog: DailyLog?
     @Published var dailyGoal: Int
     @Published var error: UserFriendlyError?
-
+    
     private var cancellables = Set<AnyCancellable>()
     
     // The pedometer data provider (either real or mock)
@@ -26,7 +26,7 @@ class StepDataViewModel: ObservableObject {
     // Initializer
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
         self.pedometerDataProvider = pedometerDataProvider
-    
+        
         // Retrieve and set the daily goal
         self.dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
         
@@ -35,11 +35,11 @@ class StepDataViewModel: ObservableObject {
         
         //Setup error subscription
         self.pedometerDataProvider.errorPublisher
-                .compactMap { $0 } // Filter out nil errors
-                .sink { [weak self] error in
-                        self?.handleError(error)
-                }
-                .store(in: &cancellables)
+            .compactMap { $0 } // Filter out nil errors
+            .sink { [weak self] error in
+                self?.handleError(error)
+            }
+            .store(in: &cancellables)
     }
     
     // Error Handler
@@ -53,14 +53,16 @@ class StepDataViewModel: ObservableObject {
             if let error = error {
                 self.handleError(error)
             }
-            self.stepDataList = logs
-            self.hourlyAverageSteps = hours
-            self.calculateWeeklySteps()
+            DispatchQueue.main.async {
+                self.stepDataList = logs
+                self.hourlyAverageSteps = hours
+                self.calculateWeeklySteps()
+            }
         }
     }
     
     //Calculate weekly average steps
-   func calculateWeeklySteps() {
+    func calculateWeeklySteps() {
         let totalSteps = stepDataList.reduce(0) { $0 + Int($1.totalSteps) }
         let averageSteps = totalSteps / max(stepDataList.count, 1)
         self.weeklyAverageSteps = averageSteps

@@ -8,7 +8,7 @@
 import Foundation
 
 class PedometerDataProcessor {
-
+    
     static func calculateMostAndLeastActiveHours(hourlySteps: [HourlySteps]) -> (mostActive: Int, leastActive: Int) {
         guard !hourlySteps.isEmpty else { return (0, 0) }
         
@@ -17,7 +17,7 @@ class PedometerDataProcessor {
         let leastActiveHour = sortedBySteps.last?.hour ?? 0
         return (mostActiveHour, leastActiveHour)
     }
-
+    
     static func calculateMostActivePeriodOfDay(hourlySteps: [HourlySteps]) -> String {
         // morning: 5 AM - 12 PM, afternoon: 12 PM - 5 PM, evening: 5 PM - 9 PM
         let morningSteps = hourlySteps.filter { 5...11 ~= $0.hour }.reduce(0) { $0 + $1.steps }
@@ -34,7 +34,7 @@ class PedometerDataProcessor {
             return "Evening"
         }
     }
-
+    
     static func compareTodayWithWeeklyAverage(todayTotalSteps: Int, weeklyAvg: Int) -> String {
         return todayTotalSteps > weeklyAvg ? "more active" : "less active"
     }

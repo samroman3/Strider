@@ -11,7 +11,7 @@ enum UserFriendlyError: Identifiable {
     
     case custom(message: String)
     case defaultError
-
+    
     var localizedMessage: String {
         switch self {
         case .custom(let message):
@@ -20,7 +20,7 @@ enum UserFriendlyError: Identifiable {
             return "An unexpected error occurred. Please try again later."
         }
     }
-
+    
     init(error: Error) {
         self = .custom(message: error.localizedDescription)
     }

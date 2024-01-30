@@ -88,13 +88,13 @@ class DetailViewModel: ObservableObject {
             .store(in: &cancellables)
         
         self.pedometerDataProvider.errorPublisher
-                .compactMap { $0 } // Filter out nil errors
-                .sink { [weak self] error in
-                        self?.handleError(error)
-                }
-                .store(in: &cancellables)
+            .compactMap { $0 } // Filter out nil errors
+            .sink { [weak self] error in
+                self?.handleError(error)
+            }
+            .store(in: &cancellables)
     }
-
+    
     private func handleError(_ error: Error) {
         self.error = UserFriendlyError(error: error) // Pass the error to the view model
     }

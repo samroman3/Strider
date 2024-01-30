@@ -32,7 +32,7 @@ struct DetailView: View {
         }
         .alert(item: $viewModel.error) { error in
             Alert(title: Text("Error"), message: Text(error.localizedMessage), dismissButton: .default(Text("OK")))
-                }
+        }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
     }

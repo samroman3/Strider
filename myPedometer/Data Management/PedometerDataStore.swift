@@ -36,5 +36,5 @@ class PedometerDataStore: ObservableObject {
             completion(newLog, error)
         }
     }
-
+    
 }
