@@ -23,6 +23,8 @@ class DetailViewModel: ObservableObject {
     
     @Published var todayLog: DailyLog?
     
+    @Published var error: UserFriendlyError?
+
     
     var insights: [String] {
         var insightsArray = [String]()
@@ -71,17 +73,22 @@ class DetailViewModel: ObservableObject {
     
     
     func loadData(for date: Date) {
-        pedometerDataProvider.getDetailData(for: date) { detailData in
-            DispatchQueue.main.async {
-                self.hourlySteps = detailData.hourlySteps
-                self.flightsAscended = detailData.flightsAscended
-                self.flightsDescended = detailData.flightsDescended
-                self.dailySteps = detailData.dailySteps
-                self.goalAchievementStatus = self.isGoalAchieved ? .achieved : .notAchieved
-                self.calculateAdditionalInsights()
-            }
-        }
-    }
+           pedometerDataProvider.getDetailData(for: date) { [weak self] detailData, error in
+               DispatchQueue.main.async {
+                   if let error = error {
+                       self?.error = UserFriendlyError(error: error)
+                       return
+                   }
+                   guard let detailData = detailData else { return }
+                   self?.hourlySteps = detailData.hourlySteps
+                   self?.flightsAscended = detailData.flightsAscended
+                   self?.flightsDescended = detailData.flightsDescended
+                   self?.dailySteps = detailData.dailySteps
+                   self?.goalAchievementStatus = self?.isGoalAchieved ?? false ? .achieved : .notAchieved
+                   self?.calculateAdditionalInsights()
+               }
+           }
+       }
     
     
     
