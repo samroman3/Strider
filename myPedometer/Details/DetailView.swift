@@ -27,6 +27,9 @@ struct DetailView: View {
                 insightsSection
             }
         }
+        .onAppear{
+            viewModel.fetchData()
+        }
         .alert(item: $viewModel.error) { error in
             Alert(title: Text("Error"), message: Text(error.localizedMessage), dismissButton: .default(Text("OK")))
                 }

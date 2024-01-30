@@ -38,7 +38,8 @@ class PedometerDataStoreTests: XCTestCase {
 
         let expectation = self.expectation(description: "FetchExistingDailyLog")
 
-        dataStore.fetchOrCreateDailyLog(for: testDate) { log in
+        dataStore.fetchOrCreateDailyLog(for: testDate) { log, error in
+            XCTAssertNil(error, "No error should be returned")
             XCTAssertEqual(log.date, testDate, "Fetched log should have the same date")
             expectation.fulfill()
         }
@@ -47,20 +48,16 @@ class PedometerDataStoreTests: XCTestCase {
     }
     
     func testCreateNewDailyLog() {
-        // Arrange
         let testDate = Calendar.current.startOfDay(for: Date())
 
         let expectation = self.expectation(description: "CreateNewDailyLog")
 
-        // Act
-        dataStore.fetchOrCreateDailyLog(for: testDate) { log in
-            // Assert
+        dataStore.fetchOrCreateDailyLog(for: testDate) { log, error in
+            XCTAssertNil(error, "No error should be returned")
             XCTAssertEqual(log.date, testDate, "Created log should have the correct date")
             expectation.fulfill()
         }
 
         waitForExpectations(timeout: 5)
     }
-
 }
-

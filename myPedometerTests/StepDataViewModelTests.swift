@@ -30,7 +30,34 @@ class StepDataViewModelTests: XCTestCase {
         super.tearDown()
     }
 
-
+    func testErrorHandling() {
+        // Simulate an error in the data provider
+        mockPedometerDataProvider.shouldSimulateError = true
+        
+        // Create an expectation
+        let expectation = XCTestExpectation(description: "Error handling")
+        
+        // Set up a cancellable to observe changes to viewModel.error
+        let cancellable = viewModel.$error
+            .sink { error in
+                if error != nil {
+                    // Error is not nil, fulfill the expectation
+                    expectation.fulfill()
+                }
+            }
+        
+        // Trigger the fetch operation
+        viewModel.loadData(provider: mockPedometerDataProvider)
+        
+        // Wait for the expectation to be fulfilled (with a timeout)
+        wait(for: [expectation], timeout: 10.0)
+        
+        // Cancel the cancellable to avoid memory leaks
+        cancellable.cancel()
+        
+        // Assert that viewModel.error is not nil
+        XCTAssertNotNil(viewModel.error)
+    }
    
     func testInitialDailyGoalSetting() {
         XCTAssertEqual(viewModel.dailyGoal, UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0, "Daily goal should be set correctly at initialization")

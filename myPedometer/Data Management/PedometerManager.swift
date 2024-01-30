@@ -14,21 +14,24 @@ protocol PedometerDataProvider {
     func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void)
     func fetchHourlyStepData(for date: Date, completion: @escaping ([Int]) -> Void)
     func fetchFlights(for date: Date, completion: @escaping (Int32, Int32, Error?) -> Void)
+    func fetchDetailData(for date: Date) 
     func getDetailData(for date: Date, completion: @escaping (DetailData?, Error?) -> Void)
     func calculateHourlyAverageSteps(stepData: [DailyLog]) -> [HourlySteps]
-    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps]) -> Void)
+    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps], Error?) -> Void)
     var stepDataList: [DailyLog] { get }
     var dailyAverageHourlySteps: [HourlySteps] { get }
-    var errorHandler: ((Error) -> Void)? { get set }
-
+    var detailData: DetailData? { get set }
+    var errorPublisher: PassthroughSubject<Error, Never> { get }
     
 }
 
 protocol PedometerDataObservable {
     var todayLogPublisher: Published<DailyLog?>.Publisher { get }
+    var detailDataPublisher: Published<DetailData?>.Publisher { get }
 }
 
 class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataObservable {
+    
     
     
     let pedometer = CMPedometer()
@@ -38,8 +41,10 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     @Published var todayLog: DailyLog?
     @Published var stepDataList: [DailyLog] = []
     @Published var dailyAverageHourlySteps: [HourlySteps] = []
-    var errorHandler: ((Error) -> Void)?
+    @Published var detailData: DetailData?
+    var errorPublisher = PassthroughSubject<Error, Never>()
     var todayLogPublisher: Published<DailyLog?>.Publisher { $todayLog }
+    var detailDataPublisher: Published<DetailData?>.Publisher { $detailData }
     
     init(context: NSManagedObjectContext, dataStore: PedometerDataStore) {
         self.context = context
@@ -58,7 +63,10 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         let defaults = UserDefaults.standard
         if let lastOpenedDate = UserDefaultsHandler.shared.retrieveLastOpenedDate(),
            !Calendar.current.isDate(lastOpenedDate, inSameDayAs: currentDate) {
-            loadStepData { logs, hourlyAvg in
+            loadStepData { logs, hourlyAvg, error in
+                if let error = error {
+                    self.errorPublisher.send(error)
+                }
                 self.stepDataList = logs
                 self.dailyAverageHourlySteps = hourlyAvg
             }
@@ -68,30 +76,36 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     }
     
     //Pedometer Start
-        func startPedometerUpdates() {
-            if CMPedometer.isStepCountingAvailable() {
-                pedometer.startUpdates(from: startOfDay) { [weak self] data, error in
-                    guard let self = self, let data = data, error == nil else {
-                        if let error = error {
-                            self?.errorHandler?(error)
-                        } else {
-                            self?.errorHandler?(NSError(domain: "PedometerManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown pedometer error."]))
-                        }
-                        return
-                    }
-                    print("\(data.numberOfSteps.intValue)")
-                    self.todayLog?.totalSteps = data.numberOfSteps.int32Value
-                    self.todayLog?.flightsAscended = data.floorsAscended?.int32Value ?? 0
-                    self.todayLog?.flightsDescended = data.floorsDescended?.int32Value ?? 0
+    func startPedometerUpdates() {
+        if CMPedometer.isStepCountingAvailable() {
+            pedometer.startUpdates(from: startOfDay) { [weak self] data, error in
+                if let error = error {
+                    self?.errorPublisher.send(error)
+                    return
                 }
-            } else {
-                let error = NSError(domain: "PedometerManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Step counting / Pedometer not supported on this device"])
-                errorHandler?(error)
+
+                guard let data = data else {
+                    let unknownError = NSError(domain: "PedometerManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown pedometer error."])
+                    self?.errorPublisher.send(unknownError)
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self?.todayLog?.totalSteps = data.numberOfSteps.int32Value
+                    self?.todayLog?.flightsAscended = data.floorsAscended?.int32Value ?? 0
+                    self?.todayLog?.flightsDescended = data.floorsDescended?.int32Value ?? 0
+                }
             }
+        } else {
+            let notSupportedError = NSError(domain: "PedometerManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Step counting / Pedometer not supported on this device"])
+            errorPublisher.send(notSupportedError)
         }
+    }
+
     
-    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps]) -> Void) {
+    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps], Error?) -> Void) {
         var fetchedLogs = [DailyLog]()
+        var fetchError: Error?
         
         let dispatchGroup = DispatchGroup()
         
@@ -99,18 +113,27 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             dispatchGroup.enter()
             let date = Calendar.current.date(byAdding: .day, value: -daysBack, to: Date())!
             
-            fetchOrCreateLog(for: date) { log in
+            fetchOrCreateLog(for: date) { log, error in
+                if let error = error {
+                    fetchError = error // Capture the error
+                }
                 fetchedLogs.append(log)
                 dispatchGroup.leave()
             }
         }
         
         dispatchGroup.notify(queue: DispatchQueue.main) {
+            if let fetchError = fetchError {
+                completion([], [], fetchError) // Pass the fetch error to the caller
+                return
+            }
+            
             let sortedLogs = fetchedLogs.sorted { $0.date ?? Date() > $1.date ?? Date() }
             let hourlyAverage = self.calculateHourlyAverageSteps(stepData: sortedLogs)
-            completion(sortedLogs,hourlyAverage)
+            completion(sortedLogs, hourlyAverage, nil)
         }
     }
+
     
     
     func setDefaultDailyGoalIfNeeded() {
@@ -121,35 +144,65 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         }
     }
     
+    func fetchDetailData(for date: Date) {
+            getDetailData(for: date) { [weak self] detailData, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self?.errorPublisher.send(error)
+                        return
+                    }
+
+                    // Update the published detailData 
+                    self?.detailData = detailData
+                }
+            }
+        }
+    
     func loadTodayLog() {
         let today = Calendar.current.startOfDay(for: Date())
-        dataStore.fetchOrCreateDailyLog(for: today) { [weak self] log in
+        dataStore.fetchOrCreateDailyLog(for: today) { [weak self] log, error in
             DispatchQueue.main.async {
-                self?.todayLog = log
+                if let error = error {
+                    self?.errorPublisher.send(error)
+                } else {
+                    self?.todayLog = log
+                }
             }
         }
     }
-    private func fetchOrCreateLog(for date: Date, completion: @escaping (DailyLog) -> Void) {
-        dataStore.fetchOrCreateDailyLog(for: date) { [weak self] dailyLog in
+
+    private func fetchOrCreateLog(for date: Date, completion: @escaping (DailyLog, Error?) -> Void) {
+        dataStore.fetchOrCreateDailyLog(for: date) { [weak self] dailyLog, error in
             guard let self = self else { return }
             
+            if let error = error {
+                completion(dailyLog, error) // Pass the error to the caller
+                return
+            }
+            
             if self.needsUpdating(log: dailyLog) {
-                self.fetchHistoricalData(for: dailyLog, date: date) { dailyLog in
-                    completion(dailyLog)
+                self.fetchHistoricalData(for: dailyLog, date: date) { updatedLog, historicalDataError in
+                    if let historicalDataError = historicalDataError {
+                        completion(updatedLog, historicalDataError) // Pass the error to the caller
+                    } else {
+                        completion(updatedLog, nil)
+                    }
                 }
             } else {
-                completion(dailyLog)
+                completion(dailyLog, nil)
             }
         }
     }
+
+
     
     //Fetches historical data from pedometer to build a dailyLog
-    private func fetchHistoricalData(for dailyLog: DailyLog, date: Date, completion: @escaping (DailyLog) -> Void) {
+    private func fetchHistoricalData(for dailyLog: DailyLog, date: Date, completion: @escaping (DailyLog, Error?) -> Void) {
         fetchSteps(for: date) { [weak self] steps, error in
             guard let self = self else { return }
             
             if let error = error {
-                self.errorHandler?(error)
+                self.errorPublisher.send(error)
                 return
             }
             
@@ -157,8 +210,8 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             
             self.fetchFlights(for: date) { ascended, descended, error in
                 if let error = error {
-                    self.errorHandler?(error)
-                    return
+                    self.errorPublisher.send(error)
+                    completion(dailyLog, error)
                 }
                 
                 dailyLog.flightsAscended = Int32(ascended)
@@ -181,7 +234,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                     
                     DispatchQueue.main.async {
                         self.saveContextIfNeeded()
-                        completion(dailyLog)  // Call the completion handler with the updated daily log
+                        completion(dailyLog, nil)  // Call the completion handler with the updated daily log
                     }
                 }
             }
@@ -208,7 +261,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     func fetchFlights(for date: Date, completion: @escaping (Int32, Int32, Error?) -> Void) {
         guard CMPedometer.isFloorCountingAvailable() else {
             let error = NSError(domain: "CMPedometer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Floor counting not available."])
-            errorHandler?(error)
+            errorPublisher.send(error)
             completion(0, 0, error)
             return
         }
@@ -218,7 +271,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         
         pedometer.queryPedometerData(from: startOfDay, to: endOfDay) { [weak self] data, error in
             if let error = error {
-                self?.errorHandler?(error)
+                self?.errorPublisher.send(error)
                 completion(0, 0, error)
                 return
             }
@@ -231,7 +284,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void) {
         guard CMPedometer.isStepCountingAvailable() else {
             let error = NSError(domain: "CMPedometer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Step counting not available."])
-            errorHandler?(error)
+            errorPublisher.send(error)
             completion(0, error)
             return
         }
@@ -241,7 +294,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         
         pedometer.queryPedometerData(from: startOfDay, to: endOfDay) { [weak self] data, error in
             if let error = error {
-                self?.errorHandler?(error)
+                self?.errorPublisher.send(error)
                 completion(0, error)
                 return
             }
@@ -253,7 +306,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     
     func fetchHourlyStepData(for date: Date, completion: @escaping ([Int]) -> Void) {
         guard CMPedometer.isStepCountingAvailable() else {
-            errorHandler?(NSError(domain: "CMPedometer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Step counting not available."]))
+            self.errorPublisher.send(NSError(domain: "CMPedometer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Step counting not available."]))
             completion([])
             return
         }
@@ -280,7 +333,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         
         group.notify(queue: .main) {
             if let error = encounteredError {
-                self.errorHandler?(error)
+                self.errorPublisher.send(error)
             }
             completion(hourlySteps)
         }
@@ -290,11 +343,16 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     //MARK: DetailView Methods
     // Fetches or creates a DailyLog, then updates it with hourly steps, flights, and goal status.
     func getDetailData(for date: Date, completion: @escaping (DetailData?, Error?) -> Void) {
-        dataStore.fetchOrCreateDailyLog(for: date) { [weak self] dailyLog in
+        dataStore.fetchOrCreateDailyLog(for: date) { [weak self] dailyLog, error in
             guard let self = self else { return }
 
             // Retrieve the daily goal from user defaults or set a default value
             let dailyStepGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 8000
+
+            if let error = error {
+                completion(nil, error) // Pass the error to the caller
+                return
+            }
 
             // If it's not today, we can use the data already in the dailyLog
             if !Calendar.current.isDateInToday(date) {
@@ -317,7 +375,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 self.fetchTodayData(dailyLog: dailyLog, dailyGoal: dailyStepGoal) { detailData, error in
                     DispatchQueue.main.async {
                         if let error = error {
-                            completion(nil, error)
+                            completion(nil, error) // Pass the error to the caller
                         } else {
                             completion(detailData, nil)
                         }
@@ -326,6 +384,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             }
         }
     }
+
 
     
     // Fetches today's data including steps and flights from the pedometer for live Detail View Data
@@ -337,14 +396,14 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             guard let self = self else { return }
             
             if let error = error {
-                self.errorHandler?(error)
+                self.errorPublisher.send(error)
                 completion(nil, error)
                 return
             }
             
             self.fetchFlights(for: today) { ascended, descended, error in
                 if let error = error {
-                    self.errorHandler?(error)
+                    self.errorPublisher.send(error)
                     completion(nil, error)
                     return
                 }
@@ -398,7 +457,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                     let hour = Int(data.hour)
                     if hour < 0 || hour >= 24 {
                         // Handle unexpected hour value
-                        errorHandler?(NSError(domain: "PedometerManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid hour value in hourly data."]))
+                        errorPublisher.send(NSError(domain: "PedometerManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid hour value in hourly data."]))
                         return []
                     }
                     hourlyStepSums[hour] += Int(data.stepCount)
@@ -408,7 +467,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 totalDayCount += 1
             } else {
                 // Handle unexpected data format
-                errorHandler?(NSError(domain: "PedometerManager", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid step data format."]))
+                errorPublisher.send(NSError(domain: "PedometerManager", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid step data format."]))
                 return []
             }
         }

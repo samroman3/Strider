@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreMotion
+import Combine
 
 class StepDataViewModel: ObservableObject {
     // Published properties to be observed by HomeView
@@ -17,6 +18,7 @@ class StepDataViewModel: ObservableObject {
     @Published var dailyGoal: Int
     @Published var error: UserFriendlyError?
 
+    private var cancellables = Set<AnyCancellable>()
     
     // The pedometer data provider (either real or mock)
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
@@ -30,23 +32,27 @@ class StepDataViewModel: ObservableObject {
         
         //Retrieve step data from provider
         loadData(provider: pedometerDataProvider)
-        //Setup error handler
-        setupErrorHandler()
+        
+        //Setup error subscription
+        self.pedometerDataProvider.errorPublisher
+                .compactMap { $0 } // Filter out nil errors
+                .sink { [weak self] error in
+                        self?.handleError(error)
+                }
+                .store(in: &cancellables)
     }
     
-    // Setup error handler
-       private func setupErrorHandler() {
-           if let pedometerManager = pedometerDataProvider as? PedometerManager {
-               pedometerManager.errorHandler = { [weak self] error in
-                   DispatchQueue.main.async {
-                       self?.error = UserFriendlyError(error: error)
-                   }
-               }
-           }
-       }
+    // Error Handler
+    private func handleError(_ error: Error) {
+        self.error = UserFriendlyError(error: error) // Pass the error to the view model
+    }
     
+    //Load initial data
     func loadData(provider: PedometerDataProvider & PedometerDataObservable) {
-        pedometerDataProvider.loadStepData { logs, hours in
+        pedometerDataProvider.loadStepData { logs, hours, error in
+            if let error = error {
+                self.handleError(error)
+            }
             self.stepDataList = logs
             self.hourlyAverageSteps = hours
             self.calculateWeeklySteps()

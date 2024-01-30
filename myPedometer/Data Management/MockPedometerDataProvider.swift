@@ -9,17 +9,24 @@ import Combine
 import CoreData
 
 class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable {
-    var errorHandler: ((Error) -> Void)?
+    
     
     
     private var context: NSManagedObjectContext
+    
     @Published var todayLog: DailyLog?
     @Published var stepDataList: [DailyLog] = []
-    var dailyAverageHourlySteps: [HourlySteps] = []
-    var stepDataListPublisher: Published<[DailyLog]>.Publisher { $stepDataList }
-    var todayLogPublisher: Published<DailyLog?>.Publisher { $todayLog }
+    @Published var detailData: DetailData?
     
     private var timer: Timer?
+    var dailyAverageHourlySteps: [HourlySteps] = []
+    
+    var stepDataListPublisher: Published<[DailyLog]>.Publisher { $stepDataList }
+    var todayLogPublisher: Published<DailyLog?>.Publisher { $todayLog }
+    var detailDataPublisher: Published<DetailData?>.Publisher { $detailData }
+    var errorPublisher = PassthroughSubject<Error, Never>()
+
+    
     
     // MARK: - Properties for Simulation
     var shouldSimulateError: Bool
@@ -46,12 +53,18 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
         }
         stepDataList[stepDataList.count - 1].totalSteps = Int32(10000) // Set specific step count for test
         dailyAverageHourlySteps = self.calculateHourlyAverageSteps(stepData: stepDataList)
+        detailData = nil
     }
 
 
     
-    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps]) -> Void) {
-        completion(self.stepDataList, self.calculateHourlyAverageSteps(stepData: stepDataList))
+    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps], Error?) -> Void) {
+        if shouldSimulateError {
+            let error = NSError(domain: "MockPedometerDataProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error in loadStepData"])
+            errorPublisher.send(error)
+            completion([],[], error)
+        }
+        completion(self.stepDataList, self.calculateHourlyAverageSteps(stepData: stepDataList), nil)
     }
 
     
@@ -83,6 +96,31 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
         createHourlyData(for: dailyLog)
         return dailyLog
     }
+    
+    func fetchDetailData(for date: Date) {
+            if shouldSimulateError {
+                let error = NSError(domain: "MockPedometerDataProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error in fetchDetailData"])
+                self.errorPublisher.send(error)
+                return
+            }
+
+            let log = stepDataList.first { $0.date == date }
+            let hourlySteps = (log?.hourlyStepData?.allObjects as? [HourlyStepData])?.sorted(by: { $0.hour < $1.hour }).map { HourlySteps(hour: Int($0.hour), steps: Int($0.stepCount)) } ?? []
+            let dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
+            let newDetailData = DetailData(
+                hourlySteps: hourlySteps,
+                flightsAscended: Int(log?.flightsAscended ?? 0),
+                flightsDescended: Int(log?.flightsDescended ?? 0),
+                goalAchievementStatus: Int(log?.totalSteps ?? 0) >= dailyGoal ? .achieved : .notAchieved,
+                dailySteps: Int(log?.totalSteps ?? 0),
+                dailyGoal: dailyGoal
+            )
+            
+            DispatchQueue.main.async {
+                self.detailData = newDetailData
+            }
+        }
+
 
     
     // MARK: - Simulate Pedometer Updates
@@ -96,8 +134,16 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     
     private func simulateStepIncrement() {
         guard let todayLog = todayLog else { return }
+        
+        // Create a new HourlyStepData instance and associate it with todayLog
+        let hourlyStepData = HourlyStepData(context: context)
+        hourlyStepData.date = Date()
+        hourlyStepData.stepCount = 3
+        hourlyStepData.dailyLog = todayLog
+        
+        // Increment totalSteps of todayLog
         context.perform {
-            todayLog.totalSteps += 3 // Increment steps by 3
+            todayLog.totalSteps += 3
             self.updateTodayLogInList()
             self.saveContextIfNeeded()
         }
@@ -132,7 +178,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     func fetchSteps(for date: Date, completion: @escaping (Int, Error?) -> Void) {
         if shouldSimulateError {
             let error = NSError(domain: "MockPedometerDataProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error in fetchSteps"])
-            errorHandler?(error)
+            errorPublisher.send(error)
             completion(0, error)
             return
         }
@@ -144,7 +190,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     func fetchHourlyStepData(for date: Date, completion: @escaping ([Int]) -> Void) {
         if shouldSimulateError {
             let error = NSError(domain: "MockPedometerDataProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error in fetchHourlyStepData"])
-            errorHandler?(error)
+            errorPublisher.send(error)
             completion([])
             return
         }
@@ -168,7 +214,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     func fetchFlights(for date: Date, completion: @escaping (Int32, Int32, Error?) -> Void) {
             if shouldSimulateError {
                 let error = NSError(domain: "MockPedometerDataProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error in fetchFlights"])
-                errorHandler?(error)
+                errorPublisher.send(error)
                 completion(0, 0, error)
                 return
             }
@@ -179,7 +225,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     func getDetailData(for date: Date, completion: @escaping (DetailData?, Error?) -> Void) {
         if shouldSimulateError {
                 let error = NSError(domain: "MockPedometerDataProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error in getDetailData"])
-                errorHandler?(error)
+                errorPublisher.send(error)
                 completion(nil, error)
                 return
             }

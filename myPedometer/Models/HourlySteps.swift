@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct HourlySteps: Identifiable {
+struct HourlySteps: Identifiable, Equatable {
     let id = UUID()
     let hour: Int
     let steps: Int
