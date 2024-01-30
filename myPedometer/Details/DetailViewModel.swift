@@ -51,22 +51,22 @@ class DetailViewModel: ObservableObject {
     }
     
     private var cancellables = Set<AnyCancellable>()
-        
-    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, date: Date, weeklyAvg: Int) {
+    
+    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, date: Date, weeklyAvg: Int, averageHourlySteps: [HourlySteps]) {
         self.pedometerDataProvider = pedometerDataProvider
         self.date = date
-        self.dailyGoal = pedometerDataProvider.retrieveDailyGoal()
+        self.dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
         self.weeklyAvg = weeklyAvg
-        self.averageHourlySteps = pedometerDataProvider.calculateWeeklyAverageHourlySteps(includeToday: false)
+        self.averageHourlySteps = averageHourlySteps
         loadData(for: date)
         pedometerDataProvider.todayLogPublisher
-                   .receive(on: DispatchQueue.main)
-                   .sink(receiveValue: { value in
-                       if self.isToday {
-                           self.dailySteps = Int(value?.totalSteps ?? 0)
-                       }
-                   })
-                   .store(in: &cancellables)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { value in
+                if self.isToday {
+                    self.dailySteps = Int(value?.totalSteps ?? 0)
+                }
+            })
+            .store(in: &cancellables)
     }
     
     
@@ -83,7 +83,7 @@ class DetailViewModel: ObservableObject {
         }
     }
     
-
+    
     
     func calculateAdditionalInsights() {
         calculateMostAndLeastActiveHours()

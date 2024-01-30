@@ -11,19 +11,19 @@ import SwiftData
 @main
 struct myPedometerApp: App {
     let persistenceController = PersistenceController.shared
-
+    
     var body: some Scene {
         let context = persistenceController.container.viewContext
         let dataStore = PedometerDataStore(context: context)
-
+        
         let pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
-
-        #if targetEnvironment(simulator)
+        
+#if targetEnvironment(simulator)
         pedometerDataProvider = MockPedometerDataProvider(context: context)
-        #else
+#else
         pedometerDataProvider = PedometerManager(context: context, dataStore: dataStore)
-        #endif
-
+#endif
+        
         return WindowGroup {
             ContentView(pedometerDataProvider: pedometerDataProvider)
                 .environment(\.managedObjectContext, context)

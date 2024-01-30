@@ -11,5 +11,5 @@ import CoreData
 
 @objc(HourlyStepData)
 public class HourlyStepData: NSManagedObject {
-
+    
 }

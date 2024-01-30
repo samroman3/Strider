@@ -15,48 +15,55 @@ protocol PedometerDataProvider {
     func fetchHourlyStepData(for date: Date, completion: @escaping ([Int]) -> Void)
     func fetchFlights(for date: Date, completion: @escaping (Int32, Int32, Error?) -> Void)
     func getDetailData(for date: Date, completion: @escaping (DetailData) -> Void)
-    func calculateWeeklyAverageHourlySteps(includeToday: Bool) -> [HourlySteps]
-    func retrieveDailyGoal() -> Int
-    func storeDailyGoal(_ goal: Int)
+    func calculateHourlyAverageSteps(stepData: [DailyLog]) -> [HourlySteps]
+    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps]) -> Void)
     var stepDataList: [DailyLog] { get }
+    var dailyAverageHourlySteps: [HourlySteps] { get }
+    
     
 }
 
 protocol PedometerDataObservable {
     var todayLogPublisher: Published<DailyLog?>.Publisher { get }
-    var stepDataListPublisher: Published<[DailyLog]>.Publisher { get }
 }
 
 class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataObservable {
+    
+    
     let pedometer = CMPedometer()
     private var context: NSManagedObjectContext
     var startOfDay = Date()
     @ObservedObject var dataStore: PedometerDataStore
     @Published var todayLog: DailyLog?
     @Published var stepDataList: [DailyLog] = []
-    var stepDataListPublisher: Published<[DailyLog]>.Publisher { $stepDataList }
+    @Published var dailyAverageHourlySteps: [HourlySteps] = []
     var todayLogPublisher: Published<DailyLog?>.Publisher { $todayLog }
     
     init(context: NSManagedObjectContext, dataStore: PedometerDataStore) {
         self.context = context
         self.dataStore = dataStore
         startOfDay = Calendar.current.startOfDay(for: Date())
+        checkDateAndLoadData()
         startPedometerUpdates()
-        loadInitialData()
         loadTodayLog()
-    }
-    
-    //MARK: Daily Goal - UserDefaults
-    func storeDailyGoal(_ goal: Int) {
-        UserDefaults.standard.set(goal, forKey: "dailyStepGoal")
-    }
-    
-    func retrieveDailyGoal() -> Int {
-        return UserDefaults.standard.integer(forKey: "dailyStepGoal")
     }
     
     
     //MARK: Initial Data Setup
+    
+    private func checkDateAndLoadData() {
+        let currentDate = Calendar.current.startOfDay(for: Date())
+        let defaults = UserDefaults.standard
+        if let lastOpenedDate = UserDefaultsHandler.shared.retrieveLastOpenedDate(),
+           !Calendar.current.isDate(lastOpenedDate, inSameDayAs: currentDate) {
+            loadStepData { logs, hourlyAvg in
+                self.stepDataList = logs
+                self.dailyAverageHourlySteps = hourlyAvg
+            }
+        }
+        UserDefaultsHandler.shared.storeLastOpenedDate(currentDate)
+        self.setDefaultDailyGoalIfNeeded()
+    }
     
     //Pedometer Start
     func startPedometerUpdates() {
@@ -67,14 +74,13 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 self.todayLog?.totalSteps = data.numberOfSteps.int32Value
                 self.todayLog?.flightsAscended = data.floorsAscended?.int32Value ?? 0
                 self.todayLog?.flightsDescended = data.floorsDescended?.int32Value ?? 0
-                
             }
         } else {
-            // Step counting is not available on this device
+            print("Step counting / Pedometer not supported on this device")
         }
     }
     
-    func loadInitialData() {
+    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps]) -> Void) {
         var fetchedLogs = [DailyLog]()
         
         let dispatchGroup = DispatchGroup()
@@ -90,16 +96,18 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
         }
         
         dispatchGroup.notify(queue: DispatchQueue.main) {
-            self.stepDataList = fetchedLogs.sorted { $0.date ?? Date() > $1.date ?? Date() }
-            self.setDefaultDailyGoalIfNeeded()
+            let sortedLogs = fetchedLogs.sorted { $0.date ?? Date() > $1.date ?? Date() }
+            let hourlyAverage = self.calculateHourlyAverageSteps(stepData: sortedLogs)
+            completion(sortedLogs,hourlyAverage)
         }
     }
     
+    
     func setDefaultDailyGoalIfNeeded() {
         let defaults = UserDefaults.standard
-        if defaults.object(forKey: "dailyStepGoal") == nil {
+        if  UserDefaultsHandler.shared.retrieveDailyGoal() == nil {
             // Key does not exist, set the default value
-            defaults.set(8000, forKey: "dailyStepGoal")
+            UserDefaultsHandler.shared.storeDailyGoal(8000)
         }
     }
     
@@ -124,6 +132,8 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             }
         }
     }
+    
+    //Fetches historical data from pedometer to build a dailyLog
     private func fetchHistoricalData(for dailyLog: DailyLog, date: Date, completion: @escaping (DailyLog) -> Void) {
         fetchSteps(for: date) { [weak self] steps, error in
             guard let self = self, error == nil else {
@@ -282,7 +292,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 if let data = data, error == nil {
                     hourlySteps[hour] = data.numberOfSteps.intValue
                 }
-                // Handle error
+                print("Error fetching hourly step data, \(error?.localizedDescription ?? "Unknown error")")
             }
         }
         
@@ -298,7 +308,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             guard let self = self else { return }
             
             // Retrieve the daily goal from user defaults or set a default value
-            let dailyStepGoal = self.retrieveDailyGoal() == 0 ? 8000 : self.retrieveDailyGoal()
+            let dailyStepGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 8000
             
             // If it's not today, we can use the data already in the dailyLog
             if !Calendar.current.isDateInToday(date) {
@@ -355,7 +365,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                         dailyGoal: dailyGoal
                     )
                     
-                    // Call the completion handler with the detail data
+                    // Completion handler with detail data
                     DispatchQueue.main.async {
                         completion(detailData)
                     }
@@ -369,31 +379,45 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                         hourlyStepData.hour = Int16(hourlyStep.hour)
                         hourlyStepData.stepCount = Int32(hourlyStep.steps)
                         dailyLog.addToHourlyStepData(hourlyStepData)
+                        self.saveContextIfNeeded()
                     }
                 }
             }
         }
     }
     
-    func calculateWeeklyAverageHourlySteps(includeToday: Bool) -> [HourlySteps] {
-        var hourlyStepSums = Array(repeating: 0, count: 24)
-        var dayCount = 0
+    func calculateHourlyAverageSteps(stepData: [DailyLog]) -> [HourlySteps] {
+        var hourlyAverages = Array(repeating: 0, count: 24)
+        var totalDayCount = 0
         
-        for dailyLog in stepDataList {
-            if !includeToday && Calendar.current.isDateInToday(dailyLog.date ?? Date()) {
-                continue
-            }
-            
+        // Initialize hourlyStepSums outside of the loop
+        var hourlyStepSums = Array(repeating: 0, count: 24)
+        
+        for dailyLog in stepData{
             if let hourlyData = dailyLog.hourlyStepData as? Set<HourlyStepData> {
+                // Reset hourlyStepSums for each daily log
+                hourlyStepSums = Array(repeating: 0, count: 24)
+                
                 for data in hourlyData {
                     hourlyStepSums[Int(data.hour)] += Int(data.stepCount)
                 }
+                
+                // Accumulate hourly sums and increment the total day count
+                hourlyAverages = zip(hourlyAverages, hourlyStepSums).map { $0 + $1 }
+                totalDayCount += 1
             }
-            dayCount += 1
         }
         
-        guard dayCount > 0 else { return [] }
+        guard totalDayCount > 0 else { return [] }
         
-        return hourlyStepSums.enumerated().map { HourlySteps(hour: $0.offset, steps: $0.element / dayCount) }
+        // Calculate hourly averages by dividing by the total day count
+        let averageHourlySteps = hourlyAverages.map { $0 / totalDayCount }
+        
+        // Create an array of HourlySteps objects with hourly averages
+        let hourlyStepsArray: [HourlySteps] = averageHourlySteps.enumerated().map { (hour, steps) in
+            return HourlySteps(hour: hour, steps: steps)
+        }
+        
+        return hourlyStepsArray
     }
 }

@@ -10,9 +10,9 @@ import CoreData
 
 class PersistenceController {
     static let shared = PersistenceController()
-
+    
     let container: NSPersistentContainer
-
+    
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "StepsModel")
         if inMemory {

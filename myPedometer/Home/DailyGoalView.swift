@@ -11,20 +11,18 @@ struct DailyGoalView: View {
     @Binding var dailyGoal: Int
     @Environment(\.presentationMode) var presentationMode
     @State private var newGoal: String = ""
-    var viewModel: StepDataViewModel
-
-    public init(dailyGoal: Binding<Int>, viewModel: StepDataViewModel) {
-        self.viewModel = viewModel
+    
+    public init(dailyGoal: Binding<Int>) {
         self._dailyGoal = dailyGoal
     }
-
+    
     var body: some View {
         VStack(spacing: 20) {
             // Display current daily goal
             Text("\(dailyGoal)")
                 .font(.title)
                 .foregroundColor(.primary)
-
+            
             // Goal icon
             Image(systemName: "flag.checkered.circle")
             
@@ -33,13 +31,13 @@ struct DailyGoalView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
                 .padding(.top)
-
+            
             // Input field for new goal
             TextField("Enter your daily goal", text: $newGoal)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.numberPad)
                 .padding([.leading, .trailing, .bottom])
-
+            
             // Confirm button
             Button(action: updateGoal) {
                 Text("Confirm")
@@ -54,14 +52,14 @@ struct DailyGoalView: View {
         .padding()
         .background(Color(.systemBackground))
     }
-
+    
     // MARK: - Private Methods
-
+    
     /// Updates the daily goal and closes the view
     private func updateGoal() {
         if let goal = Int(newGoal) {
             dailyGoal = goal
-            viewModel.pedometerDataProvider.storeDailyGoal(goal)
+            UserDefaultsHandler.shared.storeDailyGoal(goal)
             presentationMode.wrappedValue.dismiss()
         }
     }

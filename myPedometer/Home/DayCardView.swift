@@ -14,7 +14,7 @@ struct DayCardView: View {
     
     @State private var showMotion: Bool = false
     let animationDuration = 0.5
-
+    
     var body: some View {
         VStack {
             Spacer()
@@ -26,16 +26,16 @@ struct DayCardView: View {
             Spacer()
         }
         .onDisappear {
-            showMotion = false  // Reset the animation state 
+            showMotion = false 
         }
         .frame(maxWidth: .infinity, maxHeight: 400)
         .background(Color(.systemBackground))
         .cornerRadius(15)
         .shadow(color: .gray.opacity(0.3), radius: 10, x: 0, y: 10)
     }
-
+    
     // MARK: - Subviews
-
+    
     private var todayView: some View {
         VStack {
             dateHeaderView
@@ -48,7 +48,7 @@ struct DayCardView: View {
             }
         }
     }
-
+    
     private var notTodayView: some View {
         VStack(alignment: .center) {
             dateText
@@ -57,9 +57,9 @@ struct DayCardView: View {
         }
         .padding(.horizontal)
     }
-
+    
     // MARK: - Helper Views
-
+    
     private var dateHeaderView: some View {
         HStack {
             Text("Today")
@@ -69,7 +69,7 @@ struct DayCardView: View {
             dateText
         }
     }
-
+    
     private var animatedFigure: some View {
         Image(systemName: showMotion ? "figure.walk.motion" : "figure.walk")
             .font(.system(size: 60))
@@ -80,7 +80,7 @@ struct DayCardView: View {
                 }
             }
     }
-
+    
     private var goalStatusIndicator: some View {
         if (log.totalSteps) >= dailyStepGoal {
             AnyView(GoalStatusView(status: .achieved))
@@ -88,14 +88,14 @@ struct DayCardView: View {
             AnyView(ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal)))
         }
     }
-
+    
     private var stepsText: some View {
         Text("\(log.totalSteps) steps")
             .font(.title)
             .foregroundColor(.primary)
             .fontWeight(.semibold)
     }
-
+    
     private var dateText: some View {
         Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
             .font(.subheadline)

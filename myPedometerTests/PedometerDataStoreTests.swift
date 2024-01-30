@@ -30,20 +30,32 @@ class PedometerDataStoreTests: XCTestCase {
         super.tearDown()
     }
 
-    func testFetchAndStoreData() {
-        let expectedSteps = 10000
-        let testDate = Calendar.current.startOfDay(for: Date()) // Ensure the date matches the mock setup
+    func testFetchExistingDailyLog() {
+        let testDate = Calendar.current.startOfDay(for: Date())
+        let existingLog = DailyLog(context: inMemoryContext)
+        existingLog.date = testDate
+        try! inMemoryContext.save()
 
-        let expectation = self.expectation(description: "FetchAndStoreData")
+        let expectation = self.expectation(description: "FetchExistingDailyLog")
 
-        // Trigger data fetching and storing
-        dataStore.fetchLastSevenDaysData { logs in
-            // Verify that logs contain the expected data
-            if let logForTestDate = logs.first(where: { $0.date == testDate }) {
-                XCTAssertEqual(logForTestDate.totalSteps, Int32(expectedSteps), "The total steps should match the mock data")
-            } else {
-                XCTFail("Log for the test date was not found")
-            }
+        dataStore.fetchOrCreateDailyLog(for: testDate) { log in
+            XCTAssertEqual(log.date, testDate, "Fetched log should have the same date")
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 5)
+    }
+    
+    func testCreateNewDailyLog() {
+        // Arrange
+        let testDate = Calendar.current.startOfDay(for: Date())
+
+        let expectation = self.expectation(description: "CreateNewDailyLog")
+
+        // Act
+        dataStore.fetchOrCreateDailyLog(for: testDate) { log in
+            // Assert
+            XCTAssertEqual(log.date, testDate, "Created log should have the correct date")
             expectation.fulfill()
         }
 

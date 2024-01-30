@@ -14,7 +14,7 @@ enum GoalAchievementStatus {
 
 struct GoalStatusView: View {
     var status: GoalAchievementStatus
-
+    
     var body: some View {
         VStack {
             Image(systemName: status == .achieved ? "checkmark.circle" : "xmark.circle")

@@ -9,7 +9,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var viewModel: StepDataViewModel
     @State private var dailyGoalViewIsPresented: Bool = false
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -20,9 +20,9 @@ struct HomeView: View {
             .navigationBarItems(trailing: dailyGoalButton)
         }
     }
-
+    
     // MARK: - Subviews
-
+    
     /// The list of day cards displayed in the home view
     private var dayCardList: some View {
         VStack(spacing: 15) {
@@ -31,7 +31,7 @@ struct HomeView: View {
             }
         }
     }
-
+    
     /// View for displaying the daily goal button
     private var dailyGoalButton: some View {
         Button(action: { dailyGoalViewIsPresented.toggle() }) {
@@ -39,23 +39,23 @@ struct HomeView: View {
                 .font(.title2)
         }
         .sheet(isPresented: $dailyGoalViewIsPresented) {
-            DailyGoalView(dailyGoal: $viewModel.dailyGoal, viewModel: viewModel)
+            DailyGoalView(dailyGoal: $viewModel.dailyGoal)
         }
     }
-
+    
     // MARK: - Helper Methods
-
+    
     /// Generates a day card view for a given log
     /// - Parameter log: The `DailyLog` data to create a view for
     /// - Returns: A view representing the day card
     private func dayCardView(for log: DailyLog) -> some View {
         NavigationLink(destination: DetailViewDestination(log: log)) {
-            DayCardView(log: log, isToday: viewModel.isToday(log: log), dailyStepGoal: viewModel.pedometerDataProvider.retrieveDailyGoal())
+            DayCardView(log: log, isToday: viewModel.isToday(log: log), dailyStepGoal: UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0)
                 .padding([.horizontal,.vertical])
                 .frame(maxHeight: .infinity)
         }
     }
-
+    
     /// Creates a destination view for detail view navigation
     /// - Parameter log: The `DailyLog` data for the destination view
     /// - Returns: A `DetailView` for the given log
@@ -63,7 +63,7 @@ struct HomeView: View {
     private func DetailViewDestination(log: DailyLog) -> some View {
         LazyView {
             DetailView(viewModel:
-                        DetailViewModel(pedometerDataProvider: viewModel.pedometerDataProvider, date: log.date ?? Date(), weeklyAvg: viewModel.weeklyAverageSteps))
+                        DetailViewModel(pedometerDataProvider: viewModel.pedometerDataProvider, date: log.date ?? Date(), weeklyAvg: viewModel.weeklyAverageSteps, averageHourlySteps: viewModel.hourlyAverageSteps))
         }
     }
 }

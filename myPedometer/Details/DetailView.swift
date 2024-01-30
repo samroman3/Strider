@@ -10,7 +10,7 @@ import SwiftUI
 
 struct DetailView: View {
     @ObservedObject var viewModel: DetailViewModel
-
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -30,9 +30,9 @@ struct DetailView: View {
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
     }
-
+    
     // MARK: Subviews
-
+    
     private var dateAndChartSection: some View {
         VStack(alignment: .leading) {
             Text(viewModel.dateTitle)
@@ -51,47 +51,43 @@ struct DetailView: View {
         }
         .padding(.horizontal)
     }
-
+    
     private var stepsAndGoalSection: some View {
         VStack(alignment: .center, spacing: 10) {
-                //Chart Key
-                HStack(spacing: 2) {
-                    Circle()
-                        .fill(Color.orange)
-                        .frame(width: 8, height: 8)
-                    Text(viewModel.isToday ? "Today" : "This Day")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: 8, height: 8)
-                    Text("Average")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                }.padding(.horizontal)
-                Text("\(viewModel.dailySteps) steps")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.orange)
-                    .padding(.leading)
-                if viewModel.isToday {
-                    if viewModel.goalAchievementStatus == .notAchieved {
-                        // Today and goal not achieved: blue progress bar
-                        CustomProgressView(totalSteps: Int(viewModel.dailySteps),
-                                           dailyGoal: viewModel.dailyGoal,
-                                           barColor: .blue).padding(.horizontal)
-                    } else {
-                        // Today and goal achieved:
-                        GoalStatusView(status: .achieved)
-                    }
-                } else {
-                    // Not today:
-                    GoalStatusView(status: viewModel.goalAchievementStatus)
-                    
-                }
+            //Chart Key
+            HStack(spacing: 2) {
+                Circle()
+                    .fill(Color.orange)
+                    .frame(width: 8, height: 8)
+                Text(viewModel.isToday ? "Today" : "This Day")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                Circle()
+                    .fill(Color.gray)
+                    .frame(width: 8, height: 8)
+                Text("Average")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }.padding(.horizontal)
+            Text("\(viewModel.dailySteps) steps")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.orange)
+                .padding(.leading)
+            if viewModel.isToday && viewModel.goalAchievementStatus == .notAchieved {
+                // Today and goal not achieved: blue progress bar
+                CustomProgressView(totalSteps: Int(viewModel.dailySteps),
+                                   dailyGoal: viewModel.dailyGoal,
+                                   barColor: .blue).padding(.horizontal)
+                
+            } else {
+                // Goal Status
+                GoalStatusView(status: viewModel.goalAchievementStatus)
+                
             }
+        }
     }
-
+    
     private var insightsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Insights")

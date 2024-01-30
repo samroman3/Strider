@@ -9,9 +9,11 @@ import Combine
 import CoreData
 
 class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable {
+    
     private var context: NSManagedObjectContext
     @Published var todayLog: DailyLog?
     @Published var stepDataList: [DailyLog] = []
+    var dailyAverageHourlySteps: [HourlySteps] = []
     var stepDataListPublisher: Published<[DailyLog]>.Publisher { $stepDataList }
     var todayLogPublisher: Published<DailyLog?>.Publisher { $todayLog }
     
@@ -37,6 +39,11 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
         }
         
         stepDataList[stepDataList.count - 1].totalSteps = Int32(10000) // Set specific step count for test
+        dailyAverageHourlySteps = self.calculateHourlyAverageSteps(stepData: stepDataList) ?? []
+    }
+    
+    func loadStepData(completion: @escaping ([DailyLog], [HourlySteps]) -> Void) {
+        completion(self.stepDataList, self.calculateHourlyAverageSteps(stepData: stepDataList))
     }
     
     private func createMockDailyLog(for date: Date) {
@@ -131,26 +138,23 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     func getDetailData(for date: Date, completion: @escaping (DetailData) -> Void) {
         let log = stepDataList.first { $0.date == date }
         let hourlySteps = (log?.hourlyStepData?.allObjects as? [HourlyStepData])?.sorted(by: { $0.hour < $1.hour }).map { HourlySteps(hour: Int($0.hour), steps: Int($0.stepCount)) } ?? []
-        let dailyGoal = retrieveDailyGoal()
+        let dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
         let detailData = DetailData(
             hourlySteps: hourlySteps,
             flightsAscended: Int(log?.flightsAscended ?? 0),
             flightsDescended: Int(log?.flightsDescended ?? 0),
             goalAchievementStatus: Int(log?.totalSteps ?? 0) >= dailyGoal ? .achieved : .notAchieved,
             dailySteps: Int(log?.totalSteps ?? 0),
-            dailyGoal: retrieveDailyGoal()
+            dailyGoal: dailyGoal
         )
         completion(detailData)
     }
-    
-    func calculateWeeklyAverageHourlySteps(includeToday: Bool) -> [HourlySteps] {
+
+    func calculateHourlyAverageSteps(stepData: [DailyLog]) -> [HourlySteps] {
         var hourlyStepSums = Array(repeating: 0, count: 24)
         var dayCount = 0
         
-        for dailyLog in stepDataList {
-            if !includeToday && Calendar.current.isDateInToday(dailyLog.date ?? Date()) {
-                continue
-            }
+        for dailyLog in stepData {
             
             if let hourlyData = dailyLog.hourlyStepData as? Set<HourlyStepData> {
                 for data in hourlyData {

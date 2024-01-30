@@ -11,18 +11,18 @@ import CoreData
 
 
 extension HourlyStepData {
-
+    
     @nonobjc public class func fetchRequest() -> NSFetchRequest<HourlyStepData> {
         return NSFetchRequest<HourlyStepData>(entityName: "HourlyStepData")
     }
-
+    
     @NSManaged public var hour: Int16
     @NSManaged public var stepCount: Int32
     @NSManaged public var date: Date?
     @NSManaged public var dailyLog: DailyLog?
-
+    
 }
 
 extension HourlyStepData : Identifiable {
-
+    
 }
