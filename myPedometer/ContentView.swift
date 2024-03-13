@@ -10,22 +10,16 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @StateObject private var viewModel: StepDataViewModel
+    @StateObject private var stepDataViewModel: StepDataViewModel
 
         init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
-            _viewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider))
+            _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider))
         }
     
     var body: some View {
-           HomeView(viewModel: viewModel)
-            .alert(item: $viewModel.error) { error in
-                        Alert(
-                            title: Text("Error"),
-                            message: Text(error.localizedMessage),
-                            dismissButton: .default(Text("OK"))
-                        )
-                    }
-       }
+        CustomTabBarView()
+            .environmentObject(stepDataViewModel)
+    }
 }
 
 

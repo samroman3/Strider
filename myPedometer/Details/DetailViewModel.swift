@@ -63,7 +63,7 @@ class DetailViewModel: ObservableObject {
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, date: Date, weeklyAvg: Int, averageHourlySteps: [HourlySteps]) {
         self.pedometerDataProvider = pedometerDataProvider
         self.date = date
-        self.dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
+        self.dailyGoal = UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 0
         self.weeklyAvg = weeklyAvg
         self.averageHourlySteps = averageHourlySteps
         

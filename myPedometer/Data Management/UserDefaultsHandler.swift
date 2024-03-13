@@ -11,6 +11,7 @@ class UserDefaultsHandler {
     
     private let lastOpenedDateKey = "lastOpenedDate"
     private let dailyStepGoalKey = "dailyStepGoal"
+    private let dailyCalGoalKey = "dailyCalGoal"
     
     private init() {}
     
@@ -22,11 +23,18 @@ class UserDefaultsHandler {
         return UserDefaults.standard.object(forKey: lastOpenedDateKey) as? Date
     }
     
-    func storeDailyGoal(_ goal: Int) {
+    func storeDailyStepGoal(_ goal: Int) {
         UserDefaults.standard.set(goal, forKey: dailyStepGoalKey)
     }
     
-    func retrieveDailyGoal() -> Int? {
+    func retrieveDailyStepGoal() -> Int? {
         return UserDefaults.standard.integer(forKey: dailyStepGoalKey)
+    }
+    func storeDailyCalGoal(_ goal: Int) {
+        UserDefaults.standard.set(goal, forKey: dailyCalGoalKey)
+    }
+    
+    func retrieveDailyCalGoal() -> Int? {
+        return UserDefaults.standard.integer(forKey: dailyCalGoalKey)
     }
 }

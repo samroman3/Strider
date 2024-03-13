@@ -18,7 +18,7 @@ struct GoalStatusView: View {
     var body: some View {
         VStack {
             Image(systemName: status == .achieved ? "checkmark.circle" : "xmark.circle")
-                .font(.system(size: 20))
+                .font(.system(size: 28))
                 .foregroundColor(status == .achieved ? .green : .red)
             Text(status == .achieved ? "Goal Reached" : "Goal Not Reached")
                 .font(.caption)

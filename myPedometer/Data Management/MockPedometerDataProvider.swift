@@ -106,7 +106,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
         
         let log = stepDataList.first { $0.date == date }
         let hourlySteps = (log?.hourlyStepData?.allObjects as? [HourlyStepData])?.sorted(by: { $0.hour < $1.hour }).map { HourlySteps(hour: Int($0.hour), steps: Int($0.stepCount)) } ?? []
-        let dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
+        let dailyGoal = UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 0
         let newDetailData = DetailData(
             hourlySteps: hourlySteps,
             flightsAscended: Int(log?.flightsAscended ?? 0),
@@ -225,7 +225,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
         }
         let log = stepDataList.first { $0.date == date }
         let hourlySteps = (log?.hourlyStepData?.allObjects as? [HourlyStepData])?.sorted(by: { $0.hour < $1.hour }).map { HourlySteps(hour: Int($0.hour), steps: Int($0.stepCount)) } ?? []
-        let dailyGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 0
+        let dailyGoal = UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 0
         let detailData = DetailData(
             hourlySteps: hourlySteps,
             flightsAscended: Int(log?.flightsAscended ?? 0),

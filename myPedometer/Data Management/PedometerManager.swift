@@ -136,9 +136,12 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
     
     
     func setDefaultDailyGoalIfNeeded() {
-        if  UserDefaultsHandler.shared.retrieveDailyGoal() == nil {
+        if  UserDefaultsHandler.shared.retrieveDailyStepGoal() == nil {
             // Key does not exist, set the default value
-            UserDefaultsHandler.shared.storeDailyGoal(8000)
+            UserDefaultsHandler.shared.storeDailyStepGoal(8000)
+        }
+        if UserDefaultsHandler.shared.retrieveDailyCalGoal() == nil {
+            UserDefaultsHandler.shared.storeDailyCalGoal(400)
         }
     }
     
@@ -345,7 +348,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             guard let self = self else { return }
             
             // Retrieve the daily goal from user defaults or set a default value
-            let dailyStepGoal = UserDefaultsHandler.shared.retrieveDailyGoal() ?? 8000
+            let dailyStepGoal = UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 8000
             
             if let error = error {
                 completion(nil, error) // Pass the error to the caller

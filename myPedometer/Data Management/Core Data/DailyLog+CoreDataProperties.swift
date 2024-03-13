@@ -21,7 +21,9 @@ extension DailyLog {
     @NSManaged public var flightsDescended: Int32
     @NSManaged public var totalSteps: Int32
     @NSManaged public var hourlyStepData: NSSet?
-    
+    @NSManaged public var caloriesBurned: Int32
+    @NSManaged public var calGoal: Int32
+    @NSManaged public var stepsGoal: Int32
 }
 
 // MARK: Generated accessors for hourlyStepData

@@ -38,20 +38,22 @@ struct DayCardView: View {
     
     private var todayView: some View {
         VStack {
-            dateHeaderView
+        Text("Today")
+        .font(.title)
+        .bold()
+        .foregroundColor(.primary)
             HStack {
                 VStack{
                     animatedFigure
                     stepsText
+                    goalStatusIndicator
                 }
-                goalStatusIndicator
             }
         }
     }
     
     private var notTodayView: some View {
         VStack(alignment: .center) {
-            dateText
             stepsText
             GoalStatusView(status: log.totalSteps >= dailyStepGoal ? .achieved : .notAchieved)
         }
@@ -59,16 +61,6 @@ struct DayCardView: View {
     }
     
     // MARK: - Helper Views
-    
-    private var dateHeaderView: some View {
-        HStack {
-            Text("Today")
-                .font(.title3)
-                .bold()
-                .foregroundColor(.primary)
-            dateText
-        }
-    }
     
     private var animatedFigure: some View {
         Image(systemName: showMotion ? "figure.walk.motion" : "figure.walk")
@@ -82,10 +74,11 @@ struct DayCardView: View {
     }
     
     private var goalStatusIndicator: some View {
-        if (log.totalSteps) >= dailyStepGoal {
-            AnyView(GoalStatusView(status: .achieved))
-        } else {
-            AnyView(ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal)))
+        switch (log.totalSteps) >= dailyStepGoal {
+        case true:
+            return AnyView(GoalStatusView(status: .achieved))
+        case false:
+            return AnyView(ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal)))
         }
     }
     
@@ -95,11 +88,5 @@ struct DayCardView: View {
             .foregroundColor(.primary)
             .fontWeight(.semibold)
     }
-    
-    private var dateText: some View {
-        Text("\(log.date ?? Date(), formatter: DateFormatterService.shared.getItemFormatter())")
-            .font(.subheadline)
-            .foregroundColor(.primary)
-            .opacity(0.7)
-    }
+
 }
