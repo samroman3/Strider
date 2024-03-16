@@ -44,29 +44,15 @@ struct WeekView: View {
             dayCardView(for: log)
         }
     }
-    
-    /// View for displaying the daily goal button
-//    private var dailyGoalButton: some View {
-//        Button(action: { dailyGoalViewIsPresented.toggle() }) {
-//            Image(systemName: "flag.checkered.circle")
-//                .font(.title2)
-//        }
-//        .sheet(isPresented: $dailyGoalViewIsPresented) {
-//            DailyGoalView(dailyGoal: $viewModel.dailyGoal)
-//        }
-//    }
-    
+        
     // MARK: - Helper Methods
     /// Generates a day card view for a given log
     /// - Parameter log: The `DailyLog` data to create a view for
     /// - Returns: A view representing the day cardqueu
     private func dayCardView(for log: DailyLog) -> some View {
         VStack{
-            Text(log.date!, style: .date) 
-                  .font(.headline)
-                  .padding(.bottom, 2)
             NavigationLink(destination: DetailViewDestination(log: log)) {
-                DayCardView(log: log, isToday: viewModel.isToday(log: log), dailyStepGoal: UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 0)
+                DayCardView(log: log, isToday: viewModel.isToday(log: log), dailyStepGoal: UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 0, dailyCalGoal: viewModel.dailyCalGoal)
             }
         }.padding([.horizontal, .vertical], 20)
             .frame(minHeight: 300)

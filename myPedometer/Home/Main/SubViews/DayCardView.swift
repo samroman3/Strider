@@ -11,6 +11,7 @@ struct DayCardView: View {
     @ObservedObject var log: DailyLog
     var isToday: Bool
     let dailyStepGoal: Int
+    let dailyCalGoal: Int
     
     @State private var showMotion: Bool = false
     let animationDuration = 0.5
@@ -44,7 +45,6 @@ struct DayCardView: View {
         .foregroundColor(.primary)
             HStack {
                 VStack{
-                    animatedFigure
                     stepsText
                     goalStatusIndicator
                 }
@@ -53,30 +53,27 @@ struct DayCardView: View {
     }
     
     private var notTodayView: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 10) {
+            Text(log.date!, style: .date)
+            .font(.headline)
+            .padding(.bottom, 2)
+            .foregroundColor(.primary)
             stepsText
-            GoalStatusView(status: log.totalSteps >= dailyStepGoal ? .achieved : .notAchieved)
+            HStack{
+                GoalStatusView(status: log.totalSteps >= dailyStepGoal ? .achieved : .notAchieved, type: .steps)
+                GoalStatusView(status: log.caloriesBurned >= dailyCalGoal ? .achieved : .notAchieved, type: .calorie)
+            }
         }
         .padding(.horizontal)
     }
     
     // MARK: - Helper Views
-    
-    private var animatedFigure: some View {
-        Image(systemName: showMotion ? "figure.walk.motion" : "figure.walk")
-            .font(.system(size: 60))
-            .foregroundColor(.primary)
-            .onAppear {
-                withAnimation(Animation.linear(duration: animationDuration).repeatCount(1)) {
-                    self.showMotion.toggle()
-                }
-            }
-    }
+
     
     private var goalStatusIndicator: some View {
         switch (log.totalSteps) >= dailyStepGoal {
         case true:
-            return AnyView(GoalStatusView(status: .achieved))
+            return AnyView(GoalStatusView(status: .achieved, type: .steps))
         case false:
             return AnyView(ProgressCircleView(percentage: Double(log.totalSteps) / Double(dailyStepGoal)))
         }

@@ -40,9 +40,12 @@ class StepDataViewModel: ObservableObject {
     @Published var fiveHundredCalsReached: Bool = false
     @Published var thousandCalsReached: Bool = false
     
+    //Challenge
+    @Published var challengeGoal: Int = 10000
+    @Published var theirSteps: Int = 5000
+    @Published var theirName: String = "Max"
+    @Published var challengeEnd: Date = Date()
     
-    
-    // Add a property for calories burned
     
     @Published var error: UserFriendlyError?
     

@@ -9,6 +9,7 @@ import SwiftUI
 struct TodayView: View {
     
     @EnvironmentObject private var viewModel: StepDataViewModel
+    @EnvironmentObject private var userSettingsManager: UserSettingsManager
     
     @State var dailyGoalViewIsPresented: Bool = false
     
@@ -42,10 +43,11 @@ struct TodayView: View {
             .tabViewStyle(PageTabViewStyle())
             Spacer()
         }.sheet(isPresented: $dailyGoalViewIsPresented) {
-            DailyGoalView(dailyStepGoal: $viewModel.dailyStepGoal, dailyCalGoal: $viewModel.dailyCalGoal)
+//            DailyGoalView(dailyStepGoal: $viewModel.dailyStepGoal, dailyCalGoal: $viewModel.dailyCalGoal)
+            ProfileSetupView()
+                .environmentObject(userSettingsManager)
                 .presentationBackground(Material.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
-                .frame(width: 300, height: 400)
                 .padding(.horizontal, 15)
         }
         

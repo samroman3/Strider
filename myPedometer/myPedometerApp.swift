@@ -17,6 +17,7 @@ struct myPedometerApp: App {
         let dataStore = PedometerDataStore(context: context)
         
         let pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
+        UserSettingsManager.shared.context = persistenceController.container.viewContext
         
 #if targetEnvironment(simulator)
         pedometerDataProvider = MockPedometerDataProvider(context: context)
@@ -25,9 +26,13 @@ struct myPedometerApp: App {
 #endif
         
         return WindowGroup {
-            ContentView(pedometerDataProvider: pedometerDataProvider)
-                .environment(\.managedObjectContext, context)
+            ContentView(pedometerDataProvider: pedometerDataProvider, context: context)
                 .environmentObject(dataStore)
+                .environmentObject(AppState.shared)
+                .environmentObject(UserSettingsManager.shared)
+                .onAppear {
+                                }
+            
         }
     }
 }

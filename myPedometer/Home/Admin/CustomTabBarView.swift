@@ -10,6 +10,7 @@ import SwiftUI
 struct CustomTabBarView: View {
     
     @EnvironmentObject private var viewModel: StepDataViewModel
+    @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @State private var selectedTab: Tab = .today
 
     var body: some View {
@@ -19,19 +20,18 @@ struct CustomTabBarView: View {
             switch selectedTab {
             case .today:
                 TodayView()
-            case .week:
-                WeekView()
+                    .environmentObject(userSettingsManager)
             case .awards:
                AwardsView()
             case .challenge:
-                EmptyView()
+                ChallengeView()
             }
 
             // Custom Tab Bar
             HStack(spacing: 50) {
                 TabBarButton(icon: "flame", selectedIcon: "flame.fill", tab: .today, selectedTab: $selectedTab, color: .red)
                 TabBarButton(icon: "trophy", selectedIcon: "trophy.fill", tab: .awards, selectedTab: $selectedTab, color: .yellow)
-                TabBarButton(icon: "chart.bar", selectedIcon: "chart.bar.fill", tab: .week, selectedTab: $selectedTab, color: .blue)
+//                TabBarButton(icon: "chart.bar", selectedIcon: "chart.bar.fill", tab: .week, selectedTab: $selectedTab, color: .blue)
                 TabBarButton(icon: "flag.2.crossed", selectedIcon: "flag.2.crossed.fill", tab: .challenge, selectedTab: $selectedTab, color: .purple)
                 
             }
@@ -41,7 +41,7 @@ struct CustomTabBarView: View {
     }
 
     enum Tab {
-        case today, week, awards, challenge
+        case today, awards, challenge
     }
 }
 

@@ -88,7 +88,7 @@ struct DetailView: View {
                 
             } else {
                 // Goal Status
-                GoalStatusView(status: viewModel.goalAchievementStatus)
+                GoalStatusView(status: viewModel.goalAchievementStatus, type: .calorie)
                 
             }
         }
