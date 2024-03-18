@@ -124,7 +124,7 @@ struct BarView: View {
                         )
                 }
             }
-            .padding(.top, geometry.size.height / (CGFloat(maxLayers) * 5))
+            .padding(.top)
             .padding(alignLeft ? .trailing : .leading, screenWidth - barWidth)
         }
     }

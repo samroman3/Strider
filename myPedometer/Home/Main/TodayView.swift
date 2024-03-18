@@ -11,47 +11,41 @@ struct TodayView: View {
     @EnvironmentObject private var viewModel: StepDataViewModel
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     
-    @State var dailyGoalViewIsPresented: Bool = false
+    @State var profileViewIsPresented: Bool = false
     
     
     var body: some View {
-        VStack{
-            Spacer()
-            HStack {
-                Text("Today \(Date(), formatter: itemFormatter)")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                Spacer()
-                Button(action: {
-                    dailyGoalViewIsPresented.toggle()
-                }) {
-                    Image(systemName: "gear")
+            VStack {
+                HStack {
+                    Text("\(Date(), formatter: itemFormatter)")
+                        .font(.title2)
                         .foregroundColor(.white)
+                    Spacer()
+                    Button(action: {
+                        profileViewIsPresented.toggle()
+                    }) {
+                        NavigationLink(destination: ProfileSetupView().environmentObject(userSettingsManager), isActive: $profileViewIsPresented) {
+                            Image(systemName: "gear")
+                                .foregroundColor(.white)
+                        }
+                    }
                 }
+                .padding([.horizontal])
+                .background(Color.black)
+                TabView {
+                    // First page
+                    stepContent()
+                        .background(Color.black.edgesIgnoringSafeArea(.all))
+                        .tag(0)
+                    calorieContent()
+                        .background(Color.black.edgesIgnoringSafeArea(.all))
+                        .tag(1)
+                }
+                .tabViewStyle(PageTabViewStyle())
+                Spacer()
             }
-            .padding([.horizontal, .top])
-            .background(Color.black)
-            TabView {
-                // First page
-                stepContent()
-                    .background(Color.black.edgesIgnoringSafeArea(.all))
-                    .tag(0)
-                calorieContent()
-                    .background(Color.black.edgesIgnoringSafeArea(.all))
-                    .tag(1)
-            }
-            .tabViewStyle(PageTabViewStyle())
-            Spacer()
-        }.sheet(isPresented: $dailyGoalViewIsPresented) {
-//            DailyGoalView(dailyStepGoal: $viewModel.dailyStepGoal, dailyCalGoal: $viewModel.dailyCalGoal)
-            ProfileSetupView()
-                .environmentObject(userSettingsManager)
-                .presentationBackground(Material.thinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .padding(.horizontal, 15)
-        }
-        
     }
+
     
     
     @ViewBuilder

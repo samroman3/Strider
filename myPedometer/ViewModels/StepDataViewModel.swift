@@ -10,6 +10,9 @@ import CoreMotion
 import Combine
 
 class StepDataViewModel: ObservableObject {
+    
+    private var userSettingsManager: UserSettingsManager
+
     //TodayView
     @Published var todayLog: DailyLog?
     @Published var dailyStepGoal: Int
@@ -56,7 +59,8 @@ class StepDataViewModel: ObservableObject {
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
     
     // Initializer
-    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
+    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, userSettingsManager: UserSettingsManager) {
+        self.userSettingsManager = userSettingsManager
         self.pedometerDataProvider = pedometerDataProvider
         
         // Retrieve and set the daily goal
@@ -83,6 +87,7 @@ class StepDataViewModel: ObservableObject {
                     strongSelf.todayLog = todayLog
                     strongSelf.todaySteps = Int(todayLog.totalSteps)
                     strongSelf.calculateCaloriesBurned()
+                    self?.updateDailyLogWith(todayLog: todayLog)
                 }
             }
             .store(in: &cancellables)
@@ -125,29 +130,15 @@ class StepDataViewModel: ObservableObject {
         return calendar.isDateInToday(log.date ?? Date())
     }
     
-    func updatePersonalBestDate() {
-        let stepBest = stepDataList.max(by: { $0.totalSteps < $1.totalSteps })
-        let calorieBest = stepDataList.max(by: { $0.caloriesBurned < $1.caloriesBurned })
-        
-        // Assuming DailyLog has a `caloriesBurned` property. If not, you'll need to calculate or track this separately.
-        // This example also assumes you have a way to compare which record is the overall best if they're not the same day.
-        
-        var bestRecord: DailyLog?
-        
-        if let stepBest = stepBest, let calorieBest = calorieBest {
-            // Determine which record is the "best" based on a criteria. Here, arbitrarily choosing steps but you could choose more complex logic.
-            bestRecord = stepBest.totalSteps >= calorieBest.totalSteps ? stepBest : calorieBest
-        } else {
-            // Fallback to whichever is not nil, if either is nil.
-            bestRecord = stepBest ?? calorieBest
-        }
-        
-        if let bestRecord = bestRecord, let date = bestRecord.date {
-            // Format the date as a string. Customize the date format as needed.
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium // Or any other format you prefer
-            dateFormatter.timeStyle = .none
-            self.personalBestDate = dateFormatter.string(from: date)
-        }
-    }
+    private func updateDailyLogWith(todayLog: DailyLog) {
+         // Update today's log and calculate calories burned
+         self.todayLog = todayLog
+         self.todaySteps = Int(todayLog.totalSteps)
+         self.calculateCaloriesBurned()
+         
+         // Update User settings with new daily log and steps
+         userSettingsManager.updateDailyLog(with: todaySteps, calories: Int(caloriesBurned), date: Date())
+         userSettingsManager.updateUserLifetimeSteps(additionalSteps: todaySteps)
+         userSettingsManager.checkAndUpdatePersonalBest(with: todaySteps, calories: Int(caloriesBurned))
+     }
 }

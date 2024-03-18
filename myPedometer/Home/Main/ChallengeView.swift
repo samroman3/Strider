@@ -7,6 +7,112 @@
 
 import SwiftUI
 
+struct MainChallengeView: View {
+    @EnvironmentObject var challengeViewModel: ChallengeViewModel
+    @State private var showCreateChallenge = false
+
+    var body: some View {
+            VStack {
+                if challengeViewModel.challenges.isEmpty {
+                    Button(action: {
+                        showCreateChallenge.toggle()
+                    }) {
+                        Text("Create a Challenge")
+                    }
+                    .sheet(isPresented: $showCreateChallenge) {
+                        CreateChallengeView(challengeViewModel: challengeViewModel)
+                    }
+                } else {
+                    List(challengeViewModel.challenges) { challenge in
+                        ChallengeRowView(challenge: challenge)
+                    }
+                }
+            }
+            .onAppear {
+                // Load active challenges
+                challengeViewModel.loadActiveChallenges()
+            }
+    }
+}
+
+struct ChallengeRowView: View {
+    let challenge: Challenge
+
+    var body: some View {
+        // Your challenge row UI
+        Text("Challenge Details")
+    }
+}
+
+struct CreateChallengeView: View {
+    @StateObject var challengeViewModel: ChallengeViewModel
+    @State private var participants: [User] = []
+    @State private var goal: Int = 0 // Placeholder for the goal
+    @State private var endTime = Date() // Placeholder for the end time
+
+    var body: some View {
+        VStack {
+            // UI to add participants
+            Text("Add Participants:")
+                // Add UI elements to add participants, like a list or picker
+                // Example:
+                // ForEach(participants, id: \.id) { participant in
+                //     Text(participant.name)
+                // }
+            
+            // UI to set challenge details
+            VStack {
+                // Goal TextField
+                TextField("Enter Goal", value: $goal, formatter: NumberFormatter())
+                    .padding()
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.numberPad)
+                
+                // End Time DatePicker
+                DatePicker("End Time", selection: $endTime, in: Date()..., displayedComponents: .date)
+                    .padding()
+            }
+            
+            // Button to create the challenge
+            Button("Create") {
+                createChallenge()
+            }
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+        }
+        .padding()
+        .navigationTitle("Create Challenge")
+    }
+    
+    private func createChallenge() {
+        // Perform validation checks before creating the challenge
+        guard goal > 0 else {
+            // Display an alert or message for invalid goal
+            return
+        }
+        
+        // Call the ViewModel method to create the challenge
+//        challengeViewModel.createChallenge(goal: goal, endTime: endTime, participants: participants)
+    }
+}
+
+
+
+struct InviteView: View {
+    @StateObject var challengeViewModel: ChallengeViewModel
+    @State private var searchQuery: String = ""
+
+    var body: some View {
+        VStack {
+            // UI to search for other users and send invites
+        }
+        .navigationTitle("Invite Users")
+    }
+}
+
+
 struct ChallengeView: View {
     // Dummy data
     let mySteps: Int = 10300
@@ -62,7 +168,58 @@ struct ChallengeView: View {
     }
 }
 
-import SwiftUI
+struct PendingChallengesView: View {
+    @ObservedObject var challengeViewModel: ChallengeViewModel
+    
+    var body: some View {
+        List {
+            ForEach(challengeViewModel.pendingChallenges) { challenge in
+                PendingChallengeRow(challenge: challenge)
+                    .swipeActions {
+                        Button("Accept") {
+                            challengeViewModel.acceptChallenge(challenge)
+                        }
+                        .tint(.green)
+                        
+                        Button("Decline") {
+                            challengeViewModel.declineChallenge(challenge)
+                        }
+                        .tint(.red)
+                    }
+            }
+        }
+        .navigationTitle("Pending Challenges")
+        .onAppear {
+            challengeViewModel.loadPendingChallenges()
+        }
+    }
+}
+
+struct PendingChallengeRow: View {
+    let challenge: Challenge
+    
+    var body: some View {
+        // Simplified; adjust according to your data model and desired UI
+        HStack {
+            VStack(alignment: .leading) {
+                Text(challenge.title) // Assuming 'title' is a property of 'Challenge'
+                    .font(.headline)
+                Text("Goal: \(challenge.goalSteps)")
+                    .font(.subheadline)
+            }
+            Spacer()
+            Text("Ends \(challenge.endTime, formatter: itemFormatter)")
+                .font(.caption)
+        }
+    }
+}
+
+private let itemFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .short
+    return formatter
+}()
 
 struct ChallengeBarGoalView: View {
     var progress: Double
@@ -111,4 +268,5 @@ struct ChallengeView_Previews: PreviewProvider {
         ChallengeView()
     }
 }
+
 

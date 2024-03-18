@@ -99,6 +99,7 @@ struct ProfileSetupView: View {
            self.userName = userSettingsManager.userName
            self.newStepGoal = "\(dailyStepGoal)"
            self.newCalGoal = "\(dailyCalGoal)"
+        
            if let photoData = userSettingsManager.photoData, let uiImage = UIImage(data: photoData) {
                self.profileImage = Image(uiImage: uiImage)
            }
@@ -116,18 +117,24 @@ struct ProfileSetupView: View {
     }
     
     func saveProfileAndGoals() {
-        // Save the user name and profile image
-        userSettingsManager.saveProfileDetails(image: inputImage, userName: self.userName)
-
-        // Save the daily step and calorie goals
+        // Prepare the data for saving
+        if let inputImage = inputImage {
+            userSettingsManager.uploadProfileImage(inputImage)
+        }
         if let stepGoal = Int(newStepGoal), let calGoal = Int(newCalGoal) {
             dailyStepGoal = stepGoal
             dailyCalGoal = calGoal
             UserDefaultsHandler.shared.storeDailyStepGoal(stepGoal)
             UserDefaultsHandler.shared.storeDailyCalGoal(calGoal)
         }
-
-        // Exit edit mode
-        isEditMode = false
+        
+        // Save the context
+        userSettingsManager.saveContext {
+            // This closure is called after the context has been saved
+            DispatchQueue.main.async {
+                // Dismiss the ProfileSetupView only after saving is complete
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
 }

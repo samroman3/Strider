@@ -29,6 +29,10 @@
 		3A41766A2BA3CF7900F89254 /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176682BA3CF7900F89254 /* User+CoreDataProperties.swift */; };
 		3A41766C2BA503B200F89254 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A41766B2BA503B100F89254 /* ProfileSetupView.swift */; };
 		3A41766E2BA503DA00F89254 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A41766D2BA503DA00F89254 /* ImagePicker.swift */; };
+		3A4176702BA603F700F89254 /* ChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A41766F2BA603F700F89254 /* ChallengeViewModel.swift */; };
+		3A4176732BA6053500F89254 /* ChallengeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176722BA6053500F89254 /* ChallengeManager.swift */; };
+		3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */; };
+		3A4176832BA8E1D000F89254 /* CloudSharingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176822BA8E1D000F89254 /* CloudSharingView.swift */; };
 		3ABAB32D2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */; };
 		3ABAB32E2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */; };
 		3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */; };
@@ -103,6 +107,10 @@
 		3A4176682BA3CF7900F89254 /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A41766B2BA503B100F89254 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		3A41766D2BA503DA00F89254 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		3A41766F2BA603F700F89254 /* ChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeViewModel.swift; sourceTree = "<group>"; };
+		3A4176722BA6053500F89254 /* ChallengeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeManager.swift; sourceTree = "<group>"; };
+		3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeDetails.swift; sourceTree = "<group>"; };
+		3A4176822BA8E1D000F89254 /* CloudSharingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSharingView.swift; sourceTree = "<group>"; };
 		3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlySteps.swift; sourceTree = "<group>"; };
@@ -175,7 +183,6 @@
 				3AC0CEC82B66D1B300A56554 /* DailyGoalView.swift */,
 				3A41766B2BA503B100F89254 /* ProfileSetupView.swift */,
 				3A41766D2BA503DA00F89254 /* ImagePicker.swift */,
-				3A4176602BA3911D00F89254 /* ViewModel */,
 				3A41765F2BA3910500F89254 /* SubViews */,
 			);
 			path = Main;
@@ -195,18 +202,33 @@
 		3A41765F2BA3910500F89254 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				3A4176822BA8E1D000F89254 /* CloudSharingView.swift */,
 				3A17D5512B9D3B4E00D74874 /* BarGoalView.swift */,
 				3AD6F95D2B619BB200923DFC /* DayCardView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
 		};
-		3A4176602BA3911D00F89254 /* ViewModel */ = {
+		3A4176602BA3911D00F89254 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */,
+				3A41766F2BA603F700F89254 /* ChallengeViewModel.swift */,
 			);
-			path = ViewModel;
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3A4176712BA6050500F89254 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				3AD6F9462B618FF900923DFC /* PersistenceController.swift */,
+				3ACFDA112B6814D70087DBA6 /* UserDefaultsHandler.swift */,
+				3AD6F94E2B61903F00923DFC /* PedometerManager.swift */,
+				3A0BB5AB2B6933BF008C616E /* PedometerDataProcessor.swift */,
+				3AD6F9662B61AC7800923DFC /* PedometerDataStore.swift */,
+				3AD6F9702B62029900923DFC /* MockPedometerDataProvider.swift */,
+			);
+			path = Persistence;
 			sourceTree = "<group>";
 		};
 		3AC0CEBF2B66CC3B00A56554 /* Details */ = {
@@ -272,6 +294,7 @@
 				3AD6F91A2B618FA700923DFC /* myPedometerApp.swift */,
 				3AD6F91C2B618FA700923DFC /* ContentView.swift */,
 				3AC0CEC62B66D02300A56554 /* Home */,
+				3A4176602BA3911D00F89254 /* ViewModels */,
 				3AD6F95C2B61988800923DFC /* Models */,
 				3AD6F95F2B619C3900923DFC /* Supporting Files */,
 				3AD6F9502B61904600923DFC /* Data Management */,
@@ -316,12 +339,8 @@
 			isa = PBXGroup;
 			children = (
 				3A4176632BA3936D00F89254 /* UserSettingsManager.swift */,
-				3AD6F9462B618FF900923DFC /* PersistenceController.swift */,
-				3A0BB5AB2B6933BF008C616E /* PedometerDataProcessor.swift */,
-				3AD6F9702B62029900923DFC /* MockPedometerDataProvider.swift */,
-				3AD6F94E2B61903F00923DFC /* PedometerManager.swift */,
-				3AD6F9662B61AC7800923DFC /* PedometerDataStore.swift */,
-				3ACFDA112B6814D70087DBA6 /* UserDefaultsHandler.swift */,
+				3A4176722BA6053500F89254 /* ChallengeManager.swift */,
+				3A4176712BA6050500F89254 /* Persistence */,
 				3AC0CEC72B66D07A00A56554 /* Core Data */,
 			);
 			path = "Data Management";
@@ -332,6 +351,7 @@
 			children = (
 				3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */,
 				3ABAFB7B2B63133600BC0C9F /* DetailData.swift */,
+				3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -487,6 +507,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A4176732BA6053500F89254 /* ChallengeManager.swift in Sources */,
 				3ABAB32E2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift in Sources */,
 				3A2320692B9FBB5D00D1851F /* TodayView.swift in Sources */,
 				3A41766A2BA3CF7900F89254 /* User+CoreDataProperties.swift in Sources */,
@@ -497,6 +518,7 @@
 				3A0BB5AC2B6933BF008C616E /* PedometerDataProcessor.swift in Sources */,
 				3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */,
 				3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */,
+				3A4176702BA603F700F89254 /* ChallengeViewModel.swift in Sources */,
 				3A16B5472B65F9CB007BD5F6 /* DateFormatterService.swift in Sources */,
 				3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */,
 				3A0BB5A82B68A63C008C616E /* UserFriendlyError.swift in Sources */,
@@ -525,10 +547,12 @@
 				3A2320702BA26CF400D1851F /* ChallengeView.swift in Sources */,
 				3A4176622BA3915A00F89254 /* AppState.swift in Sources */,
 				3AD6F9672B61AC7800923DFC /* PedometerDataStore.swift in Sources */,
+				3A4176832BA8E1D000F89254 /* CloudSharingView.swift in Sources */,
 				3AD6F9692B61E6D700923DFC /* ProgressCircleView.swift in Sources */,
 				3AD6F95E2B619BB200923DFC /* DayCardView.swift in Sources */,
 				3A23206D2BA2403300D1851F /* AppTheme.swift in Sources */,
 				3AD6F95A2B61983500923DFC /* DailyLog+CoreDataClass.swift in Sources */,
+				3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */,
 				3AD6F9712B62029900923DFC /* MockPedometerDataProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

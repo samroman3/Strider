@@ -24,6 +24,9 @@ extension DailyLog {
     @NSManaged public var caloriesBurned: Int32
     @NSManaged public var calGoal: Int32
     @NSManaged public var stepsGoal: Int32
+    @NSManaged public var user: User?
+    @NSManaged public var recordID: String?
+
 }
 
 // MARK: Generated accessors for hourlyStepData

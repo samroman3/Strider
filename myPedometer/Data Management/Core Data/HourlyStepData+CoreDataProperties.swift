@@ -20,6 +20,8 @@ extension HourlyStepData {
     @NSManaged public var stepCount: Int32
     @NSManaged public var date: Date?
     @NSManaged public var dailyLog: DailyLog?
+    @NSManaged public var recordID: String?
+
     
 }
 

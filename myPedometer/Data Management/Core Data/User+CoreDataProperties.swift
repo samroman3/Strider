@@ -23,6 +23,8 @@ extension User {
     @NSManaged public var userName: String?
     @NSManaged public var appleId: String?
     @NSManaged public var challenges: NSSet?
+    @NSManaged public var dailyLogs: NSSet?
+    @NSManaged public var recordID: String?
 
 }
 
@@ -43,6 +45,43 @@ extension User {
 
 }
 
+extension User {
+
+    @objc(addDailyLogsObject:)
+    @NSManaged public func addToDailyLogs(_ value: DailyLog)
+
+    @objc(removeDailyLogsObject:)
+    @NSManaged public func removeFromDailyLogs(_ value: DailyLog)
+
+    @objc(addDailyLogs:)
+    @NSManaged public func addToDailyLogs(_ values: NSSet)
+
+    @objc(removeDailyLogs:)
+    @NSManaged public func removeFromDailyLogs(_ values: NSSet)
+
+}
+
 extension User : Identifiable {
 
 }
+
+extension User {
+    
+    // Check if a log exists for a specific date or create a new one
+    func dailyLog(for date: Date) -> DailyLog? {
+        let calendar = Calendar.current
+        
+        // Try to find an existing log for the specified date
+        if let dailyLogs = self.dailyLogs as? Set<DailyLog> {
+            for log in dailyLogs {
+                if let logDate = log.date, calendar.isDate(logDate, inSameDayAs: date) {
+                    return log
+                }
+            }
+        }
+        
+        // No existing log found
+        return nil
+    }
+}
+

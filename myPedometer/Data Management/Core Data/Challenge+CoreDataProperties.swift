@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 
 
 extension Challenge {
@@ -21,11 +22,19 @@ extension Challenge {
     @NSManaged public var goalSteps: Int32
     @NSManaged public var active: Bool
     @NSManaged public var users: NSSet?
+    @NSManaged public var id: String?
+    @NSManaged public var recordID: String?
 
 }
 
 // MARK: Generated accessors for users
 extension Challenge {
+    
+    var isOngoing: Bool {
+           guard let startTime = startTime, let endTime = endTime else { return false }
+           let now = Date()
+           return now >= startTime && now <= endTime
+       }
 
     @objc(addUsersObject:)
     @NSManaged public func addToUsers(_ value: User)
@@ -44,3 +53,19 @@ extension Challenge {
 extension Challenge : Identifiable {
 
 }
+    
+    extension Challenge {
+        func toCKRecord() -> CKRecord {
+            let recordId = self.recordID ?? UUID().uuidString
+            self.recordID = recordId // Ensure the Challenge has a recordID
+            let record = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: recordId))
+            record["startTime"] = startTime as CKRecordValue?
+            record["endTime"] = endTime as CKRecordValue?
+            record["goalSteps"] = goalSteps as CKRecordValue
+            record["active"] = active as CKRecordValue
+            
+            return record
+        }
+    }
+
+

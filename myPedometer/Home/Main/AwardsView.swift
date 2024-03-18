@@ -12,19 +12,15 @@ struct AwardsView: View {
     @EnvironmentObject var viewModel: StepDataViewModel
     
     var body: some View {
-        ScrollView {
-            VStack() {
-                Text("Awards")
-                    .font(.title)
-                    .foregroundColor(.primary)
-                
-                SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.dailyStepGoal)", items: stepAwards())
-                
-                SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.caloriesBurned))", items: calorieAwards())
-                
-                LifetimeStepsView(lifeTimeSteps: $viewModel.lifeTimeSteps)
+            ScrollView {
+                VStack() {
+                    SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.dailyStepGoal)", items: stepAwards())
+                    
+                    SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.caloriesBurned))", items: calorieAwards())
+                    
+                    LifetimeStepsView(lifeTimeSteps: $viewModel.lifeTimeSteps)
+                }
             }
-        }
         .background(.black)
     }
     
