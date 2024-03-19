@@ -12,6 +12,6 @@ struct ChallengeDetails {
     var endTime: Date
     var goalSteps: Int32
     var active: Bool
-    var users: [String]
+    var participants: [Participant]
     var recordId: String
 }

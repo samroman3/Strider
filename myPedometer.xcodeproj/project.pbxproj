@@ -42,6 +42,7 @@
 		3AC0CEC32B66CCB000A56554 /* CustomProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC22B66CCB000A56554 /* CustomProgressView.swift */; };
 		3AC0CEC52B66CE8F00A56554 /* GoalStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC42B66CE8F00A56554 /* GoalStatusView.swift */; };
 		3AC0CEC92B66D1B300A56554 /* DailyGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC82B66D1B300A56554 /* DailyGoalView.swift */; };
+		3ACF747C2BAA1C8B00EB37A5 /* Participant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */; };
 		3ACFDA122B6814D70087DBA6 /* UserDefaultsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACFDA112B6814D70087DBA6 /* UserDefaultsHandler.swift */; };
 		3AD6F91B2B618FA700923DFC /* myPedometerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F91A2B618FA700923DFC /* myPedometerApp.swift */; };
 		3AD6F91D2B618FA700923DFC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F91C2B618FA700923DFC /* ContentView.swift */; };
@@ -121,6 +122,7 @@
 		3AC0CEC42B66CE8F00A56554 /* GoalStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStatusView.swift; sourceTree = "<group>"; };
 		3AC0CEC82B66D1B300A56554 /* DailyGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyGoalView.swift; sourceTree = "<group>"; };
 		3AC0CECC2B6730DE00A56554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Participant.swift; sourceTree = "<group>"; };
 		3ACFDA112B6814D70087DBA6 /* UserDefaultsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHandler.swift; sourceTree = "<group>"; };
 		3AD6F9172B618FA700923DFC /* myPedometer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myPedometer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AD6F91A2B618FA700923DFC /* myPedometerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myPedometerApp.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */,
 				3ABAFB7B2B63133600BC0C9F /* DetailData.swift */,
 				3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */,
+				3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -518,6 +521,7 @@
 				3A0BB5AC2B6933BF008C616E /* PedometerDataProcessor.swift in Sources */,
 				3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */,
 				3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */,
+				3ACF747C2BAA1C8B00EB37A5 /* Participant.swift in Sources */,
 				3A4176702BA603F700F89254 /* ChallengeViewModel.swift in Sources */,
 				3A16B5472B65F9CB007BD5F6 /* DateFormatterService.swift in Sources */,
 				3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */,

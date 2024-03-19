@@ -130,23 +130,25 @@ struct ActiveChallengeRow: View {
     var challenge: DummyChallenge
     
     var body: some View {
-        VStack {
-            ForEach(0..<challenge.participants.count, id: \.self) { index in
-                // Placeholder for participant profile images
-                Circle()
-                    .fill(Color.blue)
-                    .frame(width: 50, height: 50)
-                    .overlay(Text("\(challenge.currentSteps[index])"))
-                    .padding(4)
-                
-                if index == 0 {
-                    // Highlight the current user with a ring
-                    Circle().stroke(Color.green, lineWidth: 2)
-                        .frame(width: 58, height: 58)
+        VStack{
+            HStack {
+                ForEach(0..<challenge.participants.count, id: \.self) { index in
+                    // Placeholder for participant profile images
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 50, height: 50)
+                        .overlay(Text("\(challenge.currentSteps[index])"))
+                        .padding(4)
+                    
+                    if index == 0 {
+                        // Highlight the current user with a ring
+                        Circle().stroke(Color.green, lineWidth: 2)
+                            .frame(width: 58, height: 58)
+                    }
                 }
+                
+                Text("Goal: \(challenge.goalSteps)")
             }
-            
-            Text("Goal: \(challenge.goalSteps)")
         }
         .frame(width: 200, height: 200)
         .background(Color.gray.opacity(0.2))
