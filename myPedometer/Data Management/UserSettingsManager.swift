@@ -121,7 +121,7 @@ class UserSettingsManager: ObservableObject {
             case .success(let recordID):
                 // Use the fetched recordID to create or update a User CKRecord
                 // This helps ensure that the User CKRecord is associated with the correct iCloud user
-                let userRecord = self?.user?.toCKRecord(with: recordID)
+                let userRecord = self?.user?.toCKRecord(recordID: recordID.recordName)
                 self?.cloudKitRecordName = recordID.recordName
                 
             case .failure(let error):

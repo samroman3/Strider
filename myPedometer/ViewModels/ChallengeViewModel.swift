@@ -65,11 +65,39 @@ class ChallengeViewModel: ObservableObject {
         // Similar to loadActiveChallenges, but fetches challenges that the user has been invited to and has not yet responded
     }
     
+    func createAndShareChallenge(goal: Int32, endTime: Date) {
+            // Logic to create the challenge and retrieve CKRecord and CKShare for sharing
+            // Assuming createChallenge returns CKRecord and CKShare or sets them up for sharing
+            let details = ChallengeDetails(startTime: Date(), endTime: endTime, goalSteps: goal, active: true, users: [], recordId: UUID().uuidString)
+            
+            Task {
+                do {
+                    let (record, share) = try await challengeManager.createChallenge(with: details)
+                    // Assuming we have a method to trigger the CloudShareView presentation with record and share
+                    presentCloudShareView(record: record, share: share)
+                } catch {
+                    print("Error creating or sharing challenge: \(error)")
+                }
+            }
+        }
+    
+    private func presentCloudShareView(record: CKRecord, share: CKShare) {
+           // Logic to present CloudShareView with provided record and share
+           // This could involve setting some @Published properties to trigger the presentation in the view layer
+       }
+    
     func createChallenge(details: ChallengeDetails) {
         state = .loading
-        // Use ChallengeManager to create a new challenge
-        // You may also need to create a new `Challenge` Core Data entity here, or have the manager handle it
-    }
+            Task {
+                do {
+                    try await challengeManager.createChallenge(with: details)
+                    // Reload challenges upon successful creation
+                    loadActiveChallenges()
+                } catch {
+                    print("Error creating challenge: \(error)")
+                }
+            }
+        }
     
     func acceptChallenge(_ challenge: Challenge) {
         // Accept an invitation to a challenge

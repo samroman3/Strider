@@ -37,38 +37,69 @@ class ChallengeManager: ObservableObject {
 
 
     // MARK: Challenge Management
-
-    func createChallenge(with details: ChallengeDetails) async throws {
-        DispatchQueue.main.async { [weak self] in
-               self?.state = .loading
-           }
-
+    func createChallenge(with details: ChallengeDetails) async throws -> (CKRecord, CKShare) {
         let challengeRecord = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: details.recordId))
         challengeRecord["startTime"] = details.startTime as NSDate
         challengeRecord["endTime"] = details.endTime as NSDate
         challengeRecord["goalSteps"] = details.goalSteps as NSNumber
         challengeRecord["active"] = details.active as NSNumber
 
-        // Assuming that `users` are participant iCloud user record names, not directly included in CKRecord here
-        
-        let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord], recordIDsToDelete: nil)
-        operation.modifyRecordsCompletionBlock = { [weak self] savedRecords, deletedRecordIDs, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
+        // Create a CKShare for the challenge
+        let share = CKShare(rootRecord: challengeRecord)
+        share[CKShare.SystemFieldKey.title] = "Join My Challenge"
+
+        // Set permissions for the share
+        share.publicPermission = .readWrite
+
+        // Prepare the operation to save both the record and the share
+        let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, error in
                 if let error = error {
-                    self.state = .error(ManagerError.challengeCreationFailed)
-                    print("Error creating challenge: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                } else if let savedRecord = savedRecords?.first as? CKRecord, let savedShare = savedRecords?.last as? CKShare {
+                    continuation.resume(returning: (savedRecord, savedShare))
                 } else {
-                    self.state = .loaded
-                    print("Challenge created successfully")
-                    // Optionally update local storage or perform additional actions here
+                    continuation.resume(throwing: ManagerError.challengeCreationFailed)
                 }
             }
+            cloudKitContainer.privateCloudDatabase.add(operation)
         }
-
-        cloudKitContainer.privateCloudDatabase.add(operation)
     }
-    
+
+
+//    func createChallenge(with details: ChallengeDetails, userRecord: CKRecord) async throws {
+//        DispatchQueue.main.async { [weak self] in
+//               self?.state = .loading
+//           }
+//
+//        let challengeRecord = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: details.recordId))
+//        challengeRecord["startTime"] = details.startTime as NSDate
+//        challengeRecord["endTime"] = details.endTime as NSDate
+//        challengeRecord["goalSteps"] = details.goalSteps as NSNumber
+//        challengeRecord["active"] = details.active as NSNumber
+//
+//        // Assuming that `users` are participant iCloud user record names, not directly included in CKRecord here
+//        
+//        let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord], recordIDsToDelete: nil)
+//        operation.modifyRecordsCompletionBlock = { [weak self] savedRecords, deletedRecordIDs, error in
+//            DispatchQueue.main.async {
+//                guard let self = self else { return }
+//                if let error = error {
+//                    self.state = .error(ManagerError.challengeCreationFailed)
+//                    print("Error creating challenge: \(error.localizedDescription)")
+//                } else {
+//                    self.state = .loaded
+//                    print("Challenge created successfully")
+//                    // Optionally update local storage or perform additional actions here
+//                }
+//            }
+//        }
+//
+//        cloudKitContainer.privateCloudDatabase.add(operation)
+//    }
+//    
 //    func shareChallenge(_ challenge: Challenge, with participants: [User]) async throws {
 //        // Convert the Challenge object to a CKRecord using the extension method
 //        let record = challenge.toCKRecord()

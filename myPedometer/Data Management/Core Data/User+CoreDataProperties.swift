@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 
 
 extension User {
@@ -85,3 +86,15 @@ extension User {
     }
 }
 
+extension User {
+    func toCKRecord(recordID: String) -> CKRecord {
+        let record = CKRecord(recordType: "User", recordID: CKRecord.ID(recordName: recordID))
+        
+        // Set user-specific properties
+        record["userName"] = self.userName
+        record["photoData"] = self.photoData
+        record["recordID"] = self.recordID
+        
+        return record
+    }
+}

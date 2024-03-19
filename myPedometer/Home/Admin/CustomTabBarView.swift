@@ -11,7 +11,7 @@ struct CustomTabBarView: View {
     
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @EnvironmentObject private var stepViewModel: StepDataViewModel
-//    @EnvironmentObject private var challengeViewModel: ChallengeViewModel
+    @EnvironmentObject private var challengeViewModel: ChallengeViewModel
     
     @State private var selectedTab: Tab = .today
 
@@ -48,7 +48,7 @@ struct CustomTabBarView: View {
         }
         .onAppear(){
             userSettingsManager.loadUserSettings()
-//            challengeViewModel.loadActiveChallenges()
+            challengeViewModel.loadActiveChallenges()
         }
         .background(.black)
     }

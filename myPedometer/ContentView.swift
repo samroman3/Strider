@@ -12,7 +12,7 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @StateObject private var stepDataViewModel: StepDataViewModel
-//    @StateObject private var challengeViewModel: ChallengeViewModel
+    @StateObject private var challengeViewModel: ChallengeViewModel
 
 
     @State private var showSignInView = false
@@ -20,10 +20,7 @@ struct ContentView: View {
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, context: NSManagedObjectContext) {
         let userSettingsManager = UserSettingsManager.shared
             _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager))
-//        if ChallengeManager.shared == nil {
-//            ChallengeManager.shared = ChallengeManager(userSettingsManager: userSettingsManager)
-//                }
-//        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(challengeManager: ChallengeManager.shared!, userSettingsManager: userSettingsManager))
+        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(userSettingsManager: userSettingsManager, challengeManager: ChallengeManager()))
     }
 
     var body: some View {
@@ -46,7 +43,7 @@ struct ContentView: View {
                 CustomTabBarView()
                     .environmentObject(stepDataViewModel)
                     .environmentObject(userSettingsManager)
-//                    .environmentObject(challengeViewModel)
+                    .environmentObject(challengeViewModel)
             }
         }
     }

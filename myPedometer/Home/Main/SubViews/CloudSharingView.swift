@@ -28,7 +28,7 @@ struct CloudSharingControllerRepresentable: UIViewControllerRepresentable {
     
     class Coordinator: NSObject, UICloudSharingControllerDelegate {
         func cloudSharingController(_ csc: UICloudSharingController, failedToSaveShareWithError error: Error) {
-            <#code#>
+            //
         }
         
         var parent: CloudSharingControllerRepresentable
