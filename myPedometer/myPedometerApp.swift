@@ -7,9 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import CloudKit
 
 @main
 struct myPedometerApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     let persistenceController = PersistenceController.shared
     
     var body: some Scene {
@@ -24,14 +28,13 @@ struct myPedometerApp: App {
 #else
         pedometerDataProvider = PedometerManager(context: context, dataStore: dataStore)
 #endif
-        
+                
         return WindowGroup {
             ContentView(pedometerDataProvider: pedometerDataProvider, context: context)
                 .environmentObject(dataStore)
                 .environmentObject(AppState.shared)
                 .environmentObject(UserSettingsManager.shared)
-                .onAppear {
-                                }
+                .environmentObject(CloudKitManager.shared)
             
         }
     }

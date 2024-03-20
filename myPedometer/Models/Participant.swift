@@ -14,24 +14,47 @@ struct Participant: Identifiable {
     let photoData: Data?
     var steps: Int
     
-    init(user: User) {
-        self.id = user.recordID ?? ""
+    init(user: User, recordID: String) {
+        self.id = recordID
         self.userName = user.userName
         self.photoData = user.photoData
         self.steps = 0
     }
+    
+    init(id: String, userName: String?, photoData: Data?, steps: Int) {
+            self.id = id
+            self.userName = userName
+            self.photoData = photoData
+            self.steps = steps
+        }
 }
 
 extension Participant {
     func toCKRecord() -> CKRecord {
+        //participant will have the same recordID as the User object it is init from 
         let recordID = CKRecord.ID(recordName: self.id)
         let record = CKRecord(recordType: "Participant", recordID: recordID)
         
         record["userName"] = self.userName ?? ""
         record["photoData"] = self.photoData
         record["steps"] = self.steps
-        // Note: Not necessary to save the recordID in the record itself, as it's already the unique identifier of the record.
         
         return record
     }
+    
+    static func fromCKRecord(_ record: CKRecord) -> Participant? {
+           guard let userName = record["userName"] as? String,
+                 let steps = record["steps"] as? Int else {
+               // These fields are essential; if they're missing, return nil
+               return nil
+           }
+           
+           // `photoData` can be nil if not set, so it's fine to directly try to cast it without a guard statement.
+           let photoData = record["photoData"] as? Data
+           let id = record.recordID.recordName
+
+           return Participant(id: id, userName: userName, photoData: photoData, steps: steps)
+       }
+    
+    
 }

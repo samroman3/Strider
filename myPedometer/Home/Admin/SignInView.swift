@@ -52,7 +52,6 @@ struct SignInView: View {
                     case .success(let authResults):
                         if let appleIDCredential = authResults.credential as? ASAuthorizationAppleIDCredential {
                              let userID = appleIDCredential.user // This is the stable, unique identifier
-                             // Use userID to identify the user in your app, for example:
                              let fullName = "\(appleIDCredential.fullName?.givenName ?? "Fulltime")\(appleIDCredential.fullName?.familyName ?? "Strider")"
                              userSettingsManager.updateUserAfterSignInWithApple(userID: userID, fullName: fullName)
                              self.isPresented = false
@@ -74,12 +73,3 @@ struct SignInView: View {
         .background(LinearGradient(gradient: Gradient(colors: [colorScheme == .dark ? .black : .white, colorScheme == .dark ? .gray : .blue]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
     }
 }
-
-
-//struct SignInView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SignInView(isPresented: .constant(true), onSignInComplete: {})
-//            .environmentObject(UserSettingsManager(context: viewContext))
-//            .preferredColorScheme(.dark)
-//    }
-//}

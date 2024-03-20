@@ -15,7 +15,7 @@ class UserSettingsManager: ObservableObject {
 
     
     var context: NSManagedObjectContext?
-    private var user: User?
+    var user: User?
     
     @Published var photoData: Data?
     @Published var lifetimeSteps: Int = 0
@@ -144,17 +144,15 @@ class UserSettingsManager: ObservableObject {
                 if results.isEmpty {
                     // Create new Challenge
                     challenge = Challenge(context: context)
-                    challenge.id = cloudKitRecord.recordID.recordName // Assuming 'id' is a String attribute in your Challenge entity
+                    challenge.id = cloudKitRecord.recordID.recordName
                 } else {
                     // Update existing Challenge
                     challenge = results.first!
                 }
                 
-                // Assuming 'goalSteps' and 'active' are attributes in your Challenge entity
                 challenge.goalSteps = cloudKitRecord["goalSteps"] as? Int32 ?? 0
                 challenge.active = cloudKitRecord["active"] as? Bool ?? true
                 
-                // Assuming 'startTime' and 'endTime' are Date attributes in your Challenge entity
                 challenge.startTime = cloudKitRecord["startTime"] as? Date
                 challenge.endTime = cloudKitRecord["endTime"] as? Date
                 
@@ -195,8 +193,7 @@ class UserSettingsManager: ObservableObject {
                 } else {
                     // No existing user found, create a new one
                     let newUser = User(context: context)
-                    newUser.appleId = participantID // Assuming 'recordID' is the property to match CKRecord.ID
-                    // Configure newUser as needed
+                    newUser.appleId = participantID
                     
                     updatedParticipants.insert(newUser)
                 }

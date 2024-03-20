@@ -7,45 +7,66 @@
 import SwiftUI
 import CoreData
 
-
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var userSettingsManager: UserSettingsManager
-    @StateObject private var stepDataViewModel: StepDataViewModel
-    @StateObject private var challengeViewModel: ChallengeViewModel
-
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var userSettingsManager: UserSettingsManager
+    @EnvironmentObject var cloudKitManager: CloudKitManager
+    @StateObject var stepDataViewModel: StepDataViewModel
+    @StateObject var challengeViewModel: ChallengeViewModel
 
     @State private var showSignInView = false
 
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, context: NSManagedObjectContext) {
-        let userSettingsManager = UserSettingsManager.shared
-            _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager))
-        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(userSettingsManager: userSettingsManager, challengeManager: ChallengeManager()))
+        _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: UserSettingsManager.shared))
+        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(userSettingsManager: UserSettingsManager.shared, cloudKitManager: CloudKitManager.shared))
     }
 
     var body: some View {
         Group {
+            // Determine the view based on the onboarding and sign-in status
             if !userSettingsManager.hasCompletedOnboarding {
-                OnboardingView(onOnboardingComplete: {
-                    userSettingsManager.checkiCloudAvailability { available in
-                        userSettingsManager.hasCompletedOnboarding = true
-                        if available && !userSettingsManager.hasSignedIn {
-                            showSignInView = true
-                        }
-                    }
-                }).environmentObject(userSettingsManager)
-            } else if showSignInView {
-                SignInView(isPresented: $showSignInView, onSignInComplete: {
-                    userSettingsManager.hasSignedIn = true
-                })
-                .environmentObject(userSettingsManager)
-            } else {
-                CustomTabBarView()
-                    .environmentObject(stepDataViewModel)
+                OnboardingView(onOnboardingComplete: handleOnboardingComplete)
                     .environmentObject(userSettingsManager)
-                    .environmentObject(challengeViewModel)
+            } else if showSignInView {
+                SignInView(isPresented: $showSignInView, onSignInComplete: handleSignInComplete)
+                    .environmentObject(userSettingsManager)
+            } else {
+                mainContentView()
             }
         }
+        .environmentObject(stepDataViewModel)
+        .environmentObject(userSettingsManager)
+        .environmentObject(challengeViewModel)
+    }
+
+    private func handleOnboardingComplete() {
+        userSettingsManager.checkiCloudAvailability { available in
+            userSettingsManager.hasCompletedOnboarding = true
+            if available && !userSettingsManager.hasSignedIn {
+                showSignInView = true
+            }
+        }
+    }
+
+    private func handleSignInComplete() {
+        userSettingsManager.hasSignedIn = true
+    }
+
+    @ViewBuilder
+    private func mainContentView() -> some View {
+        CustomTabBarView()
+            .sheet(isPresented: $appState.isHandlingShare) {
+                if let challengeDetails = appState.sharedChallengeDetails {
+                    SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
+                        challengeViewModel.acceptChallenge(challengeDetails)
+                        appState.isHandlingShare = false // Dismiss the sheet
+                        }, onDecline: {
+                        challengeViewModel.declineChallenge(challengeDetails)
+                        appState.isHandlingShare = false
+                       })
+                }
+            }
     }
 }
 

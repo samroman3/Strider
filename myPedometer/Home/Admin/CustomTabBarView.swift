@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CustomTabBarView: View {
-    
+    @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @EnvironmentObject private var stepViewModel: StepDataViewModel
     @EnvironmentObject private var challengeViewModel: ChallengeViewModel
@@ -17,7 +17,7 @@ struct CustomTabBarView: View {
 
     var body: some View {
         VStack {
-        switch selectedTab {
+            switch selectedTab {
             case .today:
                 NavigationView{
                     TodayView()
@@ -35,7 +35,6 @@ struct CustomTabBarView: View {
                         .navigationTitle("Challenge")
                 }
             }
-
             // Custom Tab Bar
             HStack(spacing: 50) {
                 TabBarButton(icon: "shoe", selectedIcon: "shoe.fill", tab: .today, selectedTab: $selectedTab, color: .blue)

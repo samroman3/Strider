@@ -11,9 +11,9 @@ struct DummyChallenge: Identifiable {
     let id = UUID()
     var goalSteps: Int
     var currentSteps: [Int]
-    var status: ChallengeStatus // .sent, .received, .active, .completed
-    var participants: [String] // For simplicity, using strings to represent participants
-    var winner: Int? // Index of the winning participant in the 'participants' array
+    var status: ChallengeStatus
+    var participants: [String]
+    var winner: Int? 
 }
 
 enum ChallengeStatus {
@@ -415,33 +415,3 @@ struct CreateChallengeView: View {
 //        ChallengeView()
 //    }
 //}
-
-
-
-
-class MockUserSettingsManager: UserSettingsManager {
-    // Implement the required methods or properties with dummy data or simplified logic
-}
-
-class MockChallengeManager: ChallengeManager {
-    // Similarly, implement the required methods with dummy behaviors suitable for previews
-}
-
-// Implement a PreviewProvider for MainChallengeView
-struct MainChallengeView_Previews: PreviewProvider {
-    static var previews: some View {
-        // Initialize your mock managers if necessary
-        let mockUserSettingsManager = MockUserSettingsManager()
-        let mockChallengeManager = MockChallengeManager()
-        
-        // Create a ChallengeViewModel instance using the mock managers
-        let viewModel = ChallengeViewModel(userSettingsManager: mockUserSettingsManager, challengeManager: mockChallengeManager)
-        
-        // Set up the viewModel with sample data
-        // Note: This is done outside of the view-returning closure.
-        let sampleChallenge = ChallengeDetails(startTime: Date(), endTime:  Date().addingTimeInterval(86400) , goalSteps: 10000, active: true, users: [], recordId: "") // Ensure you create a sample challenge correctly
-
-        // Now return the MainChallengeView with the viewModel injected
-        return MainChallengeView().environmentObject(viewModel)
-    }
-}

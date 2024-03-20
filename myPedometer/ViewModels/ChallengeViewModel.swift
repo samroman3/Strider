@@ -11,7 +11,7 @@ import CoreData
 import Combine
 
 class ChallengeViewModel: ObservableObject {
-    private var challengeManager: ChallengeManager
+    private var cloudKitManager: CloudKitManager
     private var userSettingsManager: UserSettingsManager
     @Published var challenges: [Challenge] = []
     @Published var pendingChallenges: [Challenge] = [] // For challenges awaiting acceptance
@@ -29,9 +29,9 @@ class ChallengeViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(userSettingsManager: UserSettingsManager, challengeManager: ChallengeManager) {
+    init(userSettingsManager: UserSettingsManager, cloudKitManager: CloudKitManager) {
         self.userSettingsManager = userSettingsManager
-        self.challengeManager = challengeManager
+        self.cloudKitManager = cloudKitManager
 //        setupSubscriptions()
     }
     
@@ -67,13 +67,11 @@ class ChallengeViewModel: ObservableObject {
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
             // Logic to create the challenge and retrieve CKRecord and CKShare for sharing
-            // Assuming createChallenge returns CKRecord and CKShare or sets them up for sharing
-            let details = ChallengeDetails(startTime: Date(), endTime: endTime, goalSteps: goal, active: true, users: [], recordId: UUID().uuidString)
-            
             Task {
                 do {
-                    let (record, share) = try await challengeManager.createChallenge(with: details)
-                    // Assuming we have a method to trigger the CloudShareView presentation with record and share
+                    let details = ChallengeDetails(startTime: Date(), endTime: endTime, goalSteps: goal, active: true, participants: [], recordId: UUID().uuidString)
+                    var creator = Participant(user: userSettingsManager.user!, recordID: userSettingsManager.cloudKitRecordName ?? "")
+                    let (record, share) = try await cloudKitManager.createChallenge(with: details, creator: creator)
                     presentCloudShareView(record: record, share: share)
                 } catch {
                     print("Error creating or sharing challenge: \(error)")
@@ -86,24 +84,37 @@ class ChallengeViewModel: ObservableObject {
            // This could involve setting some @Published properties to trigger the presentation in the view layer
        }
     
-    func createChallenge(details: ChallengeDetails) {
-        state = .loading
-            Task {
-                do {
-                    try await challengeManager.createChallenge(with: details)
-                    // Reload challenges upon successful creation
-                    loadActiveChallenges()
-                } catch {
-                    print("Error creating challenge: \(error)")
-                }
+//    func createChallenge(details: ChallengeDetails) {
+//        state = .loading
+//            Task {
+//                do {
+//                    try await challengeManager.createChallenge(with: details)
+//                    // Reload challenges upon successful creation
+//                    loadActiveChallenges()
+//                } catch {
+//                    print("Error creating challenge: \(error)")
+//                }
+//            }
+//        }
+    
+    func acceptChallenge(_ challengeDetails: ChallengeDetails) {
+        Task {
+            do {
+                // Assuming challengeDetails contains enough information to identify the challenge
+                // Add current user as a participant to the challenge
+                let currentUserParticipant = Participant(user: userSettingsManager.user!, recordID: userSettingsManager.cloudKitRecordName ?? "")
+                try await cloudKitManager.addUserToChallenge(participant: currentUserParticipant, to: challengeDetails.recordId)
+                
+                // Optionally, set the challenge to active if not already and add it to the active challenges list
+                // This could involve fetching the challenge again and updating its status
+                loadActiveChallenges() // Reload challenges to reflect the new state
+            } catch {
+                print("Error accepting challenge: \(error)")
             }
         }
-    
-    func acceptChallenge(_ challenge: Challenge) {
-        // Accept an invitation to a challenge
     }
     
-    func declineChallenge(_ challenge: Challenge) {
+    func declineChallenge(_ challenge: ChallengeDetails) {
         // Decline an invitation to a challenge
     }
 }
