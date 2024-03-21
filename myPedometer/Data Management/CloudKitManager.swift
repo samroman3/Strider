@@ -35,52 +35,92 @@ class CloudKitManager: ObservableObject {
     init() {
         self.cloudKitContainer = CKContainer(identifier: "iCloud.com.example.myPedometer")
         self.context = PersistenceController.shared.container.viewContext
+        setupChallengeSubscription()
     }
     
     
     // MARK: Challenge Management
     
     func createChallenge(with details: ChallengeDetails, creator: Participant) async throws -> (CKRecord, CKShare) {
-        state = .loading
-        
-        // Create the challenge CKRecord
-        let challengeRecord = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: details.recordId))
-        challengeRecord["startTime"] = details.startTime
-        challengeRecord["endTime"] = details.endTime
-        challengeRecord["goalSteps"] = details.goalSteps
-        challengeRecord["active"] = details.active
-                
-        let creatorReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: creator.id), action: .none)
-        var participantReferences = details.participants.map { participant -> CKRecord.Reference in
-            return CKRecord.Reference(recordID: CKRecord.ID(recordName: participant.id), action: .none)
-        }
-        participantReferences.append(creatorReference) // Add the creator as a participant
-        challengeRecord["participants"] = participantReferences
-        
-        // Prepare the CKShare
-        let share = CKShare(rootRecord: challengeRecord)
-        share[CKShare.SystemFieldKey.title] = "Join My Challenge"
-        share.publicPermission = .readWrite
-        
-        // Save the challenge and share
+           state = .loading
+           let challengeRecord = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: details.recordId))
+           // Set challenge record properties
+           challengeRecord["startTime"] = details.startTime
+           challengeRecord["endTime"] = details.endTime
+           challengeRecord["goalSteps"] = details.goalSteps
+           challengeRecord["active"] = details.active
+           // Add creator to participants
+           let creatorReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: creator.id), action: .none)
+           let participantReferences = details.participants.map { participant -> CKRecord.Reference in
+               CKRecord.Reference(recordID: CKRecord.ID(recordName: participant.id), action: .none)
+           } + [creatorReference]
+           challengeRecord["participants"] = participantReferences
+           // Prepare and save the CKShare
+           let share = CKShare(rootRecord: challengeRecord)
+           share[CKShare.SystemFieldKey.title] = "Join My Challenge"
+           share.publicPermission = .readWrite
         let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
-        
+           
+           // Using async-await with continuation
         return try await withCheckedThrowingContinuation { continuation in
-            operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, error in
-                DispatchQueue.main.async {
-                    self.state = error == nil ? .loaded : .error(error ?? ManagerError.challengeCreationFailed)
-                }
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else if let savedRecord = savedRecords?.first as? CKRecord, let savedShare = savedRecords?.last as? CKShare {
-                    continuation.resume(returning: (savedRecord, savedShare))
-                } else {
-                    continuation.resume(throwing: ManagerError.challengeCreationFailed)
-                }
-            }
-            self.cloudKitContainer.privateCloudDatabase.add(operation)
-        }
-    }
+               operation.modifyRecordsResultBlock = { result in
+                   DispatchQueue.main.async {
+                       switch result {
+                       case .success(_):
+                           self.state = .loaded
+                           continuation.resume(returning: (challengeRecord, share))
+                       case .failure(let error):
+                           self.state = .error(error)
+                           continuation.resume(throwing: error)
+                       }
+                   }
+               }
+               
+               self.cloudKitContainer.privateCloudDatabase.add(operation)
+           }
+       }
+    
+    private func setupChallengeSubscription() {
+          let subscriptionID = "challenge-updates"
+          // Check if already subscribed
+          cloudKitContainer.privateCloudDatabase.fetch(withSubscriptionID: subscriptionID) { subscription, error in
+              if let error = error as? CKError, error.code == .unknownItem {
+                  self.createChallengeUpdatesSubscription(subscriptionID: subscriptionID)
+              } // If subscription exists or another error occurs, do nothing.
+          }
+      }
+
+      private func createChallengeUpdatesSubscription(subscriptionID: String) {
+          let predicate = NSPredicate(value: true) // Adjust according to your needs
+          let subscription = CKQuerySubscription(recordType: "Challenge", predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate])
+          let notificationInfo = CKSubscription.NotificationInfo()
+          notificationInfo.alertBody = "A challenge has been updated."
+          notificationInfo.shouldBadge = true
+          subscription.notificationInfo = notificationInfo
+          cloudKitContainer.privateCloudDatabase.save(subscription) { _, error in
+              if let error = error {
+                  print("Subscription failed: \(error.localizedDescription)")
+                  // Handle error
+              } else {
+                  print("Subscription setup successfully.")
+                  // Perform any setup needed after successful subscription creation
+              }
+          }
+      }
+      
+      // MARK: Shared Record Handling
+      
+      func acceptShareAndFetchChallenge(metadata: CKShare.Metadata) async throws -> ChallengeDetails? {
+          do {
+              let _ = try await cloudKitContainer.accept(metadata)
+              let sharedRecordID = metadata.rootRecordID
+              let record = try await cloudKitContainer.privateCloudDatabase.record(for: sharedRecordID)
+              return await convertToChallengeDetails(record: record)
+          } catch {
+              print("Error handling incoming share: \(error)")
+              throw error
+          }
+      }
     
     func addUserToChallenge(participant: Participant, to challengeID: String) async throws {
         guard let challengeRecord = try? await cloudKitContainer.privateCloudDatabase.record(for: CKRecord.ID(recordName: challengeID)) else {
@@ -95,61 +135,6 @@ class CloudKitManager: ObservableObject {
         
         // Update the challenge record with the new participant
         try await cloudKitContainer.privateCloudDatabase.save(challengeRecord)
-    }
-    
-    
-    
-    // MARK: Handling Updates and Notifications
-    
-    func subscribeToChallengeUpdates() {
-        let subscription = CKQuerySubscription(recordType: "Challenge", predicate: NSPredicate(value: true), options: [.firesOnRecordCreation, .firesOnRecordUpdate])
-        
-        let info = CKSubscription.NotificationInfo()
-        info.alertBody = "A challenge has been updated."
-        info.shouldBadge = true
-        subscription.notificationInfo = info
-        
-        cloudKitContainer.privateCloudDatabase.save(subscription) { subscription, error in
-            if let error = error {
-                print("Subscription failed: \(error.localizedDescription)")
-            }
-        }
-    }
-
-
-    func acceptShareAndFetchChallenge(metadata: CKShare.Metadata) async throws -> ChallengeDetails? {
-        do {
-            // Accept the share
-            let _ = try await cloudKitContainer.accept(metadata)
-            let sharedRecordID = metadata.rootRecordID
-            let record = try await cloudKitContainer.privateCloudDatabase.record(for: sharedRecordID)
-
-            // Convert the record to ChallengeDetails
-            return await convertToChallengeDetails(record: record)
-        } catch {
-            print("Error handling incoming share: \(error)")
-            throw error
-        }
-    }
-    
-    func handleNotification(_ notification: CKQueryNotification) async {
-        guard let recordID = notification.recordID else {
-            print("Notification does not contain a recordID.")
-            return
-        }
-
-        do {
-            // Fetch the updated record based on recordID
-            let record = try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
-            // Optionally, determine the type of update and act accordingly
-            // For example, if the challenge's status has changed, fetch updated details
-            if let updatedChallengeDetails = await convertToChallengeDetails(record: record) {
-                // TODO: Must callback to inform AppState and relevant view models to update their state.
-//                print("Updated challenge details fetched: \(updatedChallengeDetails)")
-            }
-        } catch {
-            print("Failed to fetch updated record: \(error)")
-        }
     }
     
     func convertToChallengeDetails(record: CKRecord) async -> ChallengeDetails? {
@@ -203,6 +188,111 @@ class CloudKitManager: ObservableObject {
             throw error
         }
     }
+    
+    func fetchChallengeRecord(challengeID: String) async throws -> CKRecord {
+        let recordID = CKRecord.ID(recordName: challengeID)
+        return try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
+    }
+    
+    
+    
+    // MARK: Handling Updates and Notifications
+    
+    func subscribeToChallengeUpdates() {
+        let subscription = CKQuerySubscription(recordType: "Challenge", predicate: NSPredicate(value: true), options: [.firesOnRecordCreation, .firesOnRecordUpdate])
+        
+        let info = CKSubscription.NotificationInfo()
+        info.alertBody = "A challenge has been updated."
+        info.shouldBadge = true
+        subscription.notificationInfo = info
+        
+        cloudKitContainer.privateCloudDatabase.save(subscription) { subscription, error in
+            if let error = error {
+                print("Subscription failed: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func handleNotification(_ notification: CKQueryNotification) async {
+        guard let recordID = notification.recordID else {
+            print("Notification does not contain a recordID.")
+            return
+        }
+        
+        do {
+            let record = try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
+            // Process the notification
+            if let updatedChallengeDetails = await convertToChallengeDetails(record: record) {
+                // Assuming the notification indicates a challenge acceptance
+                DispatchQueue.main.async {
+                    //TODO: Switch for notification - eg. participant step updates / challenge acceptance(participant added) / challenge complete(stepgoal reached or endtime reached) / challenge invite denied
+                    AppState.shared.challengeAccepted(challengeDetails: updatedChallengeDetails)
+                    // Update sharedChallengeDetails if necessary
+                    AppState.shared.sharedChallengeDetails = updatedChallengeDetails
+                }
+            }
+        } catch {
+            print("Failed to fetch record: \(error)")
+        }
+    }
+    
+    
+    // MARK: GAME LOGIC
+    
+    func addParticipantToChallenge(challengeID: String, participantID: String) async {
+        do {
+            let challengeRecord = try await fetchChallengeRecord(challengeID: challengeID)
+            var participantReferences = challengeRecord["participants"] as? [CKRecord.Reference] ?? []
+            let newParticipantRef = CKRecord.Reference(recordID: CKRecord.ID(recordName: participantID), action: .none)
+            participantReferences.append(newParticipantRef)
+            challengeRecord["participants"] = participantReferences
+            challengeRecord["status"] = "Active" // Mark as active
+            
+            _ = try await cloudKitContainer.privateCloudDatabase.save(challengeRecord)
+            
+            // Notify AppState and ChallengeViewModel
+
+            await AppState.shared.participantAdded(challengeDetails: convertToChallengeDetails(record: challengeRecord)!)
+            
+        } catch {
+            print("Error adding participant to challenge: \(error)")
+        }
+    }
+    
+    func checkForStepGoalAchievement(challengeID: String) async {
+        do {
+            let challengeRecord = try await fetchChallengeRecord(challengeID: challengeID)
+            guard let stepGoal = challengeRecord["goalSteps"] as? Int else { return }
+
+            // Fetch participants and their steps
+            let participants = await fetchAndConvertParticipants(references: (challengeRecord["participants"] as? [CKRecord.Reference])!)
+            let winner = participants.max(by: { $0.steps < $1.steps })
+            
+            // Check if the step goal is achieved
+            if let winner = winner, winner.steps >= stepGoal {
+            // Update challenge record with the winner and mark as done
+            await updateChallengeRecordWithWinner(challengeRecord: challengeRecord, winner: winner)
+            // Notify AppState and ChallengeViewModel
+                
+            await AppState.shared.challengeCompleted(challengeDetails: convertToChallengeDetails(record: challengeRecord)!)
+                
+            }
+        } catch {
+            print("Error checking for step goal achievement: \(error)")
+        }
+    }
+    
+    func updateChallengeRecordWithWinner(challengeRecord: CKRecord, winner: Participant) async {
+        challengeRecord["winner"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: winner.id), action: .none)
+        challengeRecord["status"] = "Completed"
+        do {
+            _ = try await cloudKitContainer.privateCloudDatabase.save(challengeRecord)
+        } catch {
+            print("Error updating challenge with winner: \(error)")
+        }
+    }
+
+
     
     func updateParticipantSteps(participantID: String, newSteps: Int, inChallenge challengeID: String) async throws {
         // Fetch the challenge record from CloudKit

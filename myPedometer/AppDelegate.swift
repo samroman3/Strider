@@ -20,14 +20,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // Handle CloudKit notifications, including share notifications
-        guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String: NSObject]),
-              notification.notificationType == .query else {
-            completionHandler(.noData)
+        guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String: NSObject]) else {
+            completionHandler(.failed)
             return
         }
-        AppState.shared.handleCloudKitNotification(notification)
-        completionHandler(.newData)
+        
+        switch notification.notificationType {
+        case .query:
+            // Ensure it's the right query notification for "Challenge" updates.
+            // This assumes you have some way to verify this, like a custom key in the notification's userInfo
+            // or by fetching the record by ID and checking its type.
+            // The below is a simplified example:
+            if let queryNotification = notification as? CKQueryNotification,
+               let recordID = queryNotification.recordID {
+                
+                // Call a method on CloudKitManager to handle fetching and processing of the record.
+                Task {
+                    await CloudKitManager.shared.handleNotification(queryNotification)
+                    DispatchQueue.main.async {
+                        // Notify AppState or relevant ViewModel to update UI if needed.
+                        // This could involve setting a published property that the UI observes.
+                    }
+                    completionHandler(.newData)
+                }
+            } else {
+                completionHandler(.noData)
+            }
+        default:
+            completionHandler(.noData)
+        }
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

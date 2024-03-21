@@ -140,5 +140,7 @@ class StepDataViewModel: ObservableObject {
          userSettingsManager.updateDailyLog(with: todaySteps, calories: Int(caloriesBurned), date: Date())
          userSettingsManager.updateUserLifetimeSteps(additionalSteps: todaySteps)
          userSettingsManager.checkAndUpdatePersonalBest(with: todaySteps, calories: Int(caloriesBurned))
+        
+        //TODO: Update any active challenges with dailylog steps
      }
 }

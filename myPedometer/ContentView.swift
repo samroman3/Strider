@@ -10,8 +10,8 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var appState: AppState
-    @EnvironmentObject var userSettingsManager: UserSettingsManager
-    @EnvironmentObject var cloudKitManager: CloudKitManager
+    var userSettingsManager = UserSettingsManager.shared
+    var cloudKitManager = CloudKitManager.shared
     @StateObject var stepDataViewModel: StepDataViewModel
     @StateObject var challengeViewModel: ChallengeViewModel
 
@@ -19,7 +19,7 @@ struct ContentView: View {
 
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, context: NSManagedObjectContext) {
         _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: UserSettingsManager.shared))
-        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(userSettingsManager: UserSettingsManager.shared, cloudKitManager: CloudKitManager.shared))
+        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel())
     }
 
     var body: some View {
@@ -56,17 +56,24 @@ struct ContentView: View {
     @ViewBuilder
     private func mainContentView() -> some View {
         CustomTabBarView()
-            .sheet(isPresented: $appState.isHandlingShare) {
-                if let challengeDetails = appState.sharedChallengeDetails {
-                    SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
-                        challengeViewModel.acceptChallenge(challengeDetails)
-                        appState.isHandlingShare = false // Dismiss the sheet
+                .sheet(item: $appState.currentChallengeState) { challengeState in
+                    switch challengeState {
+                    case .invitation(let challengeDetails):
+                        SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
+                            challengeViewModel.acceptChallenge(challengeDetails)
+                            appState.currentChallengeState = nil
                         }, onDecline: {
-                        challengeViewModel.declineChallenge(challengeDetails)
-                        appState.isHandlingShare = false
-                       })
+                            challengeViewModel.declineChallenge(challengeDetails)
+                            appState.currentChallengeState = nil
+                        })
+                    case .challengeActive(let challengeDetails):
+                        // Implement your view for an active challenge
+                        Text("Challenge is now active with details: \(challengeDetails.goalSteps)")
+                    case .challengeCompleted(let challengeDetails):
+                        // Implement your view for a completed challenge
+                        Text("Challenge completed! Goal steps: \(challengeDetails.goalSteps)")
+                    }
                 }
-            }
     }
 }
 

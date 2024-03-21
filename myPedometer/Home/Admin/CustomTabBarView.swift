@@ -47,7 +47,7 @@ struct CustomTabBarView: View {
         }
         .onAppear(){
             userSettingsManager.loadUserSettings()
-            challengeViewModel.loadActiveChallenges()
+//            challengeViewModel.loadActiveChallenges()
         }
         .background(.black)
     }
