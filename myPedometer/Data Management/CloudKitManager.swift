@@ -32,8 +32,10 @@ class CloudKitManager: ObservableObject {
     private var context: NSManagedObjectContext
     let recordZone = CKRecordZone(zoneName: "Challenges")
     
+    @Published var challengeUpdates: [ChallengeDetails] = []
+    
     init() {
-        self.cloudKitContainer = CKContainer(identifier: "iCloud.com.example.myPedometer")
+        self.cloudKitContainer = CKContainer(identifier: "iCloud.com.samuelroman.strider")
         self.context = PersistenceController.shared.container.viewContext
         setupChallengeSubscription()
     }
@@ -48,7 +50,7 @@ class CloudKitManager: ObservableObject {
            challengeRecord["startTime"] = details.startTime
            challengeRecord["endTime"] = details.endTime
            challengeRecord["goalSteps"] = details.goalSteps
-           challengeRecord["active"] = details.active
+           challengeRecord["status"] = details.status
            // Add creator to participants
            let creatorReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: creator.id), action: .none)
            let participantReferences = details.participants.map { participant -> CKRecord.Reference in
@@ -79,6 +81,21 @@ class CloudKitManager: ObservableObject {
                self.cloudKitContainer.privateCloudDatabase.add(operation)
            }
        }
+    
+    func deleteExpiredChallengeRecords() async {
+        let predicate = NSPredicate(format: "expirationDate <= %@", NSDate())
+        let query = CKQuery(recordType: "Challenge", predicate: predicate)
+        
+        do {
+            let results = try await cloudKitContainer.privateCloudDatabase.perform(query, inZoneWith: nil)
+            for record in results {
+                _ = try await cloudKitContainer.privateCloudDatabase.deleteRecord(withID: record.recordID)
+            }
+            print("Expired challenge records deleted successfully.")
+        } catch {
+            print("Error deleting expired challenge records: \(error)")
+        }
+    }
     
     private func setupChallengeSubscription() {
           let subscriptionID = "challenge-updates"
@@ -122,6 +139,30 @@ class CloudKitManager: ObservableObject {
           }
       }
     
+    func declineChallenge(challengeID: String) async {
+        do {
+            // Fetch the challenge record
+            let recordID = CKRecord.ID(recordName: challengeID)
+            let challengeRecord = try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
+            
+            // Update the status to "Denied"
+            challengeRecord["status"] = "Denied"
+            
+            // Save the updated record
+            _ = try await cloudKitContainer.privateCloudDatabase.save(challengeRecord)
+            
+            // Optionally, delete the record if necessary
+            
+            // Notify the ChallengeViewModel of the declined challenge
+            
+             await self.challengeUpdates.append(self.convertToChallengeDetails(record: challengeRecord)!)
+            
+        } catch {
+            print("Error declining challenge: \(error)")
+        }
+    }
+    
+    
     func addUserToChallenge(participant: Participant, to challengeID: String) async throws {
         guard let challengeRecord = try? await cloudKitContainer.privateCloudDatabase.record(for: CKRecord.ID(recordName: challengeID)) else {
             throw ManagerError.invalidRecord
@@ -141,7 +182,7 @@ class CloudKitManager: ObservableObject {
         guard let startTime = record["startTime"] as? Date,
               let endTime = record["endTime"] as? Date,
               let goalSteps = record["goalSteps"] as? Int32,
-              let active = record["active"] as? Bool,
+              let status = record["status"] as? String,
               let participantReferences = record["participants"] as? [CKRecord.Reference] else {
             return nil
         }
@@ -153,7 +194,7 @@ class CloudKitManager: ObservableObject {
             startTime: startTime,
             endTime: endTime,
             goalSteps: goalSteps,
-            active: active,
+            status: status,
             participants: participants,
             recordId: recordId
         )
@@ -223,7 +264,6 @@ class CloudKitManager: ObservableObject {
             let record = try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
             // Process the notification
             if let updatedChallengeDetails = await convertToChallengeDetails(record: record) {
-                // Assuming the notification indicates a challenge acceptance
                 DispatchQueue.main.async {
                     //TODO: Switch for notification - eg. participant step updates / challenge acceptance(participant added) / challenge complete(stepgoal reached or endtime reached) / challenge invite denied
                     AppState.shared.challengeAccepted(challengeDetails: updatedChallengeDetails)
@@ -237,7 +277,7 @@ class CloudKitManager: ObservableObject {
     }
     
     
-    // MARK: GAME LOGIC
+    // MARK: Game Logic
     
     func addParticipantToChallenge(challengeID: String, participantID: String) async {
         do {
@@ -319,4 +359,6 @@ class CloudKitManager: ObservableObject {
             throw ManagerError.invalidRecord
         }
     }
+    
+    
 }

@@ -17,8 +17,9 @@ struct DummyChallenge: Identifiable {
 }
 
 enum ChallengeStatus {
-    case sent, received, active, completed
+    case sent, received, active, completed, denied
 }
+
 struct MainChallengeView: View {
     @EnvironmentObject var challengeViewModel: ChallengeViewModel
     @State private var showCreateChallenge = false
@@ -244,10 +245,7 @@ struct CreateChallengeView: View {
         .navigationTitle("Create Challenge")
     }
 }
-//
-//
-//
-//
+
 //struct InviteView: View {
 //    @StateObject var challengeViewModel: ChallengeViewModel
 //    @State private var searchQuery: String = ""

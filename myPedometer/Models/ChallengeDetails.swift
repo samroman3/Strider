@@ -12,7 +12,7 @@ struct ChallengeDetails {
     var startTime: Date
     var endTime: Date
     var goalSteps: Int32
-    var active: Bool
+    var status: String
     var participants: [Participant]
     var recordId: String
 }
@@ -22,7 +22,7 @@ extension ChallengeDetails {
         guard let startTime = record["startTime"] as? Date,
               let endTime = record["endTime"] as? Date,
               let goalSteps = record["goalSteps"] as? Int,
-              let active = record["active"] as? Bool,
+              let status = record["status"] as? String,
               let participants = record["participants"] as? [Participant],
               var recordId = record["recordId"] as? String
         else {
@@ -30,7 +30,7 @@ extension ChallengeDetails {
         }
             
         
-        return ChallengeDetails(startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), active: active, participants: participants, recordId: recordId)
+        return ChallengeDetails(startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), status: status, participants: participants, recordId: recordId)
     }
     
 }

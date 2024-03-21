@@ -11,59 +11,72 @@ import CoreData
 import Combine
 
 class ChallengeViewModel: ObservableObject {
-    private var cloudKitManager = CloudKitManager.shared
-    private var userSettingsManager = UserSettingsManager.shared
-    @Published var challenges: [Challenge] = []
-    @Published var pendingChallenges: [Challenge] = [] // For challenges created and awaiting acceptance
-    @Published var noActiveChallengesText = "No active challenges. Invite Striders to begin!"
+    private let cloudKitManager = CloudKitManager.shared
+    private let userSettingsManager = UserSettingsManager.shared
     
-    enum State {
-        case idle
-        case loading
-        case loaded
-        case error(Error)
+    @Published var challenges: [ChallengeDetails] = []
+    @Published var pendingChallenges: [ChallengeDetails] = [] // For challenges awaiting acceptance
+    @Published var noActiveChallengesText = "No active challenges. Create and share a challenge to begin!"
+    
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init() {
+        setupSubscriptions()
     }
     
-    @Published private(set) var state: State = .idle
+    private func setupSubscriptions() {
+        cloudKitManager.$challengeUpdates
+            .sink { [weak self] updates in
+                self?.processUpdates(updates)
+            }
+            .store(in: &cancellables)
+    }
     
-    private var cancellables = Set<AnyCancellable>()
-    
-    // MARK: - Actions
+    private func processUpdates(_ updates: [ChallengeDetails]) {
+        for update in updates {
+            if let index = challenges.firstIndex(where: { $0.recordId == update.recordId }) {
+                challenges[index] = update
+            } else {
+                challenges.append(update)
+            }
+        }
+        // Sort or filter challenges based on their status.
+        pendingChallenges = challenges.filter { $0.status == "Sent" || $0.status == "Received" }
+    }
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
-            // Logic to create the challenge and retrieve CKRecord and CKShare for sharing
-            Task {
-                do {
-                    let details = ChallengeDetails(startTime: Date(), endTime: endTime, goalSteps: goal, active: true, participants: [], recordId: UUID().uuidString)
-                    let creator = Participant(user: userSettingsManager.user!, recordID: userSettingsManager.cloudKitRecordName ?? "")
-                    let (record, share) = try await cloudKitManager.createChallenge(with: details, creator: creator)
-                    presentCloudShareView(record: record, share: share)
-                } catch {
-                    print("Error creating or sharing challenge: \(error)")
-                }
-            }
-        }
-    
-    private func presentCloudShareView(record: CKRecord, share: CKShare) {
-           // Logic to present CloudShareView with provided record and share
-           // This could involve setting some @Published properties to trigger the presentation in the view layer
-       }
-    
-     func acceptChallenge(_ challengeDetails: ChallengeDetails) {
         Task {
             do {
-                let currentUserParticipant = Participant(user: userSettingsManager.user!, recordID: userSettingsManager.cloudKitRecordName ?? "")
-                try await cloudKitManager.addUserToChallenge(participant: currentUserParticipant, to: challengeDetails.recordId)
-                // Notify AppState or directly update UI as necessary
-//                AppState.shared.challengeAccepted()
+                let details = ChallengeDetails(startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: UUID().uuidString)
+                if let user = userSettingsManager.user {
+                    let creator = Participant(user: user, recordID: userSettingsManager.cloudKitRecordName!)
+                        let (record, share) = try await cloudKitManager.createChallenge(with: details, creator: creator)
+                        DispatchQueue.main.async {
+                            self.presentCloudShareView(record: record, share: share)
+                        }
+                    }
             } catch {
-                print("Error accepting challenge: \(error)")
+                print("Error creating or sharing challenge: \(error)")
             }
         }
     }
-  
     
-    func declineChallenge(_ challenge: ChallengeDetails) {
-        // Decline an invitation to a challenge
+    private func presentCloudShareView(record: CKRecord, share: CKShare) {
+        // Implement presentation logic here.
+    }
+    
+    func acceptChallenge(_ challengeDetails: ChallengeDetails) {
+        Task {
+                let currentUserParticipant = Participant(user:userSettingsManager.user! , recordID: userSettingsManager.cloudKitRecordName!)
+                await cloudKitManager.addParticipantToChallenge(challengeID: challengeDetails.recordId, participantID: currentUserParticipant.id)
+            }
+    }
+    
+    func declineChallenge(_ challengeDetails: ChallengeDetails) {
+        Task {
+            do {
+                await cloudKitManager.declineChallenge(challengeID: challengeDetails.recordId)
+            }
+        }
     }
 }

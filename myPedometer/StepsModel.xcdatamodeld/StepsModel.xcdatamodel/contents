@@ -6,6 +6,7 @@
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="recordID" optional="YES" attributeType="String"/>
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
         <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="challenges" inverseEntity="User"/>
     </entity>
     <entity name="DailyLog" representedClassName="DailyLog" syncable="YES">

@@ -94,11 +94,6 @@ class UserSettingsManager: ObservableObject {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
-
-    @objc private func ubiquitousKeyValueStoreDidChange(_ notification: Notification) {
-        // Handle changes as needed, for example, reload flags
-    }
     
     func getCurrentUserRecordID(completion: @escaping (Result<CKRecord.ID, Error>) -> Void) {
         CKContainer.default().fetchUserRecordID { recordID, error in
@@ -164,7 +159,6 @@ class UserSettingsManager: ObservableObject {
         
         // Save the context to persist changes
         saveContext {
-            // You can use a completion block if needed, for example, to update UI or log success.
             print("Updated user lifetime steps successfully.")
         }
     }

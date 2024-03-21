@@ -27,19 +27,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         switch notification.notificationType {
         case .query:
-            // Ensure it's the right query notification for "Challenge" updates.
-            // This assumes you have some way to verify this, like a custom key in the notification's userInfo
-            // or by fetching the record by ID and checking its type.
-            // The below is a simplified example:
+            // Ensure it's the right query notification by fetching the record by ID and checking its type.
             if let queryNotification = notification as? CKQueryNotification,
                let recordID = queryNotification.recordID {
-                
                 // Call a method on CloudKitManager to handle fetching and processing of the record.
                 Task {
                     await CloudKitManager.shared.handleNotification(queryNotification)
                     DispatchQueue.main.async {
-                        // Notify AppState or relevant ViewModel to update UI if needed.
-                        // This could involve setting a published property that the UI observes.
+                   //TODO: set background notifs for challenge updates
+                        // Notify AppState/ ChallengeViewModel to update UI.
                     }
                     completionHandler(.newData)
                 }
