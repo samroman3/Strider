@@ -32,7 +32,7 @@ struct CustomTabBarView: View {
             case .challenge:
                 NavigationView{
                     MainChallengeView()
-                        .navigationTitle("Challenge")
+                        .navigationTitle("Challenges")
                 }
             }
             // Custom Tab Bar

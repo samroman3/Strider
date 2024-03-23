@@ -56,7 +56,7 @@ struct WelcomeScreen: View {
     var body: some View {
         ZStack {
             // Background gradient
-            LinearGradient(gradient: Gradient(colors: [Color("StartColor"), Color("EndColor")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(gradient: Gradient(colors: [AppTheme.darkGray, AppTheme.darkerGray]), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 20) {
@@ -85,6 +85,10 @@ struct WelcomeScreen: View {
                         .foregroundColor(.white)
                     
                     Text("Challenge friends.")
+                        .multilineTextAlignment(.center)
+                        .font(.title3)
+                        .foregroundColor(.white)
+                    Text("Reach your goals together.")
                         .multilineTextAlignment(.center)
                         .font(.title3)
                         .foregroundColor(.white)

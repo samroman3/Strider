@@ -28,7 +28,7 @@ class CloudKitManager: ObservableObject {
     
     @Published private(set) var state: State = .idle
     
-    private var cloudKitContainer: CKContainer
+    var cloudKitContainer: CKContainer
     private var context: NSManagedObjectContext
     let recordZone = CKRecordZone(zoneName: "Challenges")
     
@@ -44,22 +44,25 @@ class CloudKitManager: ObservableObject {
     // MARK: Challenge Management
     
     func createChallenge(with details: ChallengeDetails, creator: Participant) async throws -> (CKRecord, CKShare) {
-           state = .loading
+        DispatchQueue.main.async{
+            self.state = .loading
+        }
            let challengeRecord = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: details.recordId))
            // Set challenge record properties
            challengeRecord["startTime"] = details.startTime
            challengeRecord["endTime"] = details.endTime
            challengeRecord["goalSteps"] = details.goalSteps
            challengeRecord["status"] = details.status
+           challengeRecord["recordId"] = details.recordId
            // Add creator to participants
-           let creatorReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: creator.id), action: .none)
+        let creatorReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: creator.id), action: .none)
            let participantReferences = details.participants.map { participant -> CKRecord.Reference in
                CKRecord.Reference(recordID: CKRecord.ID(recordName: participant.id), action: .none)
            } + [creatorReference]
            challengeRecord["participants"] = participantReferences
            // Prepare and save the CKShare
            let share = CKShare(rootRecord: challengeRecord)
-           share[CKShare.SystemFieldKey.title] = "Join My Challenge"
+           share[CKShare.SystemFieldKey.title] = "Join My Challenge on Strider"
            share.publicPermission = .readWrite
         let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
            
@@ -83,10 +86,12 @@ class CloudKitManager: ObservableObject {
        }
     
     func deleteExpiredChallengeRecords() async {
+
         let predicate = NSPredicate(format: "expirationDate <= %@", NSDate())
         let query = CKQuery(recordType: "Challenge", predicate: predicate)
         
         do {
+            
             let results = try await cloudKitContainer.privateCloudDatabase.perform(query, inZoneWith: nil)
             for record in results {
                 _ = try await cloudKitContainer.privateCloudDatabase.deleteRecord(withID: record.recordID)
@@ -108,7 +113,7 @@ class CloudKitManager: ObservableObject {
       }
 
       private func createChallengeUpdatesSubscription(subscriptionID: String) {
-          let predicate = NSPredicate(value: true) // Adjust according to your needs
+          let predicate = NSPredicate(value: true) 
           let subscription = CKQuerySubscription(recordType: "Challenge", predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate])
           let notificationInfo = CKSubscription.NotificationInfo()
           notificationInfo.alertBody = "A challenge has been updated."
@@ -191,7 +196,7 @@ class CloudKitManager: ObservableObject {
         let recordId = record.recordID.recordName
         
         return ChallengeDetails(
-            startTime: startTime,
+            id: recordId, startTime: startTime,
             endTime: endTime,
             goalSteps: goalSteps,
             status: status,
@@ -267,15 +272,22 @@ class CloudKitManager: ObservableObject {
                 DispatchQueue.main.async {
                     //TODO: Switch for notification - eg. participant step updates / challenge acceptance(participant added) / challenge complete(stepgoal reached or endtime reached) / challenge invite denied
                     AppState.shared.challengeAccepted(challengeDetails: updatedChallengeDetails)
-                    // Update sharedChallengeDetails if necessary
                     AppState.shared.sharedChallengeDetails = updatedChallengeDetails
+                    
+                    var currentUpdates = self.challengeUpdates
+                    if let index = currentUpdates.firstIndex(where: { $0.recordId == updatedChallengeDetails.recordId }) {
+                        currentUpdates[index] = updatedChallengeDetails // Update existing challenge
+                    } else {
+                        currentUpdates.append(updatedChallengeDetails) // Add new challenge
+                    }
+                    self.challengeUpdates = currentUpdates // Publish updated challenges
                 }
             }
         } catch {
             print("Failed to fetch record: \(error)")
         }
     }
-    
+
     
     // MARK: Game Logic
     
@@ -290,7 +302,7 @@ class CloudKitManager: ObservableObject {
             
             _ = try await cloudKitContainer.privateCloudDatabase.save(challengeRecord)
             
-            // Notify AppState and ChallengeViewModel
+            // Notify AppState 
 
             await AppState.shared.participantAdded(challengeDetails: convertToChallengeDetails(record: challengeRecord)!)
             
@@ -312,8 +324,6 @@ class CloudKitManager: ObservableObject {
             if let winner = winner, winner.steps >= stepGoal {
             // Update challenge record with the winner and mark as done
             await updateChallengeRecordWithWinner(challengeRecord: challengeRecord, winner: winner)
-            // Notify AppState and ChallengeViewModel
-                
             await AppState.shared.challengeCompleted(challengeDetails: convertToChallengeDetails(record: challengeRecord)!)
                 
             }

@@ -79,7 +79,7 @@ struct HeaderView: View {
 }
 
 struct LifetimeStepsView: View {
-    @Binding var lifeTimeSteps: Double
+    @Binding var lifeTimeSteps: Int
     
     var body: some View {
         VStack(alignment: .center) {

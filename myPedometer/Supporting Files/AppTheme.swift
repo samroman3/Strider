@@ -22,6 +22,11 @@ class AppTheme {
         startPoint: .leading,
         endPoint: .trailing
     )
+    
+    static let darkerGray = Color(red: 28 / 255, green: 28 / 255, blue: 28 / 255)
+    
+    static let darkGray = Color(red: 94 / 255, green: 94 / 255, blue: 94 / 255)
+
 }
 
 

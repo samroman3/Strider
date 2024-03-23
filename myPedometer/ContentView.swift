@@ -10,8 +10,8 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var appState: AppState
-    var userSettingsManager = UserSettingsManager.shared
-    var cloudKitManager = CloudKitManager.shared
+    @EnvironmentObject var userSettingsManager: UserSettingsManager
+    @EnvironmentObject var cloudKitManager: CloudKitManager
     @StateObject var stepDataViewModel: StepDataViewModel
     @StateObject var challengeViewModel: ChallengeViewModel
 
@@ -67,10 +67,10 @@ struct ContentView: View {
                             appState.currentChallengeState = nil
                         })
                     case .challengeActive(let challengeDetails):
-                        // Implement your view for an active challenge
+                        // TODO: Implement active challenge view
                         Text("Challenge is now active with details: \(challengeDetails.goalSteps)")
                     case .challengeCompleted(let challengeDetails):
-                        // Implement your view for a completed challenge
+                        // TODO: Implement view for completed challenge
                         Text("Challenge completed! Goal steps: \(challengeDetails.goalSteps)")
                     }
                 }

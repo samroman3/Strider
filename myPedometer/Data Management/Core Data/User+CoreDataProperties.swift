@@ -25,7 +25,9 @@ extension User {
     @NSManaged public var appleId: String?
     @NSManaged public var challenges: NSSet?
     @NSManaged public var dailyLogs: NSSet?
-    @NSManaged public var recordID: String?
+    @NSManaged public var recordId: String?
+    @NSManaged public var calGoal: Int32
+    @NSManaged public var stepGoal: Int32
 
 }
 
@@ -93,8 +95,14 @@ extension User {
         // Set user-specific properties
         record["userName"] = self.userName
         record["photoData"] = self.photoData
-        record["recordID"] = self.recordID
-        
+        record["recordId"] = self.recordId
+        record["calorieRecord"] = self.calorieRecord
+        record["lifetimesteps"] = self.lifetimeSteps
+        record["stepsRecord"] = self.stepsRecord
+        record["appleId"] = self.appleId
+        record["calGoal"] = self.calGoal
+        record["stepGoal"] = self.stepGoal
+
         return record
     }
 }

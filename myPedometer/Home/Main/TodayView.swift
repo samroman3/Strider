@@ -24,10 +24,9 @@ struct TodayView: View {
                     Button(action: {
                         profileViewIsPresented.toggle()
                     }) {
-                        NavigationLink(destination: ProfileSetupView().environmentObject(userSettingsManager), isActive: $profileViewIsPresented) {
                             Image(systemName: "gear")
                                 .foregroundColor(.white)
-                        }
+                                .font(.title2)
                     }
                 }
                 .padding([.horizontal])
@@ -44,6 +43,12 @@ struct TodayView: View {
                 .tabViewStyle(PageTabViewStyle())
                 Spacer()
             }
+            .onAppear(){
+                userSettingsManager.loadUserSettings()
+            }
+            .sheet(isPresented: $profileViewIsPresented, content: {
+                ProfileSetupView().environmentObject(userSettingsManager)
+            })
     }
 
     
@@ -51,7 +56,7 @@ struct TodayView: View {
     @ViewBuilder
     private func stepContent() -> some View {
         ZStack {
-            BarGoalView(layers: 10, alignLeft: false)
+            BarGoalView(alignLeft: false, layers: 10)
             VStack {
                 Spacer()
                 VStack(alignment: .leading) {
@@ -68,6 +73,9 @@ struct TodayView: View {
                             Text("\(viewModel.todayLog?.totalSteps ?? 0)")
                                 .font(.headline)
                                 .foregroundColor(.white)
+                            Text("steps")
+                                .font(.headline)
+                                .foregroundColor(.white)
                             if let totalSteps = viewModel.todayLog?.totalSteps, totalSteps < viewModel.dailyStepGoal {
                                 Text("\(viewModel.dailyStepGoal - Int(totalSteps)) remaining")
                                     .font(.headline)
@@ -79,6 +87,7 @@ struct TodayView: View {
                             }
                             Spacer()
                         }
+                        .padding(.horizontal)
                         Spacer()
                     }
                 }
@@ -89,7 +98,7 @@ struct TodayView: View {
     @ViewBuilder
     private func calorieContent() -> some View {
         ZStack {
-            BarGoalView(layers: 10, alignLeft: true)
+            BarGoalView(alignLeft: true, layers: 10)
             VStack {
                 Spacer()
                 VStack(alignment: .trailing) {
@@ -107,6 +116,9 @@ struct TodayView: View {
                             Text("\(Int(viewModel.caloriesBurned))")
                                 .font(.headline)
                                 .foregroundColor(.white)
+                            Text("calories")
+                                .font(.headline)
+                                .foregroundColor(.white)
                             if Int(viewModel.caloriesBurned) < viewModel.dailyCalGoal {
                                 Text("\(viewModel.dailyCalGoal - Int(viewModel.caloriesBurned)) remaining")
                                     .font(.headline)
@@ -118,6 +130,7 @@ struct TodayView: View {
                             }
                             Spacer()
                         }
+                        .padding(.horizontal)
                     }
                 }
             }

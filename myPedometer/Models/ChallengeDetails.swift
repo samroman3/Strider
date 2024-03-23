@@ -8,7 +8,8 @@
 import Foundation
 import CloudKit
 
-struct ChallengeDetails {
+struct ChallengeDetails: Identifiable {
+    var id: String
     var startTime: Date
     var endTime: Date
     var goalSteps: Int32
@@ -24,13 +25,13 @@ extension ChallengeDetails {
               let goalSteps = record["goalSteps"] as? Int,
               let status = record["status"] as? String,
               let participants = record["participants"] as? [Participant],
-              var recordId = record["recordId"] as? String
+              let recordId = record["recordId"] as? String
         else {
             return nil
         }
             
         
-        return ChallengeDetails(startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), status: status, participants: participants, recordId: recordId)
+        return ChallengeDetails(id: recordId, startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), status: status, participants: participants, recordId: recordId)
     }
     
 }

@@ -30,12 +30,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ensure it's the right query notification by fetching the record by ID and checking its type.
             if let queryNotification = notification as? CKQueryNotification,
                let recordID = queryNotification.recordID {
+            //MARK: TODO
                 // Call a method on CloudKitManager to handle fetching and processing of the record.
                 Task {
                     await CloudKitManager.shared.handleNotification(queryNotification)
                     DispatchQueue.main.async {
                    //TODO: set background notifs for challenge updates
-                        // Notify AppState/ ChallengeViewModel to update UI.
+                        // Notify AppState/ ChallengeViewModel to update UI based on notificaton.
                     }
                     completionHandler(.newData)
                 }

@@ -16,12 +16,18 @@ class ChallengeViewModel: ObservableObject {
     
     @Published var challenges: [ChallengeDetails] = []
     @Published var pendingChallenges: [ChallengeDetails] = [] // For challenges awaiting acceptance
-    @Published var noActiveChallengesText = "No active challenges. Create and share a challenge to begin!"
+    @Published var activeChallenges: [ChallengeDetails] = []
+    @Published var noActiveChallengesText = "No active challenges. Invite Striders to begin!"
     
     private var cancellables: Set<AnyCancellable> = []
     
+    @Published var presentShareController = false
+    var share: CKShare?
+    var container: CKContainer?
+    
     init() {
         setupSubscriptions()
+        self.container = cloudKitManager.cloudKitContainer
     }
     
     private func setupSubscriptions() {
@@ -40,19 +46,21 @@ class ChallengeViewModel: ObservableObject {
                 challenges.append(update)
             }
         }
-        // Sort or filter challenges based on their status.
+        // filter challenges based on their status.
         pendingChallenges = challenges.filter { $0.status == "Sent" || $0.status == "Received" }
+        activeChallenges = challenges.filter { $0.status == "Active" }
     }
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
         Task {
             do {
-                let details = ChallengeDetails(startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: UUID().uuidString)
+                let uuid = UUID().uuidString
+                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: uuid )
                 if let user = userSettingsManager.user {
-                    let creator = Participant(user: user, recordID: userSettingsManager.cloudKitRecordName!)
-                        let (record, share) = try await cloudKitManager.createChallenge(with: details, creator: creator)
+                    let creator = Participant(user: user, recordId: user.recordId!)
+                    let (_, share) = try await cloudKitManager.createChallenge(with: details, creator: creator)
                         DispatchQueue.main.async {
-                            self.presentCloudShareView(record: record, share: share)
+                            self.presentCloudShareView(share: share)
                         }
                     }
             } catch {
@@ -61,13 +69,14 @@ class ChallengeViewModel: ObservableObject {
         }
     }
     
-    private func presentCloudShareView(record: CKRecord, share: CKShare) {
-        // Implement presentation logic here.
+    private func presentCloudShareView(share: CKShare) {
+        self.presentShareController = true
+        self.share = share
     }
     
     func acceptChallenge(_ challengeDetails: ChallengeDetails) {
         Task {
-                let currentUserParticipant = Participant(user:userSettingsManager.user! , recordID: userSettingsManager.cloudKitRecordName!)
+            let currentUserParticipant = Participant(user:userSettingsManager.user! , recordId: userSettingsManager.cloudKitRecordName)
                 await cloudKitManager.addParticipantToChallenge(challengeID: challengeDetails.recordId, participantID: currentUserParticipant.id)
             }
     }

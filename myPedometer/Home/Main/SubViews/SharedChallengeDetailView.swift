@@ -76,5 +76,5 @@ private let itemFormatter: DateFormatter = {
 
 
 #Preview {
-    SharedChallengeDetailView(challengeDetails: ChallengeDetails(startTime: Date(), endTime: Date(), goalSteps: 3000, status: "Active" , participants: [], recordId: ""), onAccept: {}, onDecline: {})
+    SharedChallengeDetailView(challengeDetails: ChallengeDetails(id: "", startTime: Date(), endTime: Date(), goalSteps: 3000, status: "Active" , participants: [], recordId: ""), onAccept: {}, onDecline: {})
 }

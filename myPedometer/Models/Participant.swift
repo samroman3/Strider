@@ -14,8 +14,8 @@ struct Participant: Identifiable {
     let photoData: Data?
     var steps: Int
     
-    init(user: User, recordID: String) {
-        self.id = recordID
+    init(user: User, recordId: String) {
+        self.id = recordId
         self.userName = user.userName
         self.photoData = user.photoData
         self.steps = 0
@@ -32,8 +32,8 @@ struct Participant: Identifiable {
 extension Participant {
     func toCKRecord() -> CKRecord {
         //participant will have the same recordID as the User object it is init from 
-        let recordID = CKRecord.ID(recordName: self.id)
-        let record = CKRecord(recordType: "Participant", recordID: recordID)
+        let recordId = CKRecord.ID(recordName: self.id)
+        let record = CKRecord(recordType: "Participant", recordID: recordId)
         
         record["userName"] = self.userName ?? ""
         record["photoData"] = self.photoData

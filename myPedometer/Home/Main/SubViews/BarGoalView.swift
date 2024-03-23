@@ -7,48 +7,59 @@
 import SwiftUI
 
 struct BarGoalView: View {
-    @EnvironmentObject var viewModel: StepDataViewModel
-    @State private var animatedValue: Int = 0
-    @State private var goalValue: Double = 0
-    var challenge: Bool = false
-    var layers: Int = 10
-    var alignLeft: Bool
-    
-    private func animateProgress() {
-        // Choose the correct goal and current value based on the challenge flag and alignment.
-        let targetValue = challenge ? (alignLeft ? Double(viewModel.theirSteps) : Double(viewModel.todaySteps)) : (alignLeft ? Double(viewModel.caloriesBurned) : Double(viewModel.todaySteps))
-        goalValue = challenge ? Double(viewModel.challengeGoal) : (alignLeft ? Double(viewModel.dailyCalGoal) : Double(viewModel.dailyStepGoal))
+    @EnvironmentObject var stepDataViewModel: StepDataViewModel
+    @EnvironmentObject var challengeViewModel: ChallengeViewModel
         
-        if goalValue > 0, !targetValue.isNaN, !targetValue.isInfinite {
-            let percentage = targetValue / goalValue
-            let nextPercentile = ceil(percentage * Double(layers)) / Double(layers)
-            withAnimation(.easeInOut(duration: 2)) {
-                if percentage >= 1.0 {
-                    animatedValue = Int(goalValue)
-                } else {
-                    animatedValue = Int(percentage * Double(goalValue - 1))
-                }
-            }
-        } else {
-            animatedValue = 0
-        }
-    }
+    var challengeDetails: ChallengeDetails?
+    var alignLeft: Bool
+    var layers: Int = 10
+    
+    private var goalValue: Double {
+           if let challengeDetails = challengeDetails {
+               return Double(challengeDetails.goalSteps)
+           } else {
+               return alignLeft ? Double(stepDataViewModel.dailyCalGoal) : Double(stepDataViewModel.dailyStepGoal)
+           }
+       }
+       
+       // Computed property to determine target value based on whether it's a challenge and which side it's on
+       private var targetValue: Double {
+           if let challengeDetails = challengeDetails {
+               if alignLeft {
+                   return Double(stepDataViewModel.todaySteps) // Your steps for the challenge
+               } else {
+                   // Assume other participant is first in the array; adjust if necessary
+                   return Double(challengeDetails.participants.first?.steps ?? 0)
+               }
+           } else {
+               return alignLeft ? Double(stepDataViewModel.caloriesBurned) : Double(stepDataViewModel.todaySteps)
+           }
+       }
+       
+       @State private var animatedValue: Int = 0
+    
+    // Animate progress based on current target and goal values
+     private func animateProgress() {
+         withAnimation(.easeInOut(duration: 2)) {
+             animatedValue = Int(min(targetValue, goalValue))
+         }
+     }
+
     
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 ForEach(0..<layers, id: \.self) { layer in
-                    BarView(layer: layer, maxLayers: layers, goal: Int(goalValue), current: animatedValue, alignLeft: alignLeft, challenge: challenge)
+                    BarView(layer: layer, maxLayers: layers, goal: Int(goalValue), current: animatedValue, alignLeft: alignLeft, challenge: challengeDetails != nil)
                         .frame(height: (geometry.size.height) / CGFloat(layers))
                 }
             }
         }
         .onAppear { animateProgress() }
-        .onChange(of: viewModel.todaySteps) { _ in animateProgress() }
-        .onChange(of: viewModel.caloriesBurned) { _ in animateProgress() }
-        // Add change listeners for challenge properties if challenge mode is on
-        .onChange(of: viewModel.theirSteps) { _ in if challenge { animateProgress() } }
-        .onChange(of: viewModel.challengeGoal) { _ in if challenge { animateProgress() } }
+        .onChange(of: stepDataViewModel.todaySteps) { _ in animateProgress() }
+        .onChange(of: stepDataViewModel.caloriesBurned) { _ in animateProgress() }
+         //TODO: Handle changes for challenge data. participant steps etc
+        .onChange(of: challengeDetails?.goalSteps) { _ in animateProgress() }
     }
 }
 
@@ -70,14 +81,6 @@ struct BarView: View {
             let baseWidth = screenWidth * 0.1 // Width of the smallest bar at the bottom
             let increment = (screenWidth - baseWidth) / CGFloat(maxLayers - 1)
             let barWidth = baseWidth + increment * CGFloat(maxLayers - layer - 1)
-            
-            //            // Calculate the progress
-            //            let totalProgress = CGFloat(current) / CGFloat(goal)
-            //            let layerIndex = CGFloat(maxLayers - layer - 1) // Reverse the layer index for bottom-to-top fill
-            //            let layersFilledCompletely = CGFloat(totalProgress * CGFloat(maxLayers))
-            //
-            //            // Determine if the layer should be filled based on progress
-            //            let isLayerFilled = layerIndex < layersFilledCompletely
             
             // Calculate the progress
             let totalProgress = CGFloat(current) / CGFloat(goal)
@@ -139,8 +142,7 @@ struct BarView: View {
     private func grayMaterialGradient() -> LinearGradient {
         let darkGray = Color(red: 94 / 255, green: 94 / 255, blue: 94 / 255)
         let darkerGray = Color(red: 28 / 255, green: 28 / 255, blue: 28 / 255)
-        let order = alignLeft ? [darkerGray, darkGray] : [darkerGray]
-        return LinearGradient(gradient: Gradient(colors: [darkerGray]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        return LinearGradient(gradient: Gradient(colors: [darkerGray,darkGray]), startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 }
 

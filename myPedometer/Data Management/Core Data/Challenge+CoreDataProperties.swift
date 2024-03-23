@@ -23,7 +23,7 @@ extension Challenge {
     @NSManaged public var status: String?
     @NSManaged public var users: NSSet?
     @NSManaged public var id: String?
-    @NSManaged public var recordID: String?
+    @NSManaged public var recordId: String?
 
 }
 
@@ -56,13 +56,14 @@ extension Challenge : Identifiable {
     
     extension Challenge {
         func toCKRecord() -> CKRecord {
-            let recordId = self.recordID ?? UUID().uuidString
-            self.recordID = recordId // Ensure the Challenge has a recordID
+            let recordId = self.recordId ?? UUID().uuidString
+            self.recordId = recordId // Ensure the Challenge has a recordID
             let record = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: recordId))
             record["startTime"] = startTime as CKRecordValue?
             record["endTime"] = endTime as CKRecordValue?
             record["goalSteps"] = goalSteps as CKRecordValue
             record["status"] = status as CKRecordValue?
+            record["recordId"] = recordId as CKRecordValue
             
             return record
         }

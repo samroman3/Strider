@@ -12,7 +12,7 @@ import Combine
 class StepDataViewModel: ObservableObject {
     
     private var userSettingsManager: UserSettingsManager
-
+    
     //TodayView
     @Published var todayLog: DailyLog?
     @Published var dailyStepGoal: Int
@@ -27,8 +27,10 @@ class StepDataViewModel: ObservableObject {
     
     
     //AwardsView
-    @Published var lifeTimeSteps: Double = 0
+    @Published var lifeTimeSteps: Int = 0
     @Published var personalBestDate: String = ""
+    @Published var stepsRecord: Int = 0
+    @Published var calRecord: Int = 0
     
     //Steps
     @Published var threeKStepsReached: Bool = false
@@ -42,14 +44,7 @@ class StepDataViewModel: ObservableObject {
     //Calories
     @Published var fiveHundredCalsReached: Bool = false
     @Published var thousandCalsReached: Bool = false
-    
-    //Challenge
-    @Published var challengeGoal: Int = 10000
-    @Published var theirSteps: Int = 5000
-    @Published var theirName: String = "Max"
-    @Published var challengeEnd: Date = Date()
-    
-    
+        
     @Published var error: UserFriendlyError?
     
     
@@ -63,14 +58,14 @@ class StepDataViewModel: ObservableObject {
         self.userSettingsManager = userSettingsManager
         self.pedometerDataProvider = pedometerDataProvider
         
-        // Retrieve and set the daily goal
-        self.dailyStepGoal = UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 0
-        self.dailyCalGoal = UserDefaultsHandler.shared.retrieveDailyCalGoal() ?? 0
+        //Retrieve and set the daily goal
+        self.dailyStepGoal = userSettingsManager.dailyStepGoal
+        self.dailyCalGoal = userSettingsManager.dailyCalGoal
         
         //Retrieve step data from provider
         loadData(provider: pedometerDataProvider)
         
-        //Setup error subscription
+        //Error subscription
         self.pedometerDataProvider.errorPublisher
             .compactMap { $0 } // Filter out nil errors
             .sink { [weak self] error in
@@ -78,6 +73,7 @@ class StepDataViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
+        //Today supscription
         pedometerDataProvider.todayLogPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
@@ -90,6 +86,32 @@ class StepDataViewModel: ObservableObject {
                     self?.updateDailyLogWith(todayLog: todayLog)
                 }
             }
+            .store(in: &cancellables)
+        
+        //Subscribe to user variables
+        userSettingsManager.$dailyStepGoal
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.dailyStepGoal, on: self)
+            .store(in: &cancellables)
+        
+        userSettingsManager.$dailyCalGoal
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.dailyCalGoal, on: self)
+            .store(in: &cancellables)
+        
+        userSettingsManager.$stepsRecord
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.stepsRecord, on: self)
+            .store(in: &cancellables)
+        
+        userSettingsManager.$calorieRecord
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.calRecord, on: self)
+            .store(in: &cancellables)
+        
+        userSettingsManager.$lifetimeSteps
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.lifeTimeSteps, on: self)
             .store(in: &cancellables)
     }
     
@@ -112,7 +134,7 @@ class StepDataViewModel: ObservableObject {
         }
     }
     
-    //    Calculate weekly average steps
+    // Calculate weekly average steps
     func calculateWeeklySteps() {
         let totalSteps = stepDataList.reduce(0) { $0 + Int($1.totalSteps) }
         let averageSteps = totalSteps / max(stepDataList.count, 1)
@@ -124,23 +146,23 @@ class StepDataViewModel: ObservableObject {
         self.caloriesBurned = Double(todaySteps) * 0.04
     }
     
-    //Check if log falls in today
+    // Check if log falls in today
     func isToday(log: DailyLog) -> Bool {
         let calendar = Calendar.current
         return calendar.isDateInToday(log.date ?? Date())
     }
     
     private func updateDailyLogWith(todayLog: DailyLog) {
-         // Update today's log and calculate calories burned
-         self.todayLog = todayLog
-         self.todaySteps = Int(todayLog.totalSteps)
-         self.calculateCaloriesBurned()
-         
-         // Update User settings with new daily log and steps
-         userSettingsManager.updateDailyLog(with: todaySteps, calories: Int(caloriesBurned), date: Date())
-         userSettingsManager.updateUserLifetimeSteps(additionalSteps: todaySteps)
-         userSettingsManager.checkAndUpdatePersonalBest(with: todaySteps, calories: Int(caloriesBurned))
+        // Update today's log and calculate calories burned
+        self.todayLog = todayLog
+        self.todaySteps = Int(todayLog.totalSteps)
+        self.calculateCaloriesBurned()
         
-        //TODO: Update any active challenges with dailylog steps
-     }
+        // Update User settings with new daily log and steps
+        userSettingsManager.updateDailyLog(with: todaySteps, calories: Int(caloriesBurned), date: Date())
+        userSettingsManager.updateUserLifetimeSteps(additionalSteps: todaySteps)
+        userSettingsManager.checkAndUpdatePersonalBest(with: todaySteps, calories: Int(caloriesBurned))
+        
+        //TODO: Update any active challenges with dailylog steps here
+    }
 }

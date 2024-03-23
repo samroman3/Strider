@@ -8,8 +8,8 @@ struct ProfileSetupView: View {
     @State private var profileImage: Image? = nil
     @State private var showingImagePicker = false
     @State private var inputImage: UIImage?
-    @State private var dailyStepGoal: Int = UserDefaultsHandler.shared.retrieveDailyStepGoal() ?? 10000
-    @State private var dailyCalGoal: Int = UserDefaultsHandler.shared.retrieveDailyCalGoal() ?? 2000
+    @State private var dailyStepGoal: Int = 10000
+    @State private var dailyCalGoal: Int = 500
     @State private var newStepGoal: String = ""
     @State private var newCalGoal: String = ""
 
@@ -19,6 +19,21 @@ struct ProfileSetupView: View {
                 Section(header: Text("Profile Information")) {
                     if isEditMode {
                         TextField("User Name", text: $userName)
+                        HStack {
+                            if let profileImage = profileImage {
+                                profileImage
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.crop.circle.fill.badge.plus")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 100, height: 100)
+                                    .foregroundColor(.gray)
+                            }
+                        }
                         Button("Select a profile picture") {
                             showingImagePicker = true
                         }
@@ -62,29 +77,29 @@ struct ProfileSetupView: View {
                         }
                     }
                 }
-                
-                if isEditMode {
-                    Button("Confirm Changes") {
-                        saveProfileAndGoals()
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
             }
             .navigationBarTitle("Profile", displayMode: .inline)
-            .navigationBarItems(trailing: Button(isEditMode ? "Done" : "Edit") {
-                isEditMode.toggle()
-                if !isEditMode {
-                    // Load existing values to edit fields when entering edit mode
-                    newStepGoal = String(dailyStepGoal)
-                    newCalGoal = String(dailyCalGoal)
-                }
-            })
+            .navigationBarItems(trailing: editButton)
             .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
                 ImagePicker(image: self.$inputImage)
             }
             .onAppear(perform: loadCurrentValues)
         }
     }
+    
+    var editButton: some View {
+          Button(action: {
+              if isEditMode {
+                  saveProfileAndGoals()
+              }
+              isEditMode.toggle()
+          }) {
+              Text(isEditMode ? "Done" : "Edit")
+          }
+      }
+    
+    
+    
     
     func goalInputField(iconName: String, placeholder: String, binding: Binding<String>, isCalorie: Bool = false) -> some View {
         HStack {
@@ -96,14 +111,24 @@ struct ProfileSetupView: View {
     }
     
     func loadCurrentValues() {
-           self.userName = userSettingsManager.userName
-           self.newStepGoal = "\(dailyStepGoal)"
-           self.newCalGoal = "\(dailyCalGoal)"
-        
-           if let photoData = userSettingsManager.photoData, let uiImage = UIImage(data: photoData) {
-               self.profileImage = Image(uiImage: uiImage)
-           }
-       }
+        userSettingsManager.fetchUserDetailsFromCloud { success, error in
+            guard success else {
+                print("Failed to fetch user details from CloudKit: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                // Assuming UserSettingsManager updates its @Published properties upon successful fetch
+                self.userName = self.userSettingsManager.userName
+                self.dailyStepGoal = self.userSettingsManager.dailyStepGoal
+                self.dailyCalGoal = self.userSettingsManager.dailyCalGoal 
+                
+                if let photoData = self.userSettingsManager.photoData, let uiImage = UIImage(data: photoData) {
+                    self.profileImage = Image(uiImage: uiImage)
+                }
+            }
+        }
+    }
     
     func autoCalculateCalorieGoal() {
            guard let stepGoal = Int(newStepGoal) else { return }
@@ -117,24 +142,11 @@ struct ProfileSetupView: View {
     }
     
     func saveProfileAndGoals() {
-        // Prepare the data for saving
-        if let inputImage = inputImage {
-            userSettingsManager.uploadProfileImage(inputImage)
+        guard let stepGoal = Int(newStepGoal), let calGoal = Int(newCalGoal) else {
+            print("Error: Step Goal and Cal Goal must be valid integers.")
+            return
         }
-        if let stepGoal = Int(newStepGoal), let calGoal = Int(newCalGoal) {
-            dailyStepGoal = stepGoal
-            dailyCalGoal = calGoal
-            UserDefaultsHandler.shared.storeDailyStepGoal(stepGoal)
-            UserDefaultsHandler.shared.storeDailyCalGoal(calGoal)
-        }
-        
-        // Save the context
-        userSettingsManager.saveContext {
-            // This closure is called after the context has been saved
-            DispatchQueue.main.async {
-                // Dismiss the ProfileSetupView only after saving is complete
-                self.presentationMode.wrappedValue.dismiss()
-            }
-        }
+        userSettingsManager.updateUserDetails(image: inputImage, userName: userName, stepGoal: stepGoal, calGoal: calGoal)
+        loadCurrentValues()
     }
 }

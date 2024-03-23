@@ -10,14 +10,15 @@ import CloudKit
 import UIKit
 
 struct CloudSharingControllerRepresentable: UIViewControllerRepresentable {
-    var share: CKShare
-    var container: CKContainer
-    var rootRecord: CKRecord
+    var share: CKShare?
+    var container: CKContainer?
+    
+    @EnvironmentObject var viewModel: ChallengeViewModel
     
     func makeUIViewController(context: Context) -> UICloudSharingController {
-        let controller = UICloudSharingController(share: share, container: container)
-        controller.delegate = context.coordinator
-        return controller
+        let controller = UICloudSharingController(share: share!, container: container!)
+            controller.delegate = context.coordinator
+            return controller
     }
     
     func updateUIViewController(_ uiViewController: UICloudSharingController, context: Context) {}
