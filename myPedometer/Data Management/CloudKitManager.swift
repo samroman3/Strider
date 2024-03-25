@@ -47,10 +47,6 @@ class CloudKitManager: ObservableObject {
         
         try await createZoneIfNeeded()
         
-        DispatchQueue.main.async{
-            self.state = .loading
-        }
-        
         let challengeRecordID = CKRecord.ID(recordName: details.recordId, zoneID: recordZone.zoneID)
         let challengeRecord = CKRecord(recordType: "Challenge", recordID: challengeRecordID)
         // Set challenge record properties
@@ -75,12 +71,13 @@ class CloudKitManager: ObservableObject {
         
         let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
         
+        cloudKitContainer.privateCloudDatabase.add(operation)
+
         return try await withCheckedThrowingContinuation { continuation in
             operation.modifyRecordsResultBlock = { result in
-                DispatchQueue.main.async {
                     switch result {
                     case .success(_):
-                        self.state = .loaded
+//                        self.state = .loaded
                         let updatedDetails = ChallengeDetails(id: details.id, startTime: details.startTime, endTime: details.endTime, goalSteps: details.goalSteps, status: details.status, participants: [creator], recordId: details.recordId)
                         if let shareURL = share.url {
                             continuation.resume(returning: (share, shareURL, updatedDetails))
@@ -91,7 +88,6 @@ class CloudKitManager: ObservableObject {
                         self.state = .error(error)
                         continuation.resume(throwing: error)
                     }
-                }
             }
         }
     }
@@ -234,7 +230,9 @@ class CloudKitManager: ObservableObject {
     }
     
     func createZoneIfNeeded() async throws {
-        guard !UserDefaults.standard.bool(forKey: "isChallengeZoneCreated") else { return }
+        guard !UserDefaults.standard.bool(forKey: "isChallengeZoneCreated") else { 
+            
+            return }
         
         do {
             let zone = CKRecordZone(zoneID: recordZone.zoneID)

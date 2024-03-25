@@ -63,9 +63,7 @@ class ChallengeViewModel: ObservableObject {
                     let creator = Participant(user: user, recordId: user.recordId!)
                     let (share, shareURL, updatedDetails) = try await cloudKitManager.createChallenge(with: details, creator: creator)
                     details = updatedDetails // Use the updated details with the creator included
-                    DispatchQueue.main.async {
-                        // Now setupShare has the creator in the participants array
-                        self.setupShare(share: share, url: shareURL, details: updatedDetails)                    }
+                self.setupShare(share: share, url: shareURL, details: updatedDetails)
                 }
             } catch {
                 print("Error creating or sharing challenge: \(error)")
