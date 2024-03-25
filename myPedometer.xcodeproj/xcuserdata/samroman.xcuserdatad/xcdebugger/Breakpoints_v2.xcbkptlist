@@ -103,62 +103,79 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "27109AB7-4B18-4EFC-A1C9-C6A14C4C964E"
+            uuid = "8FBC311A-ABDE-4B16-AC34-E5FD2090C71D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "myPedometer/ViewModels/ChallengeViewModel.swift"
+            filePath = "myPedometer/Home/Main/Challenge/CreateChallengeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
-            landmarkName = "presentCloudShareView(share:url:details:)"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BE8AA559-5B54-45E8-8F1D-C58D0BD561A2"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "createChallenge(with:creator:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "389F7259-6FE9-45D2-97EF-07CECC361D27"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "createZoneIfNeeded()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "27109AB7-4B18-4EFC-A1C9-C6A14C4C964E - 31597685ab4d3184"
+                  uuid = "389F7259-6FE9-45D2-97EF-07CECC361D27 - 7c6304bdc2580228"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.ChallengeViewModel.presentCloudShareView(share: __C.CKShare, url: Foundation.URL, details: myPedometer.ChallengeDetails) -&gt; ()"
+                  symbolName = "(1) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
                   moduleName = "myPedometer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/ViewModels/ChallengeViewModel.swift"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "92"
-                  endingLineNumber = "92"
-                  offsetFromSymbolStart = "224">
+                  startingLineNumber = "236"
+                  endingLineNumber = "236"
+                  offsetFromSymbolStart = "264">
                </Location>
                <Location
-                  uuid = "27109AB7-4B18-4EFC-A1C9-C6A14C4C964E - 31597685ab4d31e7"
+                  uuid = "389F7259-6FE9-45D2-97EF-07CECC361D27 - 7c6304bdc258026a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.ChallengeViewModel.presentCloudShareView(share: __C.CKShare, url: Foundation.URL, details: myPedometer.ChallengeDetails) -&gt; ()"
+                  symbolName = "(1) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
                   moduleName = "myPedometer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/ViewModels/ChallengeViewModel.swift"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "91"
-                  endingLineNumber = "91"
-                  offsetFromSymbolStart = "236">
-               </Location>
-               <Location
-                  uuid = "27109AB7-4B18-4EFC-A1C9-C6A14C4C964E - 31597685ab4d31c6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.ChallengeViewModel.presentCloudShareView(share: __C.CKShare, url: Foundation.URL, details: myPedometer.ChallengeDetails) -&gt; ()"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/ViewModels/ChallengeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "90"
-                  endingLineNumber = "90"
-                  offsetFromSymbolStart = "236">
+                  startingLineNumber = "238"
+                  endingLineNumber = "238"
+                  offsetFromSymbolStart = "264">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -166,62 +183,503 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6D3737D5-1065-4753-A682-D3C9DFCE3684"
+            uuid = "5D860D9B-0D90-4AAE-8291-7803238FCB2A"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "myPedometer/ViewModels/ChallengeViewModel.swift"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "242"
+            endingLineNumber = "242"
+            landmarkName = "createZoneIfNeeded()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5D860D9B-0D90-4AAE-8291-7803238FCB2A - 7c6304bdc25802c7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "243"
+                  endingLineNumber = "243"
+                  offsetFromSymbolStart = "632">
+               </Location>
+               <Location
+                  uuid = "5D860D9B-0D90-4AAE-8291-7803238FCB2A - ed952da87242d6c1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "243"
+                  endingLineNumber = "243"
+                  offsetFromSymbolStart = "216">
+               </Location>
+               <Location
+                  uuid = "5D860D9B-0D90-4AAE-8291-7803238FCB2A - 25a02612aa464ce1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "242"
+                  endingLineNumber = "242"
+                  offsetFromSymbolStart = "248">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C6832A78-0F05-4D87-B6CC-469E8F3E0C95"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
+            landmarkName = "createZoneIfNeeded()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C6832A78-0F05-4D87-B6CC-469E8F3E0C95 - 7c6304bdc2580228"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "236"
+                  endingLineNumber = "236"
+                  offsetFromSymbolStart = "264">
+               </Location>
+               <Location
+                  uuid = "C6832A78-0F05-4D87-B6CC-469E8F3E0C95 - 7c6304bdc25803cf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "235"
+                  endingLineNumber = "235"
+                  offsetFromSymbolStart = "628">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FD49B34-F87E-42B3-9805-DBCA41F72BF3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "239"
+            endingLineNumber = "239"
+            landmarkName = "createZoneIfNeeded()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9FD49B34-F87E-42B3-9805-DBCA41F72BF3 - 25a02612aa464c4c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "168">
+               </Location>
+               <Location
+                  uuid = "9FD49B34-F87E-42B3-9805-DBCA41F72BF3 - 7c6304bdc258024b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "384">
+               </Location>
+               <Location
+                  uuid = "9FD49B34-F87E-42B3-9805-DBCA41F72BF3 - 518a1b7b573c159"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "9FD49B34-F87E-42B3-9805-DBCA41F72BF3 - ed952da87242d64d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "9FD49B34-F87E-42B3-9805-DBCA41F72BF3 - 25a02612aa464c4c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for myPedometer.CloudKitManager.createZoneIfNeeded() async throws -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "104">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64EC91FE-1354-470A-9594-99202938C6E6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "createChallenge(with:creator:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "64EC91FE-1354-470A-9594-99202938C6E6 - c5d46ce4313f630b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "1772">
+               </Location>
+               <Location
+                  uuid = "64EC91FE-1354-470A-9594-99202938C6E6 - c5d46ce4313f630b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "872">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E9D46E6-E16B-48A7-B5E5-5BC205704FE5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "85"
             endingLineNumber = "85"
-            landmarkName = "setupShare(share:url:details:)"
+            landmarkName = "createChallenge(with:creator:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "6D3737D5-1065-4753-A682-D3C9DFCE3684 - 76fb39c75f135bf4"
+                  uuid = "7E9D46E6-E16B-48A7-B5E5-5BC205704FE5 - c5d46ce4313f638f"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.ChallengeViewModel.setupShare(share: __C.CKShare, url: Foundation.URL, details: myPedometer.ChallengeDetails) -&gt; ()"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
                   moduleName = "myPedometer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/ViewModels/ChallengeViewModel.swift"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "86"
-                  endingLineNumber = "86"
-                  offsetFromSymbolStart = "1088">
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "2024">
                </Location>
                <Location
-                  uuid = "6D3737D5-1065-4753-A682-D3C9DFCE3684 - 76fb39c75f135bd5"
+                  uuid = "7E9D46E6-E16B-48A7-B5E5-5BC205704FE5 - c5d46ce4313f638f"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.ChallengeViewModel.setupShare(share: __C.CKShare, url: Foundation.URL, details: myPedometer.ChallengeDetails) -&gt; ()"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
                   moduleName = "myPedometer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/ViewModels/ChallengeViewModel.swift"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "87"
-                  endingLineNumber = "87"
-                  offsetFromSymbolStart = "1408">
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "1604">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ACCA10CE-D63B-4BDB-8333-9B4818844C5E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "createChallenge(with:creator:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "ACCA10CE-D63B-4BDB-8333-9B4818844C5E - c5d46ce4313f6349"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "83"
+                  endingLineNumber = "83"
+                  offsetFromSymbolStart = "1604">
                </Location>
                <Location
-                  uuid = "6D3737D5-1065-4753-A682-D3C9DFCE3684 - 76fb39c75f135bf4"
+                  uuid = "ACCA10CE-D63B-4BDB-8333-9B4818844C5E - c5d46ce4313f6349"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "myPedometer.ChallengeViewModel.setupShare(share: __C.CKShare, url: Foundation.URL, details: myPedometer.ChallengeDetails) -&gt; ()"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
                   moduleName = "myPedometer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/ViewModels/ChallengeViewModel.swift"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "86"
-                  endingLineNumber = "86"
-                  offsetFromSymbolStart = "1940">
+                  startingLineNumber = "83"
+                  endingLineNumber = "83"
+                  offsetFromSymbolStart = "1772">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8CC910C7-BD6E-4317-A896-57B304707E17"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "createChallenge(with:creator:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8CC910C7-BD6E-4317-A896-57B304707E17 - c5d46ce4313f6c13"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "2160">
+               </Location>
+               <Location
+                  uuid = "8CC910C7-BD6E-4317-A896-57B304707E17 - c5d46ce4313f6c13"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "2088">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/Data Management/CloudKitManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "createChallenge(with:creator:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3 - 6cc539cc04937c85"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "2212">
+               </Location>
+               <Location
+                  uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3 - 558cd72cb0fdcfbd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) await resume partial function for myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3 - 9d2cb942a66d38c7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "224">
+               </Location>
+               <Location
+                  uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3 - 3ad8f91a16edd620"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "192">
+               </Location>
+               <Location
+                  uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3 - 2eea6c897c141728"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.CheckedContinuation&lt;(__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails), Swift.Error&gt;) -&gt; () in myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "288">
+               </Location>
+               <Location
+                  uuid = "FD113D7F-A506-420D-9C37-27FA3D9B3CE3 - 6cc539cc04937c85"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for myPedometer.CloudKitManager.createChallenge(with: myPedometer.ChallengeDetails, creator: myPedometer.Participant) async throws -&gt; (__C.CKShare, Foundation.URL, myPedometer.ChallengeDetails)"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CloudKitManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "2016">
                </Location>
             </Locations>
          </BreakpointContent>
