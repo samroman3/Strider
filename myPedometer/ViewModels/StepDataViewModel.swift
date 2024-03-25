@@ -13,20 +13,20 @@ class StepDataViewModel: ObservableObject {
     
     private var userSettingsManager: UserSettingsManager
     
-    //TodayView
+    //Today View
     @Published var todayLog: DailyLog?
     @Published var dailyStepGoal: Int
     @Published var caloriesBurned: Double = 0
     @Published var todaySteps: Int = 0
     @Published var dailyCalGoal: Int
     
-    // WeekView
+    // Week View
     @Published var stepDataList: [DailyLog] = []
     @Published var hourlyAverageSteps: [HourlySteps] = []
     @Published var weeklyAverageSteps: Int = 0
     
     
-    //AwardsView
+    //Awards View
     @Published var lifeTimeSteps: Int = 0
     @Published var personalBestDate: String = ""
     @Published var stepsRecord: Int = 0

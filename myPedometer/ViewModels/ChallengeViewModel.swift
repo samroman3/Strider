@@ -11,8 +11,8 @@ import CoreData
 import Combine
 
 class ChallengeViewModel: ObservableObject {
-    private let cloudKitManager = CloudKitManager.shared
-    private let userSettingsManager = UserSettingsManager.shared
+    var cloudKitManager: CloudKitManager
+    var userSettingsManager: UserSettingsManager
     
     @Published var challenges: [ChallengeDetails] = []
     @Published var pendingChallenges: [ChallengeDetails] = [] // For challenges awaiting acceptance
@@ -22,15 +22,18 @@ class ChallengeViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     
     @Published var presentShareController = false
-    var share: CKShare?
+    @Published var showCreateController = false
+    @Published var share: CKShare?
+    @Published var shareURL: URL?
+    @Published var details: ChallengeDetails?
+    
     var container: CKContainer?
     
-    init() {
-        setupSubscriptions()
+    init(userSettingsManager: UserSettingsManager, cloudKitManager: CloudKitManager){
+        self.userSettingsManager = userSettingsManager
+        self.cloudKitManager = cloudKitManager
         self.container = cloudKitManager.cloudKitContainer
-    }
-    
-    private func setupSubscriptions() {
+        
         cloudKitManager.$challengeUpdates
             .sink { [weak self] updates in
                 self?.processUpdates(updates)
@@ -47,7 +50,7 @@ class ChallengeViewModel: ObservableObject {
             }
         }
         // filter challenges based on their status.
-        pendingChallenges = challenges.filter { $0.status == "Sent" || $0.status == "Received" }
+        pendingChallenges = challenges.filter { $0.status == "Pending" }
         activeChallenges = challenges.filter { $0.status == "Active" }
     }
     
@@ -55,23 +58,39 @@ class ChallengeViewModel: ObservableObject {
         Task {
             do {
                 let uuid = UUID().uuidString
-                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: uuid )
+                var details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: uuid)
                 if let user = userSettingsManager.user {
                     let creator = Participant(user: user, recordId: user.recordId!)
-                    let (_, share) = try await cloudKitManager.createChallenge(with: details, creator: creator)
-                        DispatchQueue.main.async {
-                            self.presentCloudShareView(share: share)
-                        }
-                    }
+                    let (share, shareURL, updatedDetails) = try await cloudKitManager.createChallenge(with: details, creator: creator)
+                    details = updatedDetails // Use the updated details with the creator included
+                    DispatchQueue.main.async {
+                        // Now setupShare has the creator in the participants array
+                        self.setupShare(share: share, url: shareURL, details: updatedDetails)                    }
+                }
             } catch {
                 print("Error creating or sharing challenge: \(error)")
             }
         }
     }
+
+    private func setupShare(share: CKShare, url: URL, details: ChallengeDetails) {
+        // Ensure that the challenge has participants and the URL is valid.
+        guard !details.participants.isEmpty, let firstParticipantName = details.participants.first?.userName else {
+            print("Error: Challenge does not have any participants or first participant name is missing.")
+            return
+        }
+        // Prerequisites are met, configure the share.
+        share[CKShare.SystemFieldKey.title] = "Strider Challenge: \(details.goalSteps) steps by end of \(details.endTime.formatted()) from \(firstParticipantName)"
+        
+        // Present the share controller.
+        presentCloudShareView(share: share, url: url, details: details)
+    }
     
-    private func presentCloudShareView(share: CKShare) {
-        self.presentShareController = true
+    private func presentCloudShareView(share: CKShare, url: URL, details: ChallengeDetails) {
         self.share = share
+        self.shareURL = url
+        self.details = details
+        self.presentShareController = true
     }
     
     func acceptChallenge(_ challengeDetails: ChallengeDetails) {

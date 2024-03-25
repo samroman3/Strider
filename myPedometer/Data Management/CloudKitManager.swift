@@ -12,7 +12,7 @@ import CoreData
 class CloudKitManager: ObservableObject {
     
     static let shared = CloudKitManager()
-
+    
     enum State {
         case idle
         case loading
@@ -43,47 +43,58 @@ class CloudKitManager: ObservableObject {
     
     // MARK: Challenge Management
     
-    func createChallenge(with details: ChallengeDetails, creator: Participant) async throws -> (CKRecord, CKShare) {
+    func createChallenge(with details: ChallengeDetails, creator: Participant) async throws -> (CKShare, URL, ChallengeDetails) {
+        
+        try await createZoneIfNeeded()
+        
         DispatchQueue.main.async{
             self.state = .loading
         }
-           let challengeRecord = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: details.recordId))
-           // Set challenge record properties
-           challengeRecord["startTime"] = details.startTime
-           challengeRecord["endTime"] = details.endTime
-           challengeRecord["goalSteps"] = details.goalSteps
-           challengeRecord["status"] = details.status
-           challengeRecord["recordId"] = details.recordId
-           // Add creator to participants
+        
+        let challengeRecordID = CKRecord.ID(recordName: details.recordId, zoneID: recordZone.zoneID)
+        let challengeRecord = CKRecord(recordType: "Challenge", recordID: challengeRecordID)
+        // Set challenge record properties
+        challengeRecord["startTime"] = details.startTime
+        challengeRecord["endTime"] = details.endTime
+        challengeRecord["goalSteps"] = details.goalSteps
+        challengeRecord["status"] = details.status
+        challengeRecord["recordId"] = details.recordId
+        // Add creator to participants
         let creatorReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: creator.id), action: .none)
-           let participantReferences = details.participants.map { participant -> CKRecord.Reference in
-               CKRecord.Reference(recordID: CKRecord.ID(recordName: participant.id), action: .none)
-           } + [creatorReference]
-           challengeRecord["participants"] = participantReferences
-           // Prepare and save the CKShare
-           let share = CKShare(rootRecord: challengeRecord)
-           share[CKShare.SystemFieldKey.title] = "Join My Challenge on Strider"
-           share.publicPermission = .readWrite
+        let participantReferences = details.participants.map { participant -> CKRecord.Reference in
+            CKRecord.Reference(recordID: CKRecord.ID(recordName: participant.id), action: .none)
+        } + [creatorReference]
+        challengeRecord["participants"] = participantReferences
+        // Prepare and save the CKShare
+        let share = CKShare(rootRecord: challengeRecord)
+        share[CKShare.SystemFieldKey.title] = "Join My Challenge on Strider!"
+        share.publicPermission = .readWrite
+        
+        var updatedDetails = details
+        updatedDetails.participants.append(creator)
+        
         let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
-           
-           // Using async-await with continuation
+        
         return try await withCheckedThrowingContinuation { continuation in
-               operation.modifyRecordsResultBlock = { result in
-                   DispatchQueue.main.async {
-                       switch result {
-                       case .success(_):
-                           self.state = .loaded
-                           continuation.resume(returning: (challengeRecord, share))
-                       case .failure(let error):
-                           self.state = .error(error)
-                           continuation.resume(throwing: error)
-                       }
-                   }
-               }
-               
-               self.cloudKitContainer.privateCloudDatabase.add(operation)
-           }
-       }
+            operation.modifyRecordsResultBlock = { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(_):
+                        self.state = .loaded
+                        let updatedDetails = ChallengeDetails(id: details.id, startTime: details.startTime, endTime: details.endTime, goalSteps: details.goalSteps, status: details.status, participants: [creator], recordId: details.recordId)
+                        if let shareURL = share.url {
+                            continuation.resume(returning: (share, shareURL, updatedDetails))
+                        } else {
+                            continuation.resume(throwing: ManagerError.sharingFailed)
+                        }
+                    case .failure(let error):
+                        self.state = .error(error)
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+    }
     
     func deleteExpiredChallengeRecords() async {
 

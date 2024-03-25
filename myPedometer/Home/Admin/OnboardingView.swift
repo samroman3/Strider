@@ -78,7 +78,7 @@ struct WelcomeScreen: View {
                     .shadow(radius: 5)
                 
                 // Features Description
-                HStack {
+                VStack(spacing: 10) {
                     Text("Track steps.")
                         .multilineTextAlignment(.center)
                         .font(.title3)
@@ -95,7 +95,7 @@ struct WelcomeScreen: View {
                 }
                 .padding(.vertical, 5)
                 .padding(.horizontal, 20)
-                .background(Color.black.opacity(0.5))
+//                .background(Color.black.opacity(0.5))
                 .cornerRadius(15)
                 
                 // Get Started Button
@@ -105,22 +105,19 @@ struct WelcomeScreen: View {
                             .fontWeight(.medium)
                             .font(.title)
                             .foregroundColor(.white)
-                        
+
                         Image(systemName: "arrow.right.circle.fill")
                             .foregroundColor(.white)
                     }.background(
                         // Apply the green gradient as the button background
                         AppTheme.greenGradient
-                            .cornerRadius(10)
+                            .cornerRadius(20)
                             .frame(minWidth: 300)
 
                     )
                     .padding()
-                    .cornerRadius(10)
                     .shadow(radius: 10)
                 }
-                .frame(minWidth: 300)
-                .cornerRadius(10)
                 .padding([.horizontal,.vertical])
                 
                 Spacer()

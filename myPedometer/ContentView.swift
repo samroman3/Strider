@@ -19,7 +19,7 @@ struct ContentView: View {
 
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, context: NSManagedObjectContext) {
         _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: UserSettingsManager.shared))
-        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel())
+        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(userSettingsManager: UserSettingsManager.shared, cloudKitManager: CloudKitManager.shared))
     }
 
     var body: some View {
