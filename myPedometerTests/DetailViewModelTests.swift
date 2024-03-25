@@ -1,5 +1,5 @@
 //
-//  DetailViewModelTests.swift
+//  StatViewModelTests.swift
 //  myPedometerTests
 //
 //  Created by Sam Roman on 1/30/24.
@@ -9,8 +9,8 @@ import XCTest
 import CoreData
 @testable import myPedometer
 
-class DetailViewModelTests: XCTestCase {
-    var viewModel: DetailViewModel!
+class StatViewModelTests: XCTestCase {
+    var viewModel: StatViewModel!
     var mockPedometerDataProvider: MockPedometerDataProvider!
     var inMemoryContext: NSManagedObjectContext!
 
@@ -21,7 +21,7 @@ class DetailViewModelTests: XCTestCase {
         let testDate = Date()
         let weeklyAvg = 5000 // Example weekly average
         let averageHourlySteps = [HourlySteps]() // Example hourly steps data
-        viewModel = DetailViewModel(pedometerDataProvider: mockPedometerDataProvider, date: testDate, weeklyAvg: weeklyAvg, averageHourlySteps: averageHourlySteps)
+        viewModel = StatViewModel(pedometerDataProvider: mockPedometerDataProvider, date: testDate, weeklyAvg: weeklyAvg, averageHourlySteps: averageHourlySteps)
     }
 
     override func tearDown() {

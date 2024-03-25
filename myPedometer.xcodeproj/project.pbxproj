@@ -39,13 +39,13 @@
 		3A870D2E2BB0FC72000F4D1E /* PendingChallengesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D2D2BB0FC72000F4D1E /* PendingChallengesView.swift */; };
 		3A870D302BB0FCAD000F4D1E /* ActiveChallengesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D2F2BB0FCAD000F4D1E /* ActiveChallengesView.swift */; };
 		3A870D322BB0FCD8000F4D1E /* PastChallengesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D312BB0FCD8000F4D1E /* PastChallengesView.swift */; };
-		3A870D342BB0FD1E000F4D1E /* ActiveChallengeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D332BB0FD1E000F4D1E /* ActiveChallengeDetailView.swift */; };
+		3A870D342BB0FD1E000F4D1E /* LiveChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D332BB0FD1E000F4D1E /* LiveChallengeView.swift */; };
 		3A870D362BB0FD54000F4D1E /* CreateChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D352BB0FD54000F4D1E /* CreateChallengeView.swift */; };
 		3A8F0D6E2BAB4EA9004D1AE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8F0D6D2BAB4EA9004D1AE8 /* AppDelegate.swift */; };
 		3ABAB32D2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */; };
 		3ABAB32E2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */; };
 		3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */; };
-		3ABAB3322B62C3C800E174D3 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB3312B62C3C800E174D3 /* DetailViewModel.swift */; };
+		3ABAB3322B62C3C800E174D3 /* StatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB3312B62C3C800E174D3 /* StatViewModel.swift */; };
 		3ABAFB7C2B63133600BC0C9F /* DetailData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAFB7B2B63133600BC0C9F /* DetailData.swift */; };
 		3AC0CEC12B66CC5900A56554 /* HourlyStepsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC02B66CC5900A56554 /* HourlyStepsChart.swift */; };
 		3AC0CEC32B66CCB000A56554 /* CustomProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC22B66CCB000A56554 /* CustomProgressView.swift */; };
@@ -128,13 +128,13 @@
 		3A870D2D2BB0FC72000F4D1E /* PendingChallengesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingChallengesView.swift; sourceTree = "<group>"; };
 		3A870D2F2BB0FCAD000F4D1E /* ActiveChallengesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveChallengesView.swift; sourceTree = "<group>"; };
 		3A870D312BB0FCD8000F4D1E /* PastChallengesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastChallengesView.swift; sourceTree = "<group>"; };
-		3A870D332BB0FD1E000F4D1E /* ActiveChallengeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveChallengeDetailView.swift; sourceTree = "<group>"; };
+		3A870D332BB0FD1E000F4D1E /* LiveChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveChallengeView.swift; sourceTree = "<group>"; };
 		3A870D352BB0FD54000F4D1E /* CreateChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChallengeView.swift; sourceTree = "<group>"; };
 		3A8F0D6D2BAB4EA9004D1AE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlySteps.swift; sourceTree = "<group>"; };
-		3ABAB3312B62C3C800E174D3 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		3ABAB3312B62C3C800E174D3 /* StatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatViewModel.swift; sourceTree = "<group>"; };
 		3ABAFB7B2B63133600BC0C9F /* DetailData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailData.swift; sourceTree = "<group>"; };
 		3AC0CEC02B66CC5900A56554 /* HourlyStepsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyStepsChart.swift; sourceTree = "<group>"; };
 		3AC0CEC22B66CCB000A56554 /* CustomProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProgressView.swift; sourceTree = "<group>"; };
@@ -220,7 +220,7 @@
 			children = (
 				3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */,
 				3A41766F2BA603F700F89254 /* ChallengeViewModel.swift */,
-				3ABAB3312B62C3C800E174D3 /* DetailViewModel.swift */,
+				3ABAB3312B62C3C800E174D3 /* StatViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -244,7 +244,7 @@
 				3A23206F2BA26CF400D1851F /* MainChallengeView.swift */,
 				3A870D2D2BB0FC72000F4D1E /* PendingChallengesView.swift */,
 				3A870D2F2BB0FCAD000F4D1E /* ActiveChallengesView.swift */,
-				3A870D332BB0FD1E000F4D1E /* ActiveChallengeDetailView.swift */,
+				3A870D332BB0FD1E000F4D1E /* LiveChallengeView.swift */,
 				3A870D312BB0FCD8000F4D1E /* PastChallengesView.swift */,
 				3A870D352BB0FD54000F4D1E /* CreateChallengeView.swift */,
 				3A870D2B2BB0FC1B000F4D1E /* DummyChallenge.swift */,
@@ -576,13 +576,13 @@
 				3AD6F9522B6190AC00923DFC /* StepDataViewModel.swift in Sources */,
 				3ABAFB7C2B63133600BC0C9F /* DetailData.swift in Sources */,
 				3AD6F91B2B618FA700923DFC /* myPedometerApp.swift in Sources */,
-				3ABAB3322B62C3C800E174D3 /* DetailViewModel.swift in Sources */,
+				3ABAB3322B62C3C800E174D3 /* StatViewModel.swift in Sources */,
 				3A41765A2BA38CA700F89254 /* Challenge+CoreDataClass.swift in Sources */,
 				3AD6F95B2B61983500923DFC /* DailyLog+CoreDataProperties.swift in Sources */,
 				3A0ADE462B9F901100A2D9D4 /* CustomTabBarView.swift in Sources */,
 				3A17D5522B9D3B4E00D74874 /* BarGoalView.swift in Sources */,
 				3A41765D2BA3909500F89254 /* OnboardingView.swift in Sources */,
-				3A870D342BB0FD1E000F4D1E /* ActiveChallengeDetailView.swift in Sources */,
+				3A870D342BB0FD1E000F4D1E /* LiveChallengeView.swift in Sources */,
 				3ABAB32D2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift in Sources */,
 				3AC0CEC92B66D1B300A56554 /* DailyGoalView.swift in Sources */,
 				3AC0CEC32B66CCB000A56554 /* CustomProgressView.swift in Sources */,

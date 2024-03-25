@@ -8,5 +8,5 @@
 import Foundation
 
 enum ChallengeStatus {
-    case sent, received, active, completed, denied
+    case pending, active, completed, denied
 }

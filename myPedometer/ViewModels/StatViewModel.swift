@@ -1,5 +1,5 @@
 //
-//  DetailViewModel.swift
+//  StatViewModel.swift
 //  myPedometer
 //
 //  Created by Sam Roman on 1/25/24.
@@ -7,7 +7,7 @@
 import Foundation
 import Combine
 
-class DetailViewModel: ObservableObject {
+class StatViewModel: ObservableObject {
     @Published var hourlySteps: [HourlySteps] = []
     @Published var averageHourlySteps: [HourlySteps] = []
     @Published var goalAchievementStatus: GoalAchievementStatus = .notAchieved

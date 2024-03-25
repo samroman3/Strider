@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ActiveChallengeDetailView: View {
-    // Dummy data
+struct LiveChallengeView: View {
+    // Dummy data TODO: Setup with live data
     let mySteps: Int = 10300
     let theirSteps: Int = 5989
     let goal: Int = 10000

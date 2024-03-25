@@ -35,7 +35,7 @@ struct ActiveChallengeRow: View {
     var challenge: ChallengeDetails
     
     var body: some View {
-        NavigationLink(destination: ActiveChallengeDetailView(challengeDetails: challenge)) {
+        NavigationLink(destination: LiveChallengeView(challengeDetails: challenge)) {
             VStack {
                 Spacer()
                 HStack {

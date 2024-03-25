@@ -67,7 +67,7 @@ struct WeekView: View {
     private func DetailViewDestination(log: DailyLog) -> some View {
         LazyView {
             DetailView(viewModel:
-                        DetailViewModel(pedometerDataProvider: viewModel.pedometerDataProvider, date: log.date ?? Date(), weeklyAvg: viewModel.weeklyAverageSteps, averageHourlySteps: viewModel.hourlyAverageSteps))
+                        StatViewModel(pedometerDataProvider: viewModel.pedometerDataProvider, date: log.date ?? Date(), weeklyAvg: viewModel.weeklyAverageSteps, averageHourlySteps: viewModel.hourlyAverageSteps))
         }
     }
 }

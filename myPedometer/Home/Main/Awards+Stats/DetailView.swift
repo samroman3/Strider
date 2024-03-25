@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftUI
 
 struct DetailView: View {
-    @ObservedObject var viewModel: DetailViewModel
+    @ObservedObject var viewModel: StatViewModel
     
     var body: some View {
         ScrollView {
