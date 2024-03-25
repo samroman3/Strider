@@ -7,6 +7,7 @@
 
 import UIKit
 import CloudKit
+import UserNotifications
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -16,8 +17,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Handle incoming universal links for CloudKit shares
         guard let incomingURL = userActivity.webpageURL else { return false }
         AppState.shared.handleIncomingURL(incomingURL)
+        registerForPushNotifications()
         return true
     }
+    
+    func registerForPushNotifications() {
+         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+             guard granted else { return }
+             UNUserNotificationCenter.current().getNotificationSettings { settings in
+                 guard settings.authorizationStatus == .authorized else { return }
+                 DispatchQueue.main.async {
+                     UIApplication.shared.registerForRemoteNotifications()
+                 }
+             }
+         }
+     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String: NSObject]) else {
