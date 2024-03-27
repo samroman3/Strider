@@ -2,7 +2,7 @@
 //  User+CoreDataProperties.swift
 //  myPedometer
 //
-//  Created by Sam Roman on 3/14/24.
+//  Created by Sam Roman on 3/27/24.
 //
 //
 
@@ -10,24 +10,23 @@ import Foundation
 import CoreData
 import CloudKit
 
-
 extension User {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<User> {
         return NSFetchRequest<User>(entityName: "User")
     }
 
+    @NSManaged public var appleId: String?
+    @NSManaged public var calGoal: Int32
     @NSManaged public var calorieRecord: Int32
     @NSManaged public var lifetimeSteps: Int32
     @NSManaged public var photoData: Data?
+    @NSManaged public var recordId: String?
+    @NSManaged public var stepGoal: Int32
     @NSManaged public var stepsRecord: Int32
     @NSManaged public var userName: String?
-    @NSManaged public var appleId: String?
     @NSManaged public var challenges: NSSet?
     @NSManaged public var dailyLogs: NSSet?
-    @NSManaged public var recordId: String?
-    @NSManaged public var calGoal: Int32
-    @NSManaged public var stepGoal: Int32
 
 }
 
@@ -48,6 +47,7 @@ extension User {
 
 }
 
+// MARK: Generated accessors for dailyLogs
 extension User {
 
     @objc(addDailyLogsObject:)
@@ -61,10 +61,6 @@ extension User {
 
     @objc(removeDailyLogs:)
     @NSManaged public func removeFromDailyLogs(_ values: NSSet)
-
-}
-
-extension User : Identifiable {
 
 }
 
@@ -86,6 +82,10 @@ extension User {
         // No existing log found
         return nil
     }
+}
+
+extension User : Identifiable {
+
 }
 
 extension User {

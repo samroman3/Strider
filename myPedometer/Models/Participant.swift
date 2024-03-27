@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-struct Participant: Identifiable {
+struct Participant: Identifiable, Equatable {
     let id: String
     let userName: String?
     let photoData: Data?

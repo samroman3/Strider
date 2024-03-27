@@ -16,6 +16,7 @@ struct ChallengeDetails: Identifiable {
     var status: String
     var participants: [Participant]
     var recordId: String
+    var winner: String?
 }
 extension ChallengeDetails {
     
@@ -25,13 +26,14 @@ extension ChallengeDetails {
               let goalSteps = record["goalSteps"] as? Int,
               let status = record["status"] as? String,
               let participants = record["participants"] as? [Participant],
-              let recordId = record["recordId"] as? String
+              let recordId = record["recordId"] as? String,
+              let winner = record["winner"] as? String?
         else {
             return nil
         }
             
         
-        return ChallengeDetails(id: recordId, startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), status: status, participants: participants, recordId: recordId)
+        return ChallengeDetails(id: recordId, startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), status: status, participants: participants, recordId: recordId, winner: winner)
     }
     
 }

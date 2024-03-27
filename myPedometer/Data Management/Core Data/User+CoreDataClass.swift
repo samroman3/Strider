@@ -2,7 +2,7 @@
 //  User+CoreDataClass.swift
 //  myPedometer
 //
-//  Created by Sam Roman on 3/14/24.
+//  Created by Sam Roman on 3/27/24.
 //
 //
 

@@ -8,18 +8,15 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var userSettingsManager: UserSettingsManager
     @EnvironmentObject var cloudKitManager: CloudKitManager
-    @StateObject var stepDataViewModel: StepDataViewModel
-    @StateObject var challengeViewModel: ChallengeViewModel
+    var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
 
     @State private var showSignInView = false
 
-    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, context: NSManagedObjectContext) {
-        _stepDataViewModel = StateObject(wrappedValue: StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: UserSettingsManager.shared))
-        _challengeViewModel = StateObject(wrappedValue: ChallengeViewModel(userSettingsManager: UserSettingsManager.shared, cloudKitManager: CloudKitManager.shared))
+    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
+        self.pedometerDataProvider = pedometerDataProvider
     }
 
     var body: some View {
@@ -35,9 +32,10 @@ struct ContentView: View {
                 mainContentView()
             }
         }
-        .environmentObject(stepDataViewModel)
+        .environmentObject(StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager))
+        .environmentObject(ChallengeViewModel(userSettingsManager: userSettingsManager, cloudKitManager: cloudKitManager))
         .environmentObject(userSettingsManager)
-        .environmentObject(challengeViewModel)
+
     }
 
     private func handleOnboardingComplete() {
@@ -60,18 +58,16 @@ struct ContentView: View {
                     switch challengeState {
                     case .invitation(let challengeDetails):
                         SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
-                            challengeViewModel.acceptChallenge(challengeDetails)
-                            appState.currentChallengeState = nil
+                            Task {
+                                    await appState.acceptChallenge()
+                                    }
                         }, onDecline: {
-                            challengeViewModel.declineChallenge(challengeDetails)
-                            appState.currentChallengeState = nil
+                            appState.declineChallenge()
                         })
                     case .challengeActive(let challengeDetails):
-                        // TODO: Implement active challenge view
-                        Text("Challenge is now active with details: \(challengeDetails.goalSteps)")
+                        Text("Challenge is now active! Goal: \(challengeDetails.goalSteps), End Time: \(challengeDetails.endTime.formatted())")
                     case .challengeCompleted(let challengeDetails):
-                        // TODO: Implement view for completed challenge
-                        Text("Challenge completed! Goal steps: \(challengeDetails.goalSteps)")
+                        Text("Challenge completed! Goal steps: \(challengeDetails.goalSteps), winner: \(challengeDetails.winner ?? "")")
                     }
                 }
     }

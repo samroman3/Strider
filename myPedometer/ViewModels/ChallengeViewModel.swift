@@ -42,46 +42,49 @@ class ChallengeViewModel: ObservableObject {
     }
     
     private func processUpdates(_ updates: [ChallengeDetails]) {
-        for update in updates {
-            if let index = challenges.firstIndex(where: { $0.recordId == update.recordId }) {
-                challenges[index] = update
-            } else {
-                challenges.append(update)
+        DispatchQueue.main.async{
+            for update in updates {
+                if let index = self.challenges.firstIndex(where: { $0.recordId == update.recordId }) {
+                    self.challenges[index] = update
+                } else {
+                    self.challenges.append(update)
+                }
             }
+            // filter challenges based on their status.
+            self.pendingChallenges = self.challenges.filter { $0.status == "Pending" }
+            self.activeChallenges = self.challenges.filter { $0.status == "Active" }
         }
-        // filter challenges based on their status.
-        pendingChallenges = challenges.filter { $0.status == "Pending" }
-        activeChallenges = challenges.filter { $0.status == "Active" }
     }
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
         Task {
             do {
                 let uuid = UUID().uuidString
-                var details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: uuid)
-                if let user = userSettingsManager.user {
-                    let creator = Participant(user: user, recordId: user.recordId!)
-                    let (share, shareURL, updatedDetails) = try await cloudKitManager.createChallenge(with: details, creator: creator)
-                    details = updatedDetails // Use the updated details with the creator included
-                self.setupShare(share: share, url: shareURL, details: updatedDetails)
+                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: uuid)
+                
+                guard let user = userSettingsManager.user, let recordId = user.recordId else {
+                    print("User information missing")
+                    return
+                }
+                let (share, shareURL) = try await cloudKitManager.createChallenge(with: details, creator: user)
+                
+                if let share = share, let shareURL = shareURL {
+                    setupShare(share: share, url: shareURL, details: details)
+                } else {
+                    print("Failed to create or share the challenge.")
                 }
             } catch {
                 print("Error creating or sharing challenge: \(error)")
             }
         }
     }
-
     private func setupShare(share: CKShare, url: URL, details: ChallengeDetails) {
-        // Ensure that the challenge has participants and the URL is valid.
-        guard !details.participants.isEmpty, let firstParticipantName = details.participants.first?.userName else {
-            print("Error: Challenge does not have any participants or first participant name is missing.")
-            return
-        }
         // Prerequisites are met, configure the share.
-        share[CKShare.SystemFieldKey.title] = "Strider Challenge: \(details.goalSteps) steps by end of \(details.endTime.formatted()) from \(firstParticipantName)"
-        
-        // Present the share controller.
-        presentCloudShareView(share: share, url: url, details: details)
+        share[CKShare.SystemFieldKey.title] = "Strider Challenge: \(details.goalSteps) steps by end of \(details.endTime.formatted()) from \(userSettingsManager.userName)"
+        DispatchQueue.main.async{
+            // Present the share controller.
+            self.presentCloudShareView(share: share, url: url, details: details)
+        }
     }
     
     private func presentCloudShareView(share: CKShare, url: URL, details: ChallengeDetails) {

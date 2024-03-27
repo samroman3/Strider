@@ -127,6 +127,7 @@ class UserSettingsManager: ObservableObject {
                 // This helps ensure that the User CKRecord is associated with the correct iCloud user when managing challenges
                 self?.userRecord = self?.user?.toCKRecord(recordID: recordID.recordName)
                 self?.user?.recordId = recordID.recordName
+                
             case .failure(let error):
                 // Handle error
                 print("Error fetching current user's CloudKit record ID: \(error.localizedDescription)")

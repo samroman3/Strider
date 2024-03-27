@@ -7,7 +7,8 @@
         <attribute name="recordId" optional="YES" attributeType="String"/>
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="status" optional="YES" attributeType="String"/>
-        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="challenges" inverseEntity="User"/>
+        <attribute name="winner" optional="YES" attributeType="String"/>
+        <relationship name="participants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="challenges" inverseEntity="User"/>
     </entity>
     <entity name="DailyLog" representedClassName="DailyLog" syncable="YES">
         <attribute name="calGoal" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -38,7 +39,7 @@
         <attribute name="stepGoal" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stepsRecord" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="userName" optional="YES" attributeType="String"/>
-        <relationship name="challenges" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Challenge" inverseName="users" inverseEntity="Challenge"/>
+        <relationship name="challenges" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Challenge" inverseName="participants" inverseEntity="Challenge"/>
         <relationship name="dailyLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DailyLog" inverseName="user" inverseEntity="DailyLog"/>
     </entity>
 </model>

@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Handle incoming universal links for CloudKit shares
         guard let incomingURL = userActivity.webpageURL else { return false }
         AppState.shared.handleIncomingURL(incomingURL)
-        registerForPushNotifications()
         return true
     }
     
@@ -63,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+        registerForPushNotifications()
         return true
     }
 }
