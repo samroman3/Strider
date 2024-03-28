@@ -15,42 +15,43 @@ struct TodayView: View {
     
     
     var body: some View {
-            VStack {
-                HStack {
-                    Text("\(Date(), formatter: itemFormatter)")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                    Spacer()
-                    Button(action: {
-                        profileViewIsPresented.toggle()
-                    }) {
-                            Image(systemName: "gear")
-                                .foregroundColor(.white)
-                                .font(.title2)
-                    }
-                }
-                .padding([.horizontal])
-                .background(Color.black)
-                TabView {
-                    // First page
-                    stepContent()
-                        .background(Color.black.edgesIgnoringSafeArea(.all))
-                        .tag(0)
-                    calorieContent()
-                        .background(Color.black.edgesIgnoringSafeArea(.all))
-                        .tag(1)
-                }
-                .tabViewStyle(PageTabViewStyle())
+        VStack {
+            HStack(alignment: .firstTextBaseline){
+                Text("\(Date(), formatter: itemFormatter)")
+                    .font(.title2)
+                    .foregroundColor(.white)
                 Spacer()
             }
-            .onAppear(){
-                userSettingsManager.loadUserSettings()
+            .padding([.horizontal])
+            .background(Color.black)
+            TabView {
+                // First page
+                stepContent()
+                    .background(Color.black.edgesIgnoringSafeArea(.all))
+                    .tag(0)
+                calorieContent()
+                    .background(Color.black.edgesIgnoringSafeArea(.all))
+                    .tag(1)
             }
-            .sheet(isPresented: $profileViewIsPresented, content: {
-                ProfileSetupView().environmentObject(userSettingsManager)
-            })
+            .tabViewStyle(PageTabViewStyle())
+            Spacer()
+        }
+        .navigationBarItems(trailing:
+            Button(action: {
+            profileViewIsPresented.toggle()
+        }) {
+            Image(systemName: "gear")
+                .foregroundColor(.white)
+                .font(.title2)
+        })
+        .onAppear(){
+            userSettingsManager.loadUserSettings()
+        }
+        .sheet(isPresented: $profileViewIsPresented, content: {
+            ProfileSetupView().environmentObject(userSettingsManager)
+        })
     }
-
+    
     
     
     @ViewBuilder
@@ -94,7 +95,7 @@ struct TodayView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func calorieContent() -> some View {
         ZStack {
@@ -136,7 +137,7 @@ struct TodayView: View {
             }
         }
     }
-
+    
     private var itemFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "E, MMM d"
