@@ -71,9 +71,8 @@ struct TabBarButton: View {
             .imageScale(.medium)
             .font(.system(size: 25))
             .onTapGesture {
-                withAnimation(.snappy) {
-                    selectedTab = tab
-                }
+                HapticFeedbackProvider.impact()
+                selectedTab = tab
             }
     }
 }

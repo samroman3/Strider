@@ -228,6 +228,53 @@ class CloudKitManager: ObservableObject {
         }
     }
     
+    func cancelChallenge(challenge: PendingChallenge) async {
+        do {
+            // Private database as the creator will be doing the cancellation.
+            let database = cloudKitContainer.privateCloudDatabase
+            
+            // Delete the share associated with the challenge.
+            let shareRecord = challenge.share
+            try await deleteShareRecordAsync(shareRecord: shareRecord)
+            // After successful deletion in CloudKit, proceed to delete the corresponding entity from CoreData.
+            deleteChallengeFromCoreData(challengeID: challenge.challengeDetails.recordId)
+            
+        } catch {
+            print("Error cancelling challenge: \(error)")
+        }
+    }
+
+    func deleteChallengeFromCoreData(challengeID: String) {
+        let fetchRequest: NSFetchRequest<Challenge> = Challenge.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "recordId == %@", challengeID)
+        
+        do {
+            let results = try context?.fetch(fetchRequest)
+            if let challengeToDelete = results?.first {
+                context?.delete(challengeToDelete)
+                saveContext()
+            }
+        } catch {
+            print("Error deleting challenge from CoreData: \(error)")
+        }
+    }
+    
+    func deleteShareRecordAsync(shareRecord: CKRecord) async throws {
+        let database = cloudKitContainer.privateCloudDatabase
+        return try await withCheckedThrowingContinuation { continuation in
+            database.delete(withRecordID: shareRecord.recordID) { recordID, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+
+    
+    
+    
     func convertToChallengeDetails(record: CKRecord) async -> ChallengeDetails? {
         guard let startTime = record["startTime"] as? Date,
               let endTime = record["endTime"] as? Date,
