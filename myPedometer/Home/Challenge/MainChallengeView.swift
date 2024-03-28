@@ -12,6 +12,8 @@ struct MainChallengeView: View {
     
     @State private var isCreateViewPresented = false
     
+    @State private var isCustomShareViewPresented = false
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -38,6 +40,9 @@ struct MainChallengeView: View {
             Image(systemName: "plus.circle")
                 .font(.title2)
                 .foregroundStyle(.white)
+        })
+        .fullScreenCover(isPresented: $challengeViewModel.presentShareController, content: {
+            CustomShareView(share: $challengeViewModel.share, shareURL: $challengeViewModel.shareURL, details: $challengeViewModel.details, isPresented: $challengeViewModel.presentShareController)
         })
         .background(.black)
     }

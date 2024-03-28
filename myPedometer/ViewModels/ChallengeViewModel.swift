@@ -15,7 +15,7 @@ class ChallengeViewModel: ObservableObject {
     var userSettingsManager: UserSettingsManager
     
     @Published var challenges: [ChallengeDetails] = []
-    @Published var pendingChallenges: [ChallengeDetails] = [] // For challenges awaiting acceptance
+    @Published var pendingChallenges: [PendingChallenge] = [] // For challenges awaiting acceptance
     @Published var activeChallenges: [ChallengeDetails] = []
     @Published var noActiveChallengesText = "No active challenges. Invite Striders to begin!"
     
@@ -49,20 +49,27 @@ class ChallengeViewModel: ObservableObject {
                 } else {
                     self.challenges.append(update)
                 }
+                // Transition challenges from pending to active if their status has changed
+                if let pendingIndex = self.pendingChallenges.firstIndex(where: { $0.challengeDetails.recordId == update.recordId && update.status == "Active" }) {
+                    // Move the challenge to active challenges
+                    let pendingChallenge = self.pendingChallenges.remove(at: pendingIndex)
+                    self.activeChallenges.append(pendingChallenge.challengeDetails)
+                }
             }
+
+            }
+            
             // filter challenges based on their status.
-            self.pendingChallenges = self.challenges.filter { $0.status == "Pending" }
             self.activeChallenges = self.challenges.filter { $0.status == "Active" }
         }
-    }
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
         Task {
             do {
                 let uuid = UUID().uuidString
-                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Sent", participants: [], recordId: uuid)
+                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Pending", participants: [], recordId: uuid)
                 
-                guard let user = userSettingsManager.user, let recordId = user.recordId else {
+                guard let user = userSettingsManager.user, let _ = user.recordId else {
                     print("User information missing")
                     return
                 }
@@ -70,6 +77,10 @@ class ChallengeViewModel: ObservableObject {
                 
                 if let share = share, let shareURL = shareURL {
                     setupShare(share: share, url: shareURL, details: details)
+                    let pendingChallenge = PendingChallenge(id: share.recordID.recordName, challengeDetails: details, share: share)
+                        DispatchQueue.main.async {
+                            self.pendingChallenges.append(pendingChallenge)
+                        }
                 } else {
                     print("Failed to create or share the challenge.")
                 }
@@ -78,6 +89,7 @@ class ChallengeViewModel: ObservableObject {
             }
         }
     }
+    
     private func setupShare(share: CKShare, url: URL, details: ChallengeDetails) {
         // Prerequisites are met, configure the share.
         share[CKShare.SystemFieldKey.title] = "Strider Challenge: \(details.goalSteps) steps by end of \(details.endTime.formatted()) from \(userSettingsManager.userName)"
@@ -94,17 +106,27 @@ class ChallengeViewModel: ObservableObject {
         self.presentShareController = true
     }
     
-    func acceptChallenge(_ challengeDetails: ChallengeDetails) {
-        Task {
-            let currentUserParticipant = Participant(user:userSettingsManager.user! , recordId: userSettingsManager.cloudKitRecordName)
-                await cloudKitManager.addParticipantToChallenge(challengeID: challengeDetails.recordId, participantID: currentUserParticipant.id)
-            }
+    func resendChallenge(_ challenge: PendingChallenge) {
+        if let shareURL = challenge.share.url {
+            setupShare(share: challenge.share, url: shareURL, details: challenge.challengeDetails)
+        } else {
+            AppState.shared.triggerAlert(title: "Invalid Challenge", message: "Challenge has either expired or is no longer valid, please create a new challenge.")
+            cancelChallenge(challenge)
+            print("invalid share url, cancel challenge and create new one")
+        }
     }
     
-    func declineChallenge(_ challengeDetails: ChallengeDetails) {
-        Task {
+    func cancelChallenge(_ challenge: PendingChallenge) {
+        // Find the index of the challenge to be cancelled
+        if let index = pendingChallenges.firstIndex(where: { $0.id == challenge.id }) {
+            // Remove the challenge from pendingChallenges with animation
+            withAnimation {
+                pendingChallenges.remove(at: index)
+            }
+        }
+               Task {
             do {
-                await cloudKitManager.declineChallenge(challengeID: challengeDetails.recordId)
+                await cloudKitManager.declineChallenge(challengeID: challenge.challengeDetails.recordId)
             }
         }
     }

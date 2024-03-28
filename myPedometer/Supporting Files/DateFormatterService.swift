@@ -15,10 +15,17 @@ class DateFormatterService {
     
     private let dateFormatter = DateFormatter()
     
-    func getItemFormatter() -> DateFormatter {
+    func longDateItemFormatter() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
+        return formatter
+    }
+    
+    func shortItemFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
         return formatter
     }
     

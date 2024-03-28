@@ -51,6 +51,8 @@ struct CustomShareView: View {
     @Binding var shareURL: URL?
     @Binding var details: ChallengeDetails?
     
+    @Binding var isPresented: Bool
+    
     @State private var isSharingPresented = false
     
     var body: some View {
@@ -64,7 +66,11 @@ struct CustomShareView: View {
             Button("Share Challenge") {
                 isSharingPresented = true
             }
+            Button("Close") {
+                isPresented = false
+            }
             .sheet(isPresented: $isSharingPresented, onDismiss: {
+                isPresented = false
                 print("Dismissed share sheet")
             }) {
                 // Use ActivityView for sharing

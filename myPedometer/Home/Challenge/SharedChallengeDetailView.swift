@@ -18,8 +18,9 @@ struct SharedChallengeDetailView: View {
                 .font(.headline)
                 .padding()
 
-            Text("Goal Steps: \(challengeDetails.goalSteps)")
+            Text("Goal: \n \(challengeDetails.goalSteps) steps")
                 .padding()
+                .multilineTextAlignment(.center)
 
             // Display participants
             ScrollView(.horizontal, showsIndicators: false) {
@@ -60,7 +61,7 @@ struct SharedChallengeDetailView: View {
             }
             .padding()
 
-            Text("Ends: \(challengeDetails.endTime, formatter: itemFormatter)")
+            Text("Ends: \(challengeDetails.endTime, formatter: DateFormatterService.shared.shortItemFormatter())")
                 .padding()
         }
         .padding()

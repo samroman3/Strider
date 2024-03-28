@@ -50,17 +50,12 @@ struct CreateChallengeView: View {
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding()
-                    .background(Color.blue)
                     .cornerRadius(10)
                     .shadow(radius: 2)
                 }
                 .padding(.bottom)
             }
-            .sheet(isPresented: $challengeViewModel.presentShareController, content: {
-                CustomShareView(share: $challengeViewModel.share, shareURL: $challengeViewModel.shareURL, details: $challengeViewModel.details)
-            })
             .padding(.bottom)
-            .background(Color(UIColor.secondarySystemBackground).edgesIgnoringSafeArea(.all))
             .navigationTitle("Create Challenge")
         }
     }

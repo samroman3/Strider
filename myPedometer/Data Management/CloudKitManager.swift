@@ -37,6 +37,9 @@ class CloudKitManager: ObservableObject {
     
     @Published var challengeUpdates: [ChallengeDetails] = []
     
+    @Published var pendingChallenges: [PendingChallenge] = []
+
+    
     init() {
         self.cloudKitContainer =  CKContainer.default()
         setupChallengeSubscription()
@@ -217,8 +220,6 @@ class CloudKitManager: ObservableObject {
             _ = try await cloudKitContainer.sharedCloudDatabase.save(challengeRecord)
             
             // Optionally, delete the record if necessary
-            
-            // Notify the ChallengeViewModel of the declined challenge
             
              await self.challengeUpdates.append(self.convertToChallengeDetails(record: challengeRecord)!)
             

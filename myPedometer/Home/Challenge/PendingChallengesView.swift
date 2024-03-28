@@ -19,7 +19,7 @@ struct PendingChallengesView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach($challengeViewModel.pendingChallenges) { challenge in
-                        PendingChallengeRow(challenge: challenge, userRecord: (challengeViewModel.userSettingsManager.user?.recordId)!, onDeny: { challengeViewModel.declineChallenge(challenge.wrappedValue) }, onAccept: {challengeViewModel.acceptChallenge(challenge.wrappedValue)})
+                        PendingChallengeRow(challenge: challenge, userRecord: (challengeViewModel.userSettingsManager.user?.recordId)!, onCancel: { challengeViewModel.cancelChallenge(challenge.wrappedValue) }, onResend: {challengeViewModel.resendChallenge(challenge.wrappedValue)})
                     }
                 }
             }
@@ -28,35 +28,30 @@ struct PendingChallengesView: View {
 }
 
 struct PendingChallengeRow: View {
-    @Binding var challenge: ChallengeDetails
+    @Binding var challenge: PendingChallenge
     var userRecord: String
-    var onDeny: () -> Void
-    var onAccept: () -> Void
-    var isCreator: Bool {
-        return challenge.participants[0].id == userRecord
-       }
+    var onCancel: () -> Void
+    var onResend: () -> Void
     
     var body: some View {
         VStack {
-            Text("Goal: \(challenge.goalSteps)")
+            Text("Goal: \(challenge.challengeDetails.goalSteps) steps")
                 .padding()
-            
+            Text("Ends: \(challenge.challengeDetails.endTime, formatter: DateFormatterService.shared.shortItemFormatter())")
             HStack {
-                if !isCreator {
                     Button(action: {
-                        onAccept()
+                        onResend()
                     }) {
-                        Text("Accept" )
+                        Text("Resend")
                             .padding()
                             .background(Color.green)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
-                }
                 Button(action: {
-                        onDeny()
+                        onCancel()
                     }) {
-                        Text(isCreator ? "Cancel" : "Decline")
+                        Text("Cancel")
                             .padding()
                             .background(Color.red)
                             .foregroundColor(.white)
@@ -65,7 +60,7 @@ struct PendingChallengeRow: View {
                     .padding(.horizontal)
             }
         }
-        .frame(width: 200, height: 150)
+        .frame(width: 300, height: 150)
         .background(AppTheme.darkerGray)
         .cornerRadius(8)
         .padding()

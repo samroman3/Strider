@@ -34,7 +34,7 @@
         <attribute name="calGoal" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="calorieRecord" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lifetimeSteps" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="photoData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="photoData" optional="YES" attributeType="Binary"/>
         <attribute name="recordId" optional="YES" attributeType="String"/>
         <attribute name="stepGoal" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stepsRecord" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>

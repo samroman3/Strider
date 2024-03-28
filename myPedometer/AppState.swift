@@ -83,6 +83,7 @@ class AppState: ObservableObject {
         DispatchQueue.main.async {
             self.challengeInvitation = nil
             self.challengeMetadata = nil
+            self.triggerAlert(title: "Challenge", message: "Challenge Declined Successfully")
             //Inform user of successful decline
         }
     }
