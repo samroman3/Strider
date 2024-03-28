@@ -42,6 +42,7 @@
 		3A870D342BB0FD1E000F4D1E /* LiveChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D332BB0FD1E000F4D1E /* LiveChallengeView.swift */; };
 		3A870D362BB0FD54000F4D1E /* CreateChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D352BB0FD54000F4D1E /* CreateChallengeView.swift */; };
 		3A8F0D6E2BAB4EA9004D1AE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8F0D6D2BAB4EA9004D1AE8 /* AppDelegate.swift */; };
+		3AB190622BB5DA890049D672 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB190612BB5DA890049D672 /* SceneDelegate.swift */; };
 		3ABAB32D2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */; };
 		3ABAB32E2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */; };
 		3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */; };
@@ -131,6 +132,7 @@
 		3A870D332BB0FD1E000F4D1E /* LiveChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveChallengeView.swift; sourceTree = "<group>"; };
 		3A870D352BB0FD54000F4D1E /* CreateChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChallengeView.swift; sourceTree = "<group>"; };
 		3A8F0D6D2BAB4EA9004D1AE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3AB190612BB5DA890049D672 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HourlyStepData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlySteps.swift; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 				3AD6F91C2B618FA700923DFC /* ContentView.swift */,
 				3A8F0D6D2BAB4EA9004D1AE8 /* AppDelegate.swift */,
 				3A4176612BA3915A00F89254 /* AppState.swift */,
+				3AB190612BB5DA890049D672 /* SceneDelegate.swift */,
 				3AC0CEC62B66D02300A56554 /* Home */,
 				3A4176602BA3911D00F89254 /* ViewModels */,
 				3AD6F95C2B61988800923DFC /* Models */,
@@ -564,6 +567,7 @@
 				3A870D2C2BB0FC1B000F4D1E /* DummyChallenge.swift in Sources */,
 				3A16B5472B65F9CB007BD5F6 /* DateFormatterService.swift in Sources */,
 				3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */,
+				3AB190622BB5DA890049D672 /* SceneDelegate.swift in Sources */,
 				3A0BB5A82B68A63C008C616E /* UserFriendlyError.swift in Sources */,
 				3ACF747E2BAA22C700EB37A5 /* SharedChallengeDetailView.swift in Sources */,
 				3A4176662BA3ADD500F89254 /* SignInView.swift in Sources */,

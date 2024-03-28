@@ -37,6 +37,9 @@ struct myPedometerApp: App {
                 .environmentObject(AppState.shared)
                 .environmentObject(UserSettingsManager.shared)
                 .environmentObject(CloudKitManager.shared)
+                .onOpenURL { url in
+                 AppState.shared.handleIncomingURL(url)
+                 }
             
         }
     }
