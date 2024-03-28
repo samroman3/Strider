@@ -200,9 +200,9 @@
 		3A41765E2BA390D500F89254 /* Admin */ = {
 			isa = PBXGroup;
 			children = (
-				3A0ADE452B9F901100A2D9D4 /* CustomTabBarView.swift */,
 				3A41765C2BA3909500F89254 /* OnboardingView.swift */,
 				3A4176652BA3ADD500F89254 /* SignInView.swift */,
+				3A0ADE452B9F901100A2D9D4 /* CustomTabBarView.swift */,
 			);
 			path = Admin;
 			sourceTree = "<group>";

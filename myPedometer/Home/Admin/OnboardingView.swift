@@ -248,12 +248,12 @@ struct ConsentView_Previews: PreviewProvider {
     }
 }
 
-
-struct OnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingView(onOnboardingComplete: {})
-    }
-}
+//
+//struct OnboardingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        OnboardingView(onOnboardingComplete: {})
+//    }
+//}
 
 struct WelcomeScreen_Previews: PreviewProvider {
     static var previews: some View {
