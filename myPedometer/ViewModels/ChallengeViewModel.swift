@@ -107,6 +107,13 @@ class ChallengeViewModel: ObservableObject {
     }
     
     func resendChallenge(_ challenge: PendingChallenge) {
+        let now = Date()
+        if challenge.challengeDetails.endTime < now {
+            // Challenge has expired
+            AppState.shared.triggerAlert(title: "Challenge Expired", message: "This challenge has expired and cannot be resent. Please create a new challenge.")
+            cancelChallenge(challenge)
+            print("Challenge has expired, deleting challenge")
+        }
         if let shareURL = challenge.share.url {
             setupShare(share: challenge.share, url: shareURL, details: challenge.challengeDetails)
         } else {
@@ -120,7 +127,7 @@ class ChallengeViewModel: ObservableObject {
         // Find the index of the challenge to be cancelled
         if let index = pendingChallenges.firstIndex(where: { $0.id == challenge.id }) {
             // Remove the challenge from pendingChallenges with animation
-            withAnimation {
+            let _ = withAnimation {
                 pendingChallenges.remove(at: index)
             }
         }

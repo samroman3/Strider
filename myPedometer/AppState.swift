@@ -83,8 +83,7 @@ class AppState: ObservableObject {
         DispatchQueue.main.async {
             self.challengeInvitation = nil
             self.challengeMetadata = nil
-            self.triggerAlert(title: "Challenge", message: "Challenge Declined Successfully")
-            //Inform user of successful decline
+            self.triggerAlert(title: "Challenge", message: "Challenge Declined")
         }
     }
     
@@ -103,7 +102,7 @@ class AppState: ObservableObject {
                 self.challengeInvitation = nil
             }
             else {
-                //challenge participants full, alert user and remove metadata
+                //Challenge participants full, alert user and remove metadata
                 self.challengeMetadata = nil
                 self.challengeInvitation = nil
                 self.triggerAlert(title: "Challenge Full", message: "This challenge already has the maximum number of participants.")
@@ -136,6 +135,7 @@ class AppState: ObservableObject {
     func challengeAccepted(challengeDetails: ChallengeDetails) {
         DispatchQueue.main.async {
             self.currentChallengeState = .challengeActive(challengeDetails)
+            
         }
     }
     

@@ -54,6 +54,9 @@ struct ContentView: View {
     @ViewBuilder
     private func mainContentView() -> some View {
         CustomTabBarView()
+            .alert(item: $appState.alertItem) { alertItem in
+                        Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
+                    }
                 .sheet(item: $appState.currentChallengeState) { challengeState in
                     switch challengeState {
                     case .invitation(let challengeDetails):
@@ -65,9 +68,10 @@ struct ContentView: View {
                             appState.declineChallenge()
                         })
                     case .challengeActive(let challengeDetails):
-                        Text("Challenge is now active! Goal: \(challengeDetails.goalSteps), End Time: \(challengeDetails.endTime.formatted())")
+                    //TODO: replace alerts with custom views
+                       let _ = AppState.shared.triggerAlert(title: "Challenge Active", message: "Challenge is now active! Goal: \(challengeDetails.goalSteps), End Time: \(challengeDetails.endTime.formatted())")
                     case .challengeCompleted(let challengeDetails):
-                        Text("Challenge completed! Goal steps: \(challengeDetails.goalSteps), winner: \(challengeDetails.winner ?? "")")
+                        let _ = AppState.shared.triggerAlert(title: "Challenge Complete", message: "Challenge completed! Goal steps: \(challengeDetails.goalSteps), winner: \(challengeDetails.winner ?? "")")
                     }
                 }
     }
