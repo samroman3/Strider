@@ -41,8 +41,8 @@ class ChallengeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func loadPendingChallenges() async {
-        let loadedChallenges = await cloudKitManager.loadPendingChallenges()
+    func loadPendingChallenges() {
+        let loadedChallenges = cloudKitManager.loadPendingChallenges()
         DispatchQueue.main.async {
             self.pendingChallenges = loadedChallenges
         }
@@ -110,10 +110,12 @@ class ChallengeViewModel: ObservableObject {
     }
     
     private func presentCloudShareView(share: CKShare, url: URL, details: ChallengeDetails) {
-        self.share = share
-        self.shareURL = url
-        self.details = details
-        self.presentShareController = true
+        DispatchQueue.main.async {
+                self.share = share
+                self.shareURL = url
+                self.details = details
+                self.presentShareController = true
+            }
     }
     
     func resendChallenge(_ challenge: PendingChallenge) async {

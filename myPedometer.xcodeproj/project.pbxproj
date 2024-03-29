@@ -29,6 +29,7 @@
 		3A4176732BA6053500F89254 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176722BA6053500F89254 /* CloudKitManager.swift */; };
 		3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */; };
 		3A4176832BA8E1D000F89254 /* CustomShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176822BA8E1D000F89254 /* CustomShareView.swift */; };
+		3A65699A2BB661AB00E609D7 /* StepsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3A6569982BB661AB00E609D7 /* StepsModel.xcdatamodeld */; };
 		3A85835C2BB4A23B00B14956 /* Challenge+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */; };
 		3A85835D2BB4A23B00B14956 /* Challenge+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */; };
 		3A85835E2BB4A23B00B14956 /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */; };
@@ -119,6 +120,7 @@
 		3A4176722BA6053500F89254 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeDetails.swift; sourceTree = "<group>"; };
 		3A4176822BA8E1D000F89254 /* CustomShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShareView.swift; sourceTree = "<group>"; };
+		3A6569992BB661AB00E609D7 /* StepsModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = StepsModel.xcdatamodel; sourceTree = "<group>"; };
 		3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -298,6 +300,7 @@
 				3AD6F9592B61983500923DFC /* DailyLog+CoreDataProperties.swift */,
 				3ABAB32B2B622AA400E174D3 /* HourlyStepData+CoreDataClass.swift */,
 				3AD6F9582B61983500923DFC /* DailyLog+CoreDataClass.swift */,
+				3A6569982BB661AB00E609D7 /* StepsModel.xcdatamodeld */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -606,6 +609,7 @@
 				3A85835E2BB4A23B00B14956 /* User+CoreDataClass.swift in Sources */,
 				3AD6F95E2B619BB200923DFC /* DayCardView.swift in Sources */,
 				3A23206D2BA2403300D1851F /* AppTheme.swift in Sources */,
+				3A65699A2BB661AB00E609D7 /* StepsModel.xcdatamodeld in Sources */,
 				3AD6F95A2B61983500923DFC /* DailyLog+CoreDataClass.swift in Sources */,
 				3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */,
 				3A870D362BB0FD54000F4D1E /* CreateChallengeView.swift in Sources */,
@@ -968,6 +972,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		3A6569982BB661AB00E609D7 /* StepsModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3A6569992BB661AB00E609D7 /* StepsModel.xcdatamodel */,
+			);
+			currentVersion = 3A6569992BB661AB00E609D7 /* StepsModel.xcdatamodel */;
+			name = StepsModel.xcdatamodeld;
+			path = ../../StepsModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3AD6F90F2B618FA700923DFC /* Project object */;
 }

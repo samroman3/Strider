@@ -96,8 +96,6 @@ class CloudKitManager: ObservableObject {
             
             let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
             self.cloudKitContainer.privateCloudDatabase.add(operation)
-            self.updateChallengeWithShareRecordID(challenge.recordId!, shareRecordID: share.recordID.recordName)
-                    
             return try await waitForShareOperation(operation, withShare: share)
         } else {
             throw ManagerError.invalidUser
@@ -157,7 +155,7 @@ class CloudKitManager: ObservableObject {
 
     
     func fetchShareFromRecordID(_ recordIDString: String) async throws -> CKShare? {
-        let recordID = CKRecord.ID(recordName: recordIDString)
+        let recordID = CKRecord.ID(recordName: recordIDString, zoneID: recordZone.zoneID)
  
         let database = cloudKitContainer.privateCloudDatabase
 
@@ -210,7 +208,7 @@ class CloudKitManager: ObservableObject {
             throw ManagerError.challengeCreationFailed
         }
         let (share, shareURL) = try await shareChallenge(challenge, withParticipants: details.participants, creator: creator)
-        
+        self.updateChallengeWithShareRecordID(challenge.recordId!, shareRecordID: (share?.recordID.recordName)!)
         return (share, shareURL)
     }
     
@@ -286,18 +284,17 @@ class CloudKitManager: ObservableObject {
         do {
             // Fetch the challenge record
             let recordID = CKRecord.ID(recordName: challengeID)
-            let zone = recordZone
-            let challengeRecord = try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
+            let challengeRecord = try await cloudKitContainer.sharedCloudDatabase.record(for: recordID)
             
             // Update the status to "Denied"
-            challengeRecord["status"] = "Denied"
-            
+            //Deciding if creator should see a denied alert. may not be necessary
+//            challengeRecord["status"] = "Denied"
             // Save the updated record
             _ = try await cloudKitContainer.sharedCloudDatabase.save(challengeRecord)
             
             // Optionally, delete the record if necessary
             self.deleteChallengeFromCoreData(challengeID: challengeID)
-             await self.challengeUpdates.append(self.convertToChallengeDetails(record: challengeRecord)!)
+            await self.challengeUpdates.append(self.convertToChallengeDetails(record: challengeRecord)!)
             
         } catch {
             print("Error declining challenge: \(error)")
@@ -306,9 +303,6 @@ class CloudKitManager: ObservableObject {
     
     func cancelChallenge(challenge: PendingChallenge) async {
         do {
-            // Private database as the creator will be doing the cancellation.
-//            let database = cloudKitContainer.privateCloudDatabase
-            
             // Delete the corresponding entity from CoreData.
             deleteChallengeFromCoreData(challengeID: challenge.id)
             
@@ -351,9 +345,6 @@ class CloudKitManager: ObservableObject {
         }
     }
 
-    
-    
-    
     func convertToChallengeDetails(record: CKRecord) async -> ChallengeDetails? {
         guard let startTime = record["startTime"] as? Date,
               let endTime = record["endTime"] as? Date,
