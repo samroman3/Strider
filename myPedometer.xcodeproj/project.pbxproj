@@ -28,7 +28,7 @@
 		3A4176702BA603F700F89254 /* ChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A41766F2BA603F700F89254 /* ChallengeViewModel.swift */; };
 		3A4176732BA6053500F89254 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176722BA6053500F89254 /* CloudKitManager.swift */; };
 		3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */; };
-		3A4176832BA8E1D000F89254 /* CloudSharingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176822BA8E1D000F89254 /* CloudSharingView.swift */; };
+		3A4176832BA8E1D000F89254 /* CustomShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176822BA8E1D000F89254 /* CustomShareView.swift */; };
 		3A85835C2BB4A23B00B14956 /* Challenge+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */; };
 		3A85835D2BB4A23B00B14956 /* Challenge+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */; };
 		3A85835E2BB4A23B00B14956 /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */; };
@@ -68,7 +68,6 @@
 		3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F94C2B61902800923DFC /* DetailView.swift */; };
 		3AD6F94F2B61903F00923DFC /* PedometerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F94E2B61903F00923DFC /* PedometerManager.swift */; };
 		3AD6F9522B6190AC00923DFC /* StepDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */; };
-		3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9552B61943E00923DFC /* StepsModel.xcdatamodeld */; };
 		3AD6F95A2B61983500923DFC /* DailyLog+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9582B61983500923DFC /* DailyLog+CoreDataClass.swift */; };
 		3AD6F95B2B61983500923DFC /* DailyLog+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F9592B61983500923DFC /* DailyLog+CoreDataProperties.swift */; };
 		3AD6F95E2B619BB200923DFC /* DayCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F95D2B619BB200923DFC /* DayCardView.swift */; };
@@ -119,7 +118,7 @@
 		3A41766F2BA603F700F89254 /* ChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeViewModel.swift; sourceTree = "<group>"; };
 		3A4176722BA6053500F89254 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeDetails.swift; sourceTree = "<group>"; };
-		3A4176822BA8E1D000F89254 /* CloudSharingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSharingView.swift; sourceTree = "<group>"; };
+		3A4176822BA8E1D000F89254 /* CustomShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShareView.swift; sourceTree = "<group>"; };
 		3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -163,7 +162,6 @@
 		3AD6F94C2B61902800923DFC /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		3AD6F94E2B61903F00923DFC /* PedometerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerManager.swift; sourceTree = "<group>"; };
 		3AD6F9512B6190AC00923DFC /* StepDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepDataViewModel.swift; sourceTree = "<group>"; };
-		3AD6F9562B61943E00923DFC /* StepsModel.xcdatamodel */ = {isa = PBXFileReference; explicitFileType = wrapper.xcdatamodel; path = StepsModel.xcdatamodel; sourceTree = "<group>"; };
 		3AD6F9582B61983500923DFC /* DailyLog+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyLog+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3AD6F9592B61983500923DFC /* DailyLog+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyLog+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3AD6F95D2B619BB200923DFC /* DayCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCardView.swift; sourceTree = "<group>"; };
@@ -237,9 +235,8 @@
 				3A870D332BB0FD1E000F4D1E /* LiveChallengeView.swift */,
 				3A870D312BB0FCD8000F4D1E /* PastChallengesView.swift */,
 				3A870D352BB0FD54000F4D1E /* CreateChallengeView.swift */,
-				3A870D2B2BB0FC1B000F4D1E /* DummyChallenge.swift */,
 				3A870D292BB0FBFF000F4D1E /* ChallengeStatus.swift */,
-				3A4176822BA8E1D000F89254 /* CloudSharingView.swift */,
+				3A4176822BA8E1D000F89254 /* CustomShareView.swift */,
 				3ACF747D2BAA22C700EB37A5 /* SharedChallengeDetailView.swift */,
 			);
 			path = Challenge;
@@ -341,7 +338,6 @@
 				3AD6F95C2B61988800923DFC /* Models */,
 				3AD6F95F2B619C3900923DFC /* Supporting Files */,
 				3AD6F9202B618FA900923DFC /* Assets.xcassets */,
-				3AD6F9552B61943E00923DFC /* StepsModel.xcdatamodeld */,
 				3AD6F9222B618FA900923DFC /* Preview Content */,
 			);
 			path = myPedometer;
@@ -396,6 +392,7 @@
 				3ABAFB7B2B63133600BC0C9F /* DetailData.swift */,
 				3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */,
 				3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */,
+				3A870D2B2BB0FC1B000F4D1E /* DummyChallenge.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -570,7 +567,6 @@
 				3A4176702BA603F700F89254 /* ChallengeViewModel.swift in Sources */,
 				3A870D2C2BB0FC1B000F4D1E /* DummyChallenge.swift in Sources */,
 				3A16B5472B65F9CB007BD5F6 /* DateFormatterService.swift in Sources */,
-				3AD6F9572B61943E00923DFC /* StepsModel.xcdatamodeld in Sources */,
 				3AB190622BB5DA890049D672 /* SceneDelegate.swift in Sources */,
 				3A0BB5A82B68A63C008C616E /* UserFriendlyError.swift in Sources */,
 				3ACF747E2BAA22C700EB37A5 /* SharedChallengeDetailView.swift in Sources */,
@@ -605,7 +601,7 @@
 				3A4176622BA3915A00F89254 /* AppState.swift in Sources */,
 				3AD6F9672B61AC7800923DFC /* PedometerDataStore.swift in Sources */,
 				3A870D2E2BB0FC72000F4D1E /* PendingChallengesView.swift in Sources */,
-				3A4176832BA8E1D000F89254 /* CloudSharingView.swift in Sources */,
+				3A4176832BA8E1D000F89254 /* CustomShareView.swift in Sources */,
 				3AD6F9692B61E6D700923DFC /* ProgressCircleView.swift in Sources */,
 				3A85835E2BB4A23B00B14956 /* User+CoreDataClass.swift in Sources */,
 				3AD6F95E2B619BB200923DFC /* DayCardView.swift in Sources */,
@@ -796,8 +792,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -836,8 +832,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -972,19 +968,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		3AD6F9552B61943E00923DFC /* StepsModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				3AD6F9562B61943E00923DFC /* StepsModel.xcdatamodel */,
-			);
-			currentVersion = 3AD6F9562B61943E00923DFC /* StepsModel.xcdatamodel */;
-			path = StepsModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 3AD6F90F2B618FA700923DFC /* Project object */;
 }

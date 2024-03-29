@@ -41,6 +41,6 @@ extension ChallengeDetails {
 struct PendingChallenge: Identifiable {
     var id: String
     let challengeDetails: ChallengeDetails
-    let share: CKShare
+    let shareRecordID: String
 }
 

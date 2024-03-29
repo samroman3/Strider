@@ -57,23 +57,24 @@ struct ContentView: View {
             .alert(item: $appState.alertItem) { alertItem in
                         Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
                     }
-                .sheet(item: $appState.currentChallengeState) { challengeState in
-                    switch challengeState {
-                    case .invitation(let challengeDetails):
-                        SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
-                            Task {
-                                    await appState.acceptChallenge()
-                                    }
-                        }, onDecline: {
-                            appState.declineChallenge()
-                        })
-                    case .challengeActive(let challengeDetails):
-                    //TODO: replace alerts with custom views
-                       let _ = AppState.shared.triggerAlert(title: "Challenge Active", message: "Challenge is now active! Goal: \(challengeDetails.goalSteps), End Time: \(challengeDetails.endTime.formatted())")
-                    case .challengeCompleted(let challengeDetails):
-                        let _ = AppState.shared.triggerAlert(title: "Challenge Complete", message: "Challenge completed! Goal steps: \(challengeDetails.goalSteps), winner: \(challengeDetails.winner ?? "")")
-                    }
+            .sheet(item: $appState.currentChallengeState) { challengeState in
+                switch challengeState {
+                case .invitation(let challengeDetails):
+                    SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
+                        Task {
+                            await appState.acceptChallenge()
+                        }
+                    }, onDecline: {
+                        appState.declineChallenge()
+                    })
+
+                    //TODO: replace alerts with custom view
+                case .challengeActive(_):
+                    EmptyView()
+                case .challengeCompleted(_):
+                    EmptyView()
                 }
+            }
     }
 }
 

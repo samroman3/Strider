@@ -11,19 +11,24 @@ struct PendingChallengesView: View {
     @EnvironmentObject var challengeViewModel: ChallengeViewModel
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Pending Challenges")
                 .font(.headline)
-                .padding(.leading)
+                .padding([.leading, .top])
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
+                HStack(spacing: 20) {
                     ForEach($challengeViewModel.pendingChallenges) { challenge in
-                        PendingChallengeRow(challenge: challenge, userRecord: (challengeViewModel.userSettingsManager.user?.recordId)!, onCancel: { challengeViewModel.cancelChallenge(challenge.wrappedValue) }, onResend: {challengeViewModel.resendChallenge(challenge.wrappedValue)})
+                        PendingChallengeRow(challenge: challenge, userRecord: (challengeViewModel.userSettingsManager.user?.recordId)!, onCancel: { challengeViewModel.cancelChallenge(challenge.wrappedValue) }, onResend: {
+                            Task { await challengeViewModel.resendChallenge(challenge.wrappedValue)}
+                        })
+                            .padding(.bottom, 5)
                     }
                 }
+                .padding(.leading)
             }
         }
+        .padding(.bottom)
     }
 }
 
@@ -34,39 +39,35 @@ struct PendingChallengeRow: View {
     var onResend: () -> Void
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             Text("Goal: \(challenge.challengeDetails.goalSteps) steps")
-                .padding()
+                .fontWeight(.semibold)
             Text("Ends: \(challenge.challengeDetails.endTime, formatter: DateFormatterService.shared.shortItemFormatter())")
-            HStack {
-                    Button(action: {
-                        onResend()
-                    }) {
-                        Text("Resend")
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
+            
+            HStack(spacing: 10) {
                 Button(action: {
-                        onCancel()
-                    }) {
-                        Text("Cancel")
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    .padding(.horizontal)
+                    HapticFeedbackProvider.impact()
+                    onResend()
+                }) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .buttonStyle(AppButtonStyle(backgroundColor: AppTheme.purpleGradient))
+                
+                Button(action: {
+                    HapticFeedbackProvider.impact()
+                    onCancel()
+                }) {
+                    Label("Cancel", systemImage: "xmark.circle")
+                }
+                .buttonStyle(AppButtonStyle(backgroundColor: AppTheme.fullGrayMaterial))
             }
         }
-        .frame(width: 300, height: 150)
-        .background(AppTheme.darkerGray)
-        .cornerRadius(8)
         .padding()
+        .frame(width: 280, height: 140)
+        .background(AppTheme.darkerGray)
+        .cornerRadius(12)
+        .shadow(radius: 2)
     }
 }
 
-#Preview {
-    PendingChallengesView()
-}
+

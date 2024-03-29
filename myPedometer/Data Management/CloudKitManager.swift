@@ -96,9 +96,84 @@ class CloudKitManager: ObservableObject {
             
             let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
             self.cloudKitContainer.privateCloudDatabase.add(operation)
+            self.updateChallengeWithShareRecordID(challenge.recordId!, shareRecordID: share.recordID.recordName)
+                    
             return try await waitForShareOperation(operation, withShare: share)
         } else {
             throw ManagerError.invalidUser
+        }
+    }
+    
+    func updateChallengeWithShareRecordID(_ challengeID: String, shareRecordID: String) {
+        guard let context = self.context else { return }
+        let fetchRequest: NSFetchRequest<Challenge> = Challenge.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "recordId == %@", challengeID)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let challengeToUpdate = results.first {
+                challengeToUpdate.shareRecordID = shareRecordID
+                saveContext()
+            }
+        } catch {
+            print("Updating Challenge with shareRecordID failed: \(error)")
+        }
+    }
+    
+    func loadPendingChallenges() -> [PendingChallenge] {
+        guard let context = self.context else { return [] }
+        let fetchRequest: NSFetchRequest<Challenge> = Challenge.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "status == %@ AND shareRecordID != NIL", "Pending")
+
+        var loadedPendingChallenges = [PendingChallenge]()
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            for challenge in results {
+                guard let shareRecordID = challenge.shareRecordID, let recordId = challenge.recordId else { continue }
+                let details = ChallengeDetails(
+                    id: recordId,
+                    startTime: challenge.startTime ?? Date(),
+                    endTime: challenge.endTime ?? Date(),
+                    goalSteps: challenge.goalSteps,
+                    status: challenge.status ?? "Pending",
+                    participants: [],
+                    recordId: recordId
+                )
+                let pendingChallenge = PendingChallenge(
+                    id: recordId,
+                    challengeDetails: details,
+                    shareRecordID: shareRecordID
+                )
+                loadedPendingChallenges.append(pendingChallenge)
+            }
+        } catch {
+            print("Failed to load pending challenges: \(error)")
+        }
+
+        return loadedPendingChallenges
+    }
+
+
+    
+    func fetchShareFromRecordID(_ recordIDString: String) async throws -> CKShare? {
+        let recordID = CKRecord.ID(recordName: recordIDString)
+ 
+        let database = cloudKitContainer.privateCloudDatabase
+
+        do {
+            let record = try await database.record(for: recordID)
+            
+            // Directly attempt to cast the fetched record as CKShare
+            guard let shareRecord = record as? CKShare else {
+                print("Record fetched is not a CKShare")
+                return nil
+            }
+
+            return shareRecord
+        } catch {
+            print("Error fetching share from CloudKit: \(error)")
+            throw error
         }
     }
     
@@ -211,7 +286,8 @@ class CloudKitManager: ObservableObject {
         do {
             // Fetch the challenge record
             let recordID = CKRecord.ID(recordName: challengeID)
-            let challengeRecord = try await cloudKitContainer.sharedCloudDatabase.record(for: recordID)
+            let zone = recordZone
+            let challengeRecord = try await cloudKitContainer.privateCloudDatabase.record(for: recordID)
             
             // Update the status to "Denied"
             challengeRecord["status"] = "Denied"
@@ -220,7 +296,7 @@ class CloudKitManager: ObservableObject {
             _ = try await cloudKitContainer.sharedCloudDatabase.save(challengeRecord)
             
             // Optionally, delete the record if necessary
-            
+            self.deleteChallengeFromCoreData(challengeID: challengeID)
              await self.challengeUpdates.append(self.convertToChallengeDetails(record: challengeRecord)!)
             
         } catch {
@@ -231,13 +307,14 @@ class CloudKitManager: ObservableObject {
     func cancelChallenge(challenge: PendingChallenge) async {
         do {
             // Private database as the creator will be doing the cancellation.
-            let database = cloudKitContainer.privateCloudDatabase
+//            let database = cloudKitContainer.privateCloudDatabase
+            
+            // Delete the corresponding entity from CoreData.
+            deleteChallengeFromCoreData(challengeID: challenge.id)
             
             // Delete the share associated with the challenge.
-            let shareRecord = challenge.share
-            try await deleteShareRecordAsync(shareRecord: shareRecord)
-            // After successful deletion in CloudKit, proceed to delete the corresponding entity from CoreData.
-            deleteChallengeFromCoreData(challengeID: challenge.challengeDetails.recordId)
+            let shareRecordID = challenge.shareRecordID
+            try await deleteShareRecordAsync(shareRecordID: shareRecordID)
             
         } catch {
             print("Error cancelling challenge: \(error)")
@@ -259,14 +336,16 @@ class CloudKitManager: ObservableObject {
         }
     }
     
-    func deleteShareRecordAsync(shareRecord: CKRecord) async throws {
+    func deleteShareRecordAsync(shareRecordID: String) async throws {
         let database = cloudKitContainer.privateCloudDatabase
-        return try await withCheckedThrowingContinuation { continuation in
-            database.delete(withRecordID: shareRecord.recordID) { recordID, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: ())
+        if let record = try await fetchShareFromRecordID(shareRecordID) {
+            return try await withCheckedThrowingContinuation { continuation in
+                database.delete(withRecordID: record.recordID) { recordID, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: ())
+                    }
                 }
             }
         }

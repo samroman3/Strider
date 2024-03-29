@@ -38,6 +38,7 @@ struct TodayView: View {
         }
         .navigationBarItems(trailing:
             Button(action: {
+            HapticFeedbackProvider.impact()
             profileViewIsPresented.toggle()
         }) {
             Image(systemName: "gear")

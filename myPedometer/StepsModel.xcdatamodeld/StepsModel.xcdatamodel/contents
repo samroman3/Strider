@@ -5,6 +5,7 @@
         <attribute name="goalSteps" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="recordId" optional="YES" attributeType="String"/>
+        <attribute name="shareRecordID" optional="YES" attributeType="String"/>
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="winner" optional="YES" attributeType="String"/>

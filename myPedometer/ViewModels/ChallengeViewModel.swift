@@ -41,6 +41,13 @@ class ChallengeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func loadPendingChallenges() async {
+        let loadedChallenges = await cloudKitManager.loadPendingChallenges()
+        DispatchQueue.main.async {
+            self.pendingChallenges = loadedChallenges
+        }
+    }
+    
     private func processUpdates(_ updates: [ChallengeDetails]) {
         DispatchQueue.main.async{
             for update in updates {
@@ -71,13 +78,15 @@ class ChallengeViewModel: ObservableObject {
                 
                 guard let user = userSettingsManager.user, let _ = user.recordId else {
                     print("User information missing")
+                    AppState.shared.triggerAlert(title: "Error", message: "Invalid User. Please sign out and sign back in.")
                     return
                 }
                 let (share, shareURL) = try await cloudKitManager.createChallenge(with: details, creator: user)
                 
                 if let share = share, let shareURL = shareURL {
+                    
                     setupShare(share: share, url: shareURL, details: details)
-                    let pendingChallenge = PendingChallenge(id: share.recordID.recordName, challengeDetails: details, share: share)
+                    let pendingChallenge = PendingChallenge(id: share.recordID.recordName, challengeDetails: details, shareRecordID: share.recordID.recordName)
                         DispatchQueue.main.async {
                             self.pendingChallenges.append(pendingChallenge)
                         }
@@ -85,6 +94,7 @@ class ChallengeViewModel: ObservableObject {
                     print("Failed to create or share the challenge.")
                 }
             } catch {
+                AppState.shared.triggerAlert(title: "Error", message: "Error creating or sharing challenge. Please try again later.")
                 print("Error creating or sharing challenge: \(error)")
             }
         }
@@ -106,7 +116,7 @@ class ChallengeViewModel: ObservableObject {
         self.presentShareController = true
     }
     
-    func resendChallenge(_ challenge: PendingChallenge) {
+    func resendChallenge(_ challenge: PendingChallenge) async {
         let now = Date()
         if challenge.challengeDetails.endTime < now {
             // Challenge has expired
@@ -114,26 +124,31 @@ class ChallengeViewModel: ObservableObject {
             cancelChallenge(challenge)
             print("Challenge has expired, deleting challenge")
         }
-        if let shareURL = challenge.share.url {
-            setupShare(share: challenge.share, url: shareURL, details: challenge.challengeDetails)
-        } else {
+        do {
+            if let share = try await cloudKitManager.fetchShareFromRecordID(challenge.shareRecordID) {
+                self.presentCloudShareView(share: share, url: share.url!, details: challenge.challengeDetails)
+            }
+        } catch {
             AppState.shared.triggerAlert(title: "Invalid Challenge", message: "Challenge has either expired or is no longer valid, please create a new challenge.")
             cancelChallenge(challenge)
             print("invalid share url, cancel challenge and create new one")
         }
+
     }
     
     func cancelChallenge(_ challenge: PendingChallenge) {
         // Find the index of the challenge to be cancelled
         if let index = pendingChallenges.firstIndex(where: { $0.id == challenge.id }) {
             // Remove the challenge from pendingChallenges with animation
-            let _ = withAnimation {
-                pendingChallenges.remove(at: index)
+            DispatchQueue.main.async{
+                let _ = withAnimation {
+                    self.pendingChallenges.remove(at: index)
+                }
             }
         }
                Task {
             do {
-                await cloudKitManager.declineChallenge(challengeID: challenge.challengeDetails.recordId)
+                await cloudKitManager.cancelChallenge(challenge: challenge)
             }
         }
     }

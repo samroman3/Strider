@@ -1,5 +1,5 @@
 //
-//  CloudSharingView.swift
+//  CustomShareView.swift
 //  myPedometer
 //
 //  Created by Sam Roman on 3/18/24.
@@ -9,76 +9,63 @@ import SwiftUI
 import CloudKit
 import LinkPresentation
 
-//struct CloudSharingControllerRepresentable: UIViewControllerRepresentable {
-//    var share: CKShare?
-//    var container: CKContainer?
-//    var shareURL: URL?
-//    
-//    @EnvironmentObject var viewModel: ChallengeViewModel
-//    
-//    func makeUIViewController(context: Context) -> UICloudSharingController {
-//        let controller = UICloudSharingController(share: share!, container: container!)
-//        controller.availablePermissions = [.allowPrivate, .allowReadWrite]
-//        controller.delegate = context.coordinator
-//        return controller
-//    }
-//    
-//    func updateUIViewController(_ uiViewController: UICloudSharingController, context: Context) {}
-//    
-//    func makeCoordinator() -> Coordinator {
-//        Coordinator(self)
-//    }
-//    
-//    class Coordinator: NSObject, UICloudSharingControllerDelegate {
-//        func cloudSharingController(_ csc: UICloudSharingController, failedToSaveShareWithError error: Error) {
-//            //
-//        }
-//        
-//        var parent: CloudSharingControllerRepresentable
-//        
-//        init(_ parent: CloudSharingControllerRepresentable) {
-//            self.parent = parent
-//        }
-//        
-//        func itemTitle(for csc: UICloudSharingController) -> String? {
-//            return "Share Challenge"
-//        }
-//    }
-//}
-
 struct CustomShareView: View {
     @Binding var share: CKShare?
     @Binding var shareURL: URL?
     @Binding var details: ChallengeDetails?
-    
     @Binding var isPresented: Bool
     
     @State private var isSharingPresented = false
     
     var body: some View {
-        VStack {
-            // Display challenge details
+        VStack(spacing: 20) {
+            Text("Share Your Challenge!")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .padding(.top, 20)
+            
             if let goalSteps = details?.goalSteps, let endTime = details?.endTime {
-                Text("Challenge: \(goalSteps) steps")
-                Text("End Time: \(endTime.formatted())")
+                VStack {
+                    Text("Challenge: \(goalSteps) steps")
+                        .fontWeight(.medium)
+                    Text("End Time: \(endTime.formatted())")
+                        .fontWeight(.medium)
+                }
+                .padding()
+                .background(AppTheme.darkerGray)
+                .cornerRadius(12)
+                .shadow(radius: 3)
             }
             
-            Button("Share Challenge") {
+            Button(action: {
                 isSharingPresented = true
+            }) {
+                Text("Share Challenge")
+                    .bold()
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(AppTheme.purpleGradient)
+                    .cornerRadius(12)
+                    .shadow(radius: 3)
             }
+            
             Button("Close") {
                 isPresented = false
             }
-            .sheet(isPresented: $isSharingPresented, onDismiss: {
-                isPresented = false
-                print("Dismissed share sheet")
-            }) {
-                // Use ActivityView for sharing
-                if let shareURL = shareURL {
-                    ActivityView(activityItems: [AnySharingItem(source: shareURL)], applicationActivities: nil)
-                }
+            .foregroundColor(.red)
+            .padding()
+            
+        }
+        .padding()
+        .sheet(isPresented: $isSharingPresented, onDismiss: {
+            isPresented = false
+            print("Dismissed share sheet")
+        }) {
+            if let shareURL = shareURL {
+                ActivityView(activityItems: [AnySharingItem(source: shareURL)], applicationActivities: nil)
             }
         }
+        .background(AppTheme.purpleGradient.opacity(0.03))
     }
 }
 
@@ -105,12 +92,9 @@ class AnySharingItem: NSObject, UIActivityItemSource {
         let metadata = LPLinkMetadata()
         metadata.title = "Join My Challenge on Strider!"
         metadata.originalURL = source
-        //TODO: Detailed meta data, user icon, app icon, goal and time
-//        metadata.iconProvider
         return metadata
     }
 }
-
 
 struct ActivityView: UIViewControllerRepresentable {
     var activityItems: [Any]

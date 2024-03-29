@@ -135,7 +135,7 @@ class AppState: ObservableObject {
     func challengeAccepted(challengeDetails: ChallengeDetails) {
         DispatchQueue.main.async {
             self.currentChallengeState = .challengeActive(challengeDetails)
-            
+           AppState.shared.triggerAlert(title: "Challenge Active", message: "Challenge is now active! Goal: \(challengeDetails.goalSteps), End Time: \(challengeDetails.endTime.formatted())")
         }
     }
     

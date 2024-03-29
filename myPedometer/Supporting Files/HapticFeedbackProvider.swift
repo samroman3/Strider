@@ -12,7 +12,7 @@ class HapticFeedbackProvider {
     
     static func impact() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
-        generator.impactOccurred()
+        generator.impactOccurred(intensity: .greatestFiniteMagnitude)
     }
     
 }

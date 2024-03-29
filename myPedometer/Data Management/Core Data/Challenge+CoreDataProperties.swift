@@ -24,6 +24,7 @@ extension Challenge {
     @NSManaged public var status: String?
     @NSManaged public var winner: String?
     @NSManaged public var participants: NSSet?
+    @NSManaged public var shareRecordID: String?
 
 }
 
@@ -66,6 +67,7 @@ extension Challenge {
         record["status"] = status as CKRecordValue?
         record["recordId"] = recordId as CKRecordValue
         record["winner"] = winner as CKRecordValue?
+        record["shareRecordID"] = shareRecordID as CKRecordValue?
         
         return record
     }

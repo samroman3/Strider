@@ -31,19 +31,25 @@ struct MainChallengeView: View {
             }
         }
         .navigationBarItems(trailing: Button(action: {
+            HapticFeedbackProvider.impact()
             isCreateViewPresented = true
         }) {
-            NavigationLink(destination: 
-                            CreateChallengeView()
-                .environmentObject(challengeViewModel)
-                           , isActive: $isCreateViewPresented) {}
             Image(systemName: "plus.circle")
                 .font(.title2)
                 .foregroundStyle(.white)
         })
+        .fullScreenCover(isPresented: $isCreateViewPresented) {
+            CreateChallengeView(isPresented: $isCreateViewPresented)
+                .environmentObject(challengeViewModel)
+        }
         .fullScreenCover(isPresented: $challengeViewModel.presentShareController, content: {
             CustomShareView(share: $challengeViewModel.share, shareURL: $challengeViewModel.shareURL, details: $challengeViewModel.details, isPresented: $challengeViewModel.presentShareController)
         })
         .background(.black)
+        .onAppear {
+            Task {
+                await challengeViewModel.loadPendingChallenges()
+            }
+        }
     }
 }
