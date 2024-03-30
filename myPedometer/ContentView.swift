@@ -30,12 +30,12 @@ struct ContentView: View {
                     .environmentObject(userSettingsManager)
             } else {
                 mainContentView()
+                    .environmentObject(StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager))
+                    .environmentObject(ChallengeViewModel(userSettingsManager: userSettingsManager, cloudKitManager: cloudKitManager))
+                    .environmentObject(userSettingsManager)
+                
             }
         }
-        .environmentObject(StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager))
-        .environmentObject(ChallengeViewModel(userSettingsManager: userSettingsManager, cloudKitManager: cloudKitManager))
-        .environmentObject(userSettingsManager)
-
     }
 
     private func handleOnboardingComplete() {

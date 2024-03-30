@@ -27,6 +27,8 @@ struct myPedometerApp: App {
         
 #if targetEnvironment(simulator)
         pedometerDataProvider = MockPedometerDataProvider(context: context)
+        UserSettingsManager.shared.hasCompletedOnboarding = true
+        UserSettingsManager.shared.hasSignedIn = true
 #else
         pedometerDataProvider = PedometerManager(context: context, dataStore: dataStore)
 #endif
