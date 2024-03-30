@@ -231,32 +231,25 @@ class UserSettingsManager: ObservableObject {
     
     //MARK: Core Data Sync
     
-    func updateUserDetails(image: UIImage?, userName: String, stepGoal: Int?, calGoal: Int?) {
-        DispatchQueue.main.async {
-            let user = self.fetchOrCreateUserSettings()
+    func updateUserDetails(image: UIImage?, userName: String, stepGoal: Int?, calGoal: Int?, updateImage: Bool = true) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             
-            if let image = image {
-                let imageData = image.jpegData(compressionQuality: 1.0)
-                user.photoData = imageData
-                self.photoData = imageData
-            }
-            
-            user.userName = userName
             self.userName = userName
-            
+            // Only update photoData if updateImage flag is true and a new image is provided
+            if updateImage, let newImage = image {
+                self.photoData = newImage.jpegData(compressionQuality: 0.5)
+            }
+            // Proceed to update step goal and calorie goal only if new values are provided
             if let stepGoal = stepGoal {
-                user.stepGoal = Int32(stepGoal)
                 self.dailyStepGoal = stepGoal
             }
-            
             if let calGoal = calGoal {
-                user.calGoal = Int32(calGoal)
                 self.dailyCalGoal = calGoal
             }
-            
-            self.saveContext()
-            // Now, update CloudKit with the latest information
-            let imageData = image?.jpegData(compressionQuality: 1.0)
+            // Make sure to only upload imageData if there's a new image
+            let imageData = updateImage ? image?.jpegData(compressionQuality: 1.0) : nil
+            self.updateCoreDataCache(userName: userName, photoData: imageData, stepGoal: stepGoal ?? self.dailyStepGoal, calGoal: calGoal ?? self.dailyCalGoal)
             self.saveUserUpdatesToCloud(userName: userName, imageData: imageData, stepGoal: stepGoal ?? self.dailyStepGoal, calGoal: calGoal ?? self.dailyCalGoal) { success, error in
                 if success {
                     print("Successfully updated user details in CloudKit.")
@@ -266,8 +259,9 @@ class UserSettingsManager: ObservableObject {
             }
         }
     }
+
     
-    func updateCoreDataCacheWithCloudKitData(userName: String, photoData: Data?, stepGoal: Int, calGoal: Int) {
+    func updateCoreDataCache(userName: String, photoData: Data?, stepGoal: Int, calGoal: Int) {
         DispatchQueue.main.async {
             // Fetch or create the User entity instance
             let user = self.fetchOrCreateUserSettings()
@@ -325,7 +319,7 @@ class UserSettingsManager: ObservableObject {
         fetchUserDetailsFromCloud { success, error in
             if success {
                 print("CloudKit data fetched successfully.")
-                self.updateCoreDataCacheWithCloudKitData(userName: self.userName, photoData: self.photoData, stepGoal: self.dailyStepGoal, calGoal: self.dailyCalGoal)
+                self.updateCoreDataCache(userName: self.userName, photoData: self.photoData, stepGoal: self.dailyStepGoal, calGoal: self.dailyCalGoal)
             } else {
                 print("Failed to fetch from CloudKit: \(error?.localizedDescription ?? "Unknown error")")
             }
