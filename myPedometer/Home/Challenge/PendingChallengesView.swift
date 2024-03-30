@@ -12,7 +12,7 @@ struct PendingChallengesView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Pending Challenges")
+            Text("Pending")
                 .font(.headline)
                 .padding([.leading, .top])
             

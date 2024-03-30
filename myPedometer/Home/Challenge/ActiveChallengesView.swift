@@ -11,7 +11,7 @@ struct ActiveChallengesView: View {
     @EnvironmentObject var challengeViewModel: ChallengeViewModel
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Active Challenges")
+            Text("Active")
                 .font(.headline)
                 .padding(.leading)
             ScrollView(.horizontal, showsIndicators: false) {

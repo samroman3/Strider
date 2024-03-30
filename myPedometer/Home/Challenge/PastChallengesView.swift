@@ -16,7 +16,7 @@ struct PastChallengesView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Past Challenges")
+            Text("Past")
                 .font(.headline)
                 .padding(.leading)
             
