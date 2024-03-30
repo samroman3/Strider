@@ -45,9 +45,6 @@ struct TodayView: View {
                 .foregroundColor(.white)
                 .font(.title2)
         })
-        .onAppear(){
-            userSettingsManager.loadUserSettings()
-        }
         .sheet(isPresented: $profileViewIsPresented, content: {
             ProfileSetupView().environmentObject(userSettingsManager)
         })
@@ -72,14 +69,14 @@ struct TodayView: View {
                                         .font(.system(size: 50))
                                 )
                                 .frame(width: 70, height: 70)
-                            Text("\(viewModel.todayLog?.totalSteps ?? 0)")
+                            Text("\(viewModel.animatedStepCount)")
                                 .font(.headline)
                                 .foregroundColor(.white)
                             Text("steps")
                                 .font(.headline)
                                 .foregroundColor(.white)
-                            if let totalSteps = viewModel.todayLog?.totalSteps, totalSteps < viewModel.dailyStepGoal {
-                                Text("\(viewModel.dailyStepGoal - Int(totalSteps)) remaining")
+                            if viewModel.animatedStepCount < viewModel.dailyStepGoal {
+                                Text("\(viewModel.dailyStepGoal - Int(viewModel.animatedStepCount)) remaining")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             } else {

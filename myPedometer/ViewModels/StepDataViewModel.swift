@@ -47,6 +47,31 @@ class StepDataViewModel: ObservableObject {
         
     @Published var error: UserFriendlyError?
     
+    @Published var animatedStepCount: Int = 0
+
+       // Trigger the count up animation for the step count
+       func animateStepCount(to finalValue: Int) {
+           // Reset animatedStepCount to 0 for re-animation
+           animatedStepCount = 0
+
+           // Determine the animation duration and step increment
+           let animationDuration = 1.0 // Total duration of the animation in seconds
+           let animationStep = 1 // Increment by this step
+
+           // Calculate time per step
+           let timePerStep = animationDuration / Double(finalValue)
+
+           // Use a timer to update animatedStepCount
+           Timer.scheduledTimer(withTimeInterval: timePerStep, repeats: true) { timer in
+               DispatchQueue.main.async {
+                   if self.animatedStepCount < finalValue {
+                       self.animatedStepCount += animationStep
+                   } else {
+                       timer.invalidate() // Stop the timer if we've reached the final value
+                   }
+               }
+           }
+       }
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -82,6 +107,7 @@ class StepDataViewModel: ObservableObject {
                 if let todayLog = value, strongSelf.isToday(log: todayLog) {
                     strongSelf.todayLog = todayLog
                     strongSelf.todaySteps = Int(todayLog.totalSteps)
+                    strongSelf.animateStepCount(to: Int(todayLog.totalSteps))
                     strongSelf.calculateCaloriesBurned()
                     self?.updateDailyLogWith(todayLog: todayLog)
                 }

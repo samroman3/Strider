@@ -231,7 +231,7 @@ class UserSettingsManager: ObservableObject {
     
     //MARK: Core Data Sync
     
-    func updateUserDetails(image: UIImage?, userName: String, stepGoal: Int?, calGoal: Int?, updateImage: Bool = true) {
+    func updateUserDetails(image: UIImage?, userName: String, stepGoal: Int?, calGoal: Int?, updateImage: Bool = true, calRecord: Int?, stepsRecord: Int?) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
@@ -247,6 +247,7 @@ class UserSettingsManager: ObservableObject {
             if let calGoal = calGoal {
                 self.dailyCalGoal = calGoal
             }
+            
             // Make sure to only upload imageData if there's a new image
             let imageData = updateImage ? image?.jpegData(compressionQuality: 1.0) : nil
             self.updateCoreDataCache(userName: userName, photoData: imageData, stepGoal: stepGoal ?? self.dailyStepGoal, calGoal: calGoal ?? self.dailyCalGoal)

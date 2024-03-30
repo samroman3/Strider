@@ -1514,9 +1514,9 @@
             filePath = "myPedometer/Data Management/UserSettingsManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
-            landmarkName = "updateUserDetails(image:userName:stepGoal:calGoal:updateImage:)"
+            startingLineNumber = "256"
+            endingLineNumber = "256"
+            landmarkName = "updateUserDetails(image:userName:stepGoal:calGoal:updateImage:calRecord:stepsRecord:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1577,9 +1577,9 @@
             filePath = "myPedometer/Data Management/UserSettingsManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "258"
-            endingLineNumber = "258"
-            landmarkName = "updateUserDetails(image:userName:stepGoal:calGoal:updateImage:)"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
+            landmarkName = "updateUserDetails(image:userName:stepGoal:calGoal:updateImage:calRecord:stepsRecord:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1752,8 +1752,8 @@
             filePath = "myPedometer/Data Management/UserSettingsManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "359"
-            endingLineNumber = "359"
+            startingLineNumber = "360"
+            endingLineNumber = "360"
             landmarkName = "fetchUserDetailsFromCloud(completion:)"
             landmarkType = "7">
             <Locations>
@@ -1845,8 +1845,8 @@
             filePath = "myPedometer/Data Management/UserSettingsManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "317"
-            endingLineNumber = "317"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
             landmarkName = "loadUserSettings()"
             landmarkType = "7">
             <Locations>
@@ -1893,8 +1893,8 @@
             filePath = "myPedometer/Data Management/UserSettingsManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "308"
-            endingLineNumber = "308"
+            startingLineNumber = "309"
+            endingLineNumber = "309"
             landmarkName = "loadUserSettings()"
             landmarkType = "7">
             <Locations>
