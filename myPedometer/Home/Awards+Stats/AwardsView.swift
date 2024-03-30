@@ -6,23 +6,64 @@
 //
 
 import SwiftUI
-import SwiftUI
 
 struct AwardsView: View {
     @EnvironmentObject var viewModel: StepDataViewModel
-    
+    // Tracks the temporary animation state of awards, starting as false (gray)
+    @State private var animateToGold: [Bool]
+
+    init() {
+        // Initialize animation states based on the number of awards
+        self._animateToGold = State(initialValue: Array(repeating: false, count: 7))
+    }
+
     var body: some View {
-            ScrollView {
-                VStack() {
-                    SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.stepsRecord)", items: stepAwards())
-                    
-                    SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.calRecord))", items: calorieAwards())
-                    
-                    LifetimeStepsView(lifeTimeSteps: viewModel.lifeTimeSteps)
+        ScrollView {
+            VStack {
+                SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.stepsRecord)", items: stepAwards(), animateToGold: $animateToGold)
+                SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.calRecord))", items: calorieAwards(), animateToGold: $animateToGold)
+            }
+        }
+        .background(Color.black)
+        .onAppear {
+            // Animate each award to gold one by one
+            for index in animateToGold.indices {
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        animateToGold[index] = true
+                    }
+                    // After the animation to gold, determine if it needs to revert to gray
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1 + 1) {
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            animateToGold[index] = remain(index: index)
+                        }
+                    }
                 }
             }
-        .background(.black)
+        }
     }
+
+    private func remain(index: Int) -> Bool {
+        switch index {
+        case 0:
+            return (viewModel.todaySteps >= viewModel.dailyStepGoal)
+        case 1:
+            return viewModel.fiveKStepsReached
+        case 2:
+            return viewModel.tenKStepsReached
+        case 3:
+            return viewModel.twentyKStepsReached
+        case 4:
+            return viewModel.thirtyKStepsReached
+        case 5:
+            return viewModel.fortyKStepsReached
+        case 6:
+            return viewModel.fiftyKStepsReached
+        default:
+            return false
+        }
+    }
+
     
     private func stepAwards() -> [(title: String, imageName: String, count: String)] {
         return [
@@ -50,11 +91,12 @@ struct SectionView: View {
     let sectionTitle: String
     let personalBest: String
     let items: [(title: String, imageName: String, count: String)]
+    @Binding var animateToGold: [Bool]
     
     var body: some View {
         VStack {
             HeaderView(sectionTitle: sectionTitle, personalBest: personalBest)
-            AwardGrid(items: items)
+            AwardGrid(items: items, animateToGold: $animateToGold)
         }
         .background(.clear)
     }
@@ -109,52 +151,46 @@ extension Int {
 // Award Grid Component
 struct AwardGrid: View {
     let items: [(title: String, imageName: String, count: String)]
-    
-    // Define uniform tile size
-     let tileWidth: CGFloat = 115
-     let tileHeight: CGFloat = 150
-    
+    let tileWidth: CGFloat = 115
+    let tileHeight: CGFloat = 150
+    @Binding var animateToGold: [Bool] // Accept a binding to the animation state
+
+    func achievementBackground(isAchieved: Bool) -> some View {
+        let goldGradient = LinearGradient(gradient: Gradient(colors: [.yellow, .orange, .yellow]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        let darkGray = Color(red: 94 / 255, green: 94 / 255, blue: 94 / 255)
+        let grayGradient = LinearGradient(gradient: Gradient(colors: [.gray, darkGray]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        
+        return RoundedRectangle(cornerRadius: 10)
+            .fill(isAchieved ? goldGradient : grayGradient)
+            .shadow(color: isAchieved ? .yellow : .clear, radius: 10, x: 0, y: 10)
+            .overlay(isAchieved ? RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5) : nil)
+    }
+
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 15), count: 3), spacing: 15) {
-            ForEach(items, id: \.title) { item in
+            ForEach(items.indices, id: \.self) { index in
+                let isAchieved = animateToGold[index]
                 VStack {
-                    Image(systemName: item.imageName)
+                    Image(systemName: items[index].imageName)
                         .font(.largeTitle)
-                        .foregroundColor(item.imageName.contains("fill") ? .black : .yellow)
-                    Text(item.title)
-                        .foregroundColor(item.imageName.contains("fill") ? .black : .white)
+                        .foregroundColor(isAchieved ? .black : .gray) // Use animateToGold state for color
+                    Text(items[index].title)
+                        .foregroundColor(.white)
                         .font(.caption)
                         .multilineTextAlignment(.center)
-                    Text(item.count)
-                        .foregroundColor(item.imageName.contains("fill") ? .black : .gray)
+                    Text(items[index].count)
+                        .foregroundColor(.gray)
                         .padding(.top, 4)
                 }
                 .padding([.horizontal])
                 .frame(width: tileWidth, height: tileHeight)
-                .background(achievementBackground(isAchieved: item.imageName.contains("fill")))
+                .background(achievementBackground(isAchieved: isAchieved)) // Use animateToGold for background
                 .cornerRadius(10)
-            }.padding()
+            }
         }
     }
-    // Function to determine the background based on achievement
-      func achievementBackground(isAchieved: Bool) -> some View {
-          // Gold and shiny background for achieved awards
-          let goldGradient = LinearGradient(gradient: Gradient(colors: [.yellow, .orange, .yellow]), startPoint: .topLeading, endPoint: .bottomTrailing)
-          // More subdued background for not achieved
-          let darkGray = Color(red: 94 / 255, green: 94 / 255, blue: 94 / 255)
-          let grayGradient = LinearGradient(gradient: Gradient(colors: [.gray, darkGray]), startPoint: .topLeading, endPoint: .bottomTrailing)
-          
-          return RoundedRectangle(cornerRadius: 10)
-              .fill(isAchieved ? goldGradient : grayGradient)
-              .shadow(color: isAchieved ? .yellow : .clear, radius: 10, x: 0, y: 10) // Optional: Add a glow effect to achieved awards
-              .overlay(
-                  isAchieved ?
-                      RoundedRectangle(cornerRadius: 10)
-                      .stroke(Color.black, lineWidth: 0.5) // Adds a subtle border to achieved awards for better contrast
-                      : nil
-              )
-      }
 }
+
 
 // Preview
 struct AwardsView_Previews: PreviewProvider {

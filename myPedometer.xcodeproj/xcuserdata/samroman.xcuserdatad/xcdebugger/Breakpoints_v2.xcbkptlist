@@ -64,6 +64,21 @@
                   endingLineNumber = "187"
                   offsetFromSymbolStart = "687">
                </Location>
+               <Location
+                  uuid = "E37E1C2F-50E3-469F-AC2D-E20E367AFD94 - 9ceb0f222689c5e7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in myPedometer.PedometerManager.fetchOrCreateLog(for: Foundation.Date, completion: (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "myPedometer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CoreMotion/PedometerManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "191"
+                  endingLineNumber = "191"
+                  offsetFromSymbolStart = "524">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
