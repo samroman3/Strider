@@ -13,6 +13,8 @@ struct TodayView: View {
     
     @State var profileViewIsPresented: Bool = false
     
+    @State private var isSpinning = false
+    
     
     var body: some View {
         VStack {
@@ -36,8 +38,11 @@ struct TodayView: View {
             .tabViewStyle(PageTabViewStyle())
             Spacer()
         }
+        .onReceive(viewModel.$todaySteps) { _ in
+            viewModel.animateStepCount(to: viewModel.todaySteps)
+        }
         .navigationBarItems(trailing:
-            Button(action: {
+                                Button(action: {
             HapticFeedbackProvider.impact()
             profileViewIsPresented.toggle()
         }) {
@@ -62,13 +67,28 @@ struct TodayView: View {
                     HStack {
                         VStack {
                             Spacer()
-                            AppTheme.greenGradient
-                                .mask(
-                                    Image(systemName: "shoe.circle")
-                                        .imageScale(.large)
-                                        .font(.system(size: 50))
-                                )
-                                .frame(width: 70, height: 70)
+                            Button(action: {
+                                // Trigger the refresh data action in your viewModel
+                                viewModel.refreshData()
+                                
+                                // Spin the icon
+                                withAnimation(.linear(duration: 1)) {
+                                    isSpinning.toggle()
+                                }
+                                // Reset the spin after the duration to allow for re-spin
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    isSpinning.toggle()
+                                }
+                            }) {
+                                AppTheme.greenGradient
+                                    .mask(
+                                        Image(systemName: "shoe.circle")
+                                            .imageScale(.large)
+                                            .font(.system(size: 50))
+                                    )
+                                    .rotation3DEffect(.degrees(isSpinning ? 360 : 0), axis: (x: 0, y: 1, z: 0))
+                                    .frame(width: 70, height: 70)
+                            }
                             Text("\(viewModel.animatedStepCount)")
                                 .font(.headline)
                                 .foregroundColor(.white)

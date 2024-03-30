@@ -71,7 +71,6 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             }
         }
         UserDefaultsHandler.shared.storeLastOpenedDate(currentDate)
-        self.setDefaultDailyGoalIfNeeded()
     }
     
     //Pedometer Start
@@ -88,12 +87,11 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                     self?.errorPublisher.send(unknownError)
                     return
                 }
+                self?.todayLog?.totalSteps = data.numberOfSteps.int32Value
+                self?.todayLog?.flightsAscended = data.floorsAscended?.int32Value ?? 0
+                self?.todayLog?.flightsDescended = data.floorsDescended?.int32Value ?? 0
+                self?.saveContextIfNeeded()
                 
-                DispatchQueue.main.async {
-                    self?.todayLog?.totalSteps = data.numberOfSteps.int32Value
-                    self?.todayLog?.flightsAscended = data.floorsAscended?.int32Value ?? 0
-                    self?.todayLog?.flightsDescended = data.floorsDescended?.int32Value ?? 0
-                }
             }
         } else {
             let notSupportedError = NSError(domain: "PedometerManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Step counting / Pedometer not supported on this device"])

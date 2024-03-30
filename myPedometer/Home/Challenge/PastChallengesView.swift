@@ -9,10 +9,11 @@ import SwiftUI
 
 struct PastChallengesView: View {
     // Dummy data for previewing
-    var pastChallenges: [DummyChallenge] = [
-        .init(goalSteps: 10000, currentSteps: [10000, 7500], status: .completed, participants: ["User1", "User2"], winner: 0),
-        .init(goalSteps: 15000, currentSteps: [14000, 15000], status: .completed, participants: ["User3", "User4"], winner: 1)
-    ]
+    var pastChallenges: [DummyChallenge] = []
+//    var pastChallenges: [DummyChallenge] = [
+//        .init(goalSteps: 10000, currentSteps: [10000, 7500], status: .completed, participants: ["User1", "User2"], winner: 0),
+//        .init(goalSteps: 15000, currentSteps: [14000, 15000], status: .completed, participants: ["User3", "User4"], winner: 1)
+//    ]
     
     var body: some View {
         VStack(alignment: .leading) {

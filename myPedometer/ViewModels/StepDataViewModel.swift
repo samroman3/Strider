@@ -51,12 +51,12 @@ class StepDataViewModel: ObservableObject {
 
        // Trigger the count up animation for the step count
        func animateStepCount(to finalValue: Int) {
-           // Reset animatedStepCount to 0 for re-animation
-           animatedStepCount = 0
+           // Reset animatedStepCount to 0 for re-animation - need to only animate on first launch 
+//           animatedStepCount = 0
 
            // Determine the animation duration and step increment
            let animationDuration = 1.0 // Total duration of the animation in seconds
-           let animationStep = 1 // Increment by this step
+           let animationStep = 10 // Increment by this step
 
            // Calculate time per step
            let timePerStep = animationDuration / Double(finalValue)
@@ -87,11 +87,31 @@ class StepDataViewModel: ObservableObject {
         self.dailyStepGoal = userSettingsManager.dailyStepGoal
         self.dailyCalGoal = userSettingsManager.dailyCalGoal
         
+        setUpSubscriptions()
         //Retrieve step data from provider
         loadData(provider: pedometerDataProvider)
-        
+    }
+    
+    func refreshData() {
+            // Assuming pedometerDataProvider has a method to manually refresh data
+            pedometerDataProvider.loadStepData { [weak self] logs, hourlyAvg, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self?.handleError(error)
+                        return
+                    }
+                    guard let todayLog = logs.first(where: { self?.isToday(log: $0) ?? false }) else {
+                        return
+                    }
+                    
+                    self?.updateDailyLogWith(log: todayLog)
+                }
+            }
+        }
+    
+    func setUpSubscriptions(){
         //Error subscription
-        self.pedometerDataProvider.errorPublisher
+        pedometerDataProvider.errorPublisher
             .compactMap { $0 } // Filter out nil errors
             .sink { [weak self] error in
                 self?.handleError(error)
@@ -104,12 +124,8 @@ class StepDataViewModel: ObservableObject {
             .sink { [weak self] value in
                 guard let strongSelf = self else { return }
                 
-                if let todayLog = value, strongSelf.isToday(log: todayLog) {
-                    strongSelf.todayLog = todayLog
-                    strongSelf.todaySteps = Int(todayLog.totalSteps)
-                    strongSelf.animateStepCount(to: Int(todayLog.totalSteps))
-                    strongSelf.calculateCaloriesBurned()
-                    self?.updateDailyLogWith(todayLog: todayLog)
+                if let log = value {
+                    strongSelf.updateDailyLogWith(log: log)
                 }
             }
             .store(in: &cancellables)
@@ -178,17 +194,16 @@ class StepDataViewModel: ObservableObject {
         return calendar.isDateInToday(log.date ?? Date())
     }
     
-    private func updateDailyLogWith(todayLog: DailyLog) {
-        // Update today's log and calculate calories burned
-        self.todayLog = todayLog
-        self.todaySteps = Int(todayLog.totalSteps)
-        self.calculateCaloriesBurned()
-        
-        // Update User settings with new daily log and steps
-        userSettingsManager.updateDailyLog(with: todaySteps, calories: Int(caloriesBurned), date: Date())
-        userSettingsManager.updateUserLifetimeSteps(additionalSteps: todaySteps)
-        userSettingsManager.checkAndUpdatePersonalBest(with: todaySteps, calories: Int(caloriesBurned))
-        
+    private func updateDailyLogWith(log: DailyLog) {
+        DispatchQueue.main.async { [self] in
+            self.todayLog = log
+            self.todaySteps = Int(log.totalSteps)
+            self.animateStepCount(to: Int(log.totalSteps))
+            
+            self.calculateCaloriesBurned()
+
+            self.userSettingsManager.updateDailyLog(with: self.todaySteps, calories: Int(self.caloriesBurned), date: Date())
+        }
         //TODO: Update any active challenges with dailylog steps here
     }
 }

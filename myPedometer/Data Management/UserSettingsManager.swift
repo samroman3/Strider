@@ -231,7 +231,7 @@ class UserSettingsManager: ObservableObject {
     
     //MARK: Core Data Sync
     
-    func updateUserDetails(image: UIImage?, userName: String, stepGoal: Int?, calGoal: Int?, updateImage: Bool = true, calRecord: Int?, stepsRecord: Int?) {
+    func updateUserDetails(image: UIImage?, userName: String, stepGoal: Int?, calGoal: Int?, updateImage: Bool = true) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
@@ -250,7 +250,7 @@ class UserSettingsManager: ObservableObject {
             
             // Make sure to only upload imageData if there's a new image
             let imageData = updateImage ? image?.jpegData(compressionQuality: 1.0) : nil
-            self.updateCoreDataCache(userName: userName, photoData: imageData, stepGoal: stepGoal ?? self.dailyStepGoal, calGoal: calGoal ?? self.dailyCalGoal)
+            self.updateProfileCoreDataCache(userName: userName, photoData: imageData, stepGoal: stepGoal ?? self.dailyStepGoal, calGoal: calGoal ?? self.dailyCalGoal)
             self.saveUserUpdatesToCloud(userName: userName, imageData: imageData, stepGoal: stepGoal ?? self.dailyStepGoal, calGoal: calGoal ?? self.dailyCalGoal) { success, error in
                 if success {
                     print("Successfully updated user details in CloudKit.")
@@ -262,7 +262,7 @@ class UserSettingsManager: ObservableObject {
     }
 
     
-    func updateCoreDataCache(userName: String, photoData: Data?, stepGoal: Int, calGoal: Int) {
+    func updateProfileCoreDataCache(userName: String, photoData: Data?, stepGoal: Int, calGoal: Int) {
         DispatchQueue.main.async {
             // Fetch or create the User entity instance
             let user = self.fetchOrCreateUserSettings()
@@ -320,7 +320,7 @@ class UserSettingsManager: ObservableObject {
         fetchUserDetailsFromCloud { success, error in
             if success {
                 print("CloudKit data fetched successfully.")
-                self.updateCoreDataCache(userName: self.userName, photoData: self.photoData, stepGoal: self.dailyStepGoal, calGoal: self.dailyCalGoal)
+                self.updateProfileCoreDataCache(userName: self.userName, photoData: self.photoData, stepGoal: self.dailyStepGoal, calGoal: self.dailyCalGoal)
             } else {
                 print("Failed to fetch from CloudKit: \(error?.localizedDescription ?? "Unknown error")")
             }
@@ -400,7 +400,6 @@ class UserSettingsManager: ObservableObject {
         
         // Check if a daily log exists for today, otherwise create a new one
         let dailyLog = user.dailyLog(for: date) ?? DailyLog(context: context)
-        
         // Update the log details
         dailyLog.totalSteps = Int32(steps)
         dailyLog.caloriesBurned = Int32(calories)
@@ -410,44 +409,73 @@ class UserSettingsManager: ObservableObject {
         if dailyLog.isInserted {
             user.addToDailyLogs(dailyLog)
         }
-        
+//        checkAndUpdatePersonalBest(with: steps, calories: calories)
         // Save changes
-        saveContext()
-    }
-    
-    func updateUserLifetimeSteps(additionalSteps: Int) {
-        let user = fetchOrCreateUserSettings()
-        
-        // Update the lifetime steps with the additional steps
-        let newLifetimeSteps = Int(user.lifetimeSteps) + additionalSteps
-        user.lifetimeSteps = Int32(newLifetimeSteps)
-        
-        // Save the context to persist changes
         saveContext()
     }
     
     func checkAndUpdatePersonalBest(with steps: Int, calories: Int) {
         let user = fetchOrCreateUserSettings()
-        
-        var isRecordUpdated = false
-        
+    
         // Check if today's steps are a new record
         if steps > user.stepsRecord {
             user.stepsRecord = Int32(steps)
-            isRecordUpdated = true
         }
         
         // Check if today's calories are a new record
         if calories > user.calorieRecord {
             user.calorieRecord = Int32(calories)
-            isRecordUpdated = true
         }
         
-        // Save the context if a new record is set
-        if isRecordUpdated {
-            saveContext()
+        // Update the lifetime steps with the additional steps
+        let newLifetimeSteps = Int(user.lifetimeSteps) + steps
+        user.lifetimeSteps = Int32(newLifetimeSteps)
+        
+        savePersonalBestsToCloud(lifetimeSteps: Int(user.lifetimeSteps), stepsRecord: Int(user.stepsRecord), caloriesRecord: Int(user.calorieRecord)) { saved, error in
+            switch saved {
+            case true:
+                print("saved personalbest/lifetime steps succesfully")
+            case false:
+                print("error saving personal best/lifetime steps")
+            }
+        }
+
+    }
+    
+    func savePersonalBestsToCloud(lifetimeSteps: Int, stepsRecord: Int?, caloriesRecord: Int?, completion: @escaping (Bool, Error?) -> Void) {
+        getCurrentUserRecordID { [weak self] result in
+            switch result {
+            case .success(let recordID):
+                guard let self = self else { return }
+                self.userRecord = self.user?.toCKRecord(recordID: recordID.recordName)
+                self.user?.recordId = recordID.recordName
+                let publicDatabase = CKContainer.default().publicCloudDatabase
+                publicDatabase.fetch(withRecordID: recordID) { (record, error) in
+                    guard let record = record else {
+                        completion(false, error)
+                        return
+                    }
+
+                    // Update the specific fields for lifetime steps and personal bests
+                    record["lifetimeSteps"] = lifetimeSteps
+                    record["stepsRecord"] = stepsRecord
+                    record["caloriesRecord"] = caloriesRecord
+
+                    // Save the record
+                    publicDatabase.save(record) { _, error in
+                        if let error = error {
+                            completion(false, error)
+                        } else {
+                            completion(true, nil)
+                        }
+                    }
+                }
+            case .failure(let error):
+                completion(false, error)
+            }
         }
     }
+
 }
 
 // Helper extension to convert NSData to UIImage

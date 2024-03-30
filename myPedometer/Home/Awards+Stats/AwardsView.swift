@@ -14,11 +14,11 @@ struct AwardsView: View {
     var body: some View {
             ScrollView {
                 VStack() {
-                    SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.dailyStepGoal)", items: stepAwards())
+                    SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.stepsRecord)", items: stepAwards())
                     
-                    SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.caloriesBurned))", items: calorieAwards())
+                    SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.calRecord))", items: calorieAwards())
                     
-                    LifetimeStepsView(lifeTimeSteps: $viewModel.lifeTimeSteps)
+                    LifetimeStepsView(lifeTimeSteps: viewModel.lifeTimeSteps)
                 }
             }
         .background(.black)
@@ -79,11 +79,11 @@ struct HeaderView: View {
 }
 
 struct LifetimeStepsView: View {
-    @Binding var lifeTimeSteps: Int
+    @State var lifeTimeSteps: Int
     
     var body: some View {
         VStack(alignment: .center) {
-            Text("LIFETIME STEPS")
+            Text("STRIDER STEPS")
                 .font(.headline)
                 .foregroundColor(.gray)
             Text("\(lifeTimeSteps, specifier: "%.0f") total steps")

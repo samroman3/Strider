@@ -127,7 +127,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
     
     func startPedometerUpdates() {
         timer?.invalidate() // Invalidate any existing timer
-        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
             self?.simulateStepIncrement()
         }
     }
@@ -137,7 +137,7 @@ class MockPedometerDataProvider: PedometerDataProvider, PedometerDataObservable 
 
         // Increment totalSteps of todayLog
         context.perform {
-            todayLog.totalSteps += 3
+            todayLog.totalSteps += 10
             self.updateTodayLogInList()
             self.saveContextIfNeeded()
         }
