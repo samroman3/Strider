@@ -38,8 +38,8 @@ struct TodayView: View {
             .tabViewStyle(PageTabViewStyle())
             Spacer()
         }
-        .onReceive(viewModel.$todaySteps) { _ in
-            viewModel.animateStepCount(to: viewModel.todaySteps)
+        .onAppear(){
+            spinIcon()
         }
         .navigationBarItems(trailing:
                                 Button(action: {
@@ -71,14 +71,7 @@ struct TodayView: View {
                                 // Trigger the refresh data action in your viewModel
                                 viewModel.refreshData()
                                 
-                                // Spin the icon
-                                withAnimation(.linear(duration: 1)) {
-                                    isSpinning.toggle()
-                                }
-                                // Reset the spin after the duration to allow for re-spin
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    isSpinning.toggle()
-                                }
+                              spinIcon()
                             }) {
                                 AppTheme.greenGradient
                                     .mask(
@@ -125,12 +118,20 @@ struct TodayView: View {
                         Spacer()
                         VStack {
                             Spacer()
-                            AppTheme.redGradient
-                                .mask(
-                                    Image(systemName: "flame.circle")
-                                        .imageScale(.large)
-                                        .font(.system(size: 50))
-                                )
+                            Button(action: {
+                                // Trigger the refresh data action in your viewModel
+                                viewModel.refreshData()
+                                spinIcon()
+                            }) {
+                                AppTheme.redGradient
+                                    .mask(
+                                        Image(systemName: "flame.circle")
+                                            .imageScale(.large)
+                                            .font(.system(size: 50))
+                                    )
+                                    .rotation3DEffect(.degrees(isSpinning ? 360 : 0), axis: (x: 0, y: 1, z: 0))
+                                    .frame(width: 70, height: 70)
+                            }
                                 .frame(width: 70, height: 70)
                             Text("\(Int(viewModel.caloriesBurned))")
                                 .font(.headline)
@@ -153,6 +154,17 @@ struct TodayView: View {
                     }
                 }
             }
+        }
+    }
+    
+    private func spinIcon() {
+        HapticFeedbackProvider.impact()
+        withAnimation(.linear(duration: 1)) {
+            isSpinning.toggle()
+        }
+        // Reset the spin after the duration to allow for re-spin
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            isSpinning.toggle()
         }
     }
     

@@ -44,34 +44,42 @@ class StepDataViewModel: ObservableObject {
     //Calories
     @Published var fiveHundredCalsReached: Bool = false
     @Published var thousandCalsReached: Bool = false
-        
+    
     @Published var error: UserFriendlyError?
     
     @Published var animatedStepCount: Int = 0
-
-       // Trigger the count up animation for the step count
-       func animateStepCount(to finalValue: Int) {
-           // Reset animatedStepCount to 0 for re-animation - need to only animate on first launch 
-//           animatedStepCount = 0
-
-           // Determine the animation duration and step increment
-           let animationDuration = 1.0 // Total duration of the animation in seconds
-           let animationStep = 10 // Increment by this step
-
-           // Calculate time per step
-           let timePerStep = animationDuration / Double(finalValue)
-
-           // Use a timer to update animatedStepCount
-           Timer.scheduledTimer(withTimeInterval: timePerStep, repeats: true) { timer in
-               DispatchQueue.main.async {
-                   if self.animatedStepCount < finalValue {
-                       self.animatedStepCount += animationStep
-                   } else {
-                       timer.invalidate() // Stop the timer if we've reached the final value
-                   }
-               }
-           }
-       }
+    
+    private var lastRefreshDate: Date?
+    
+    // Method to check if we should refresh
+    func shouldRefresh() -> Bool {
+        guard let lastRefreshDate = lastRefreshDate else { return true }
+        return Date().timeIntervalSince(lastRefreshDate) > 30 // 30 seconds
+    }
+    
+    // Trigger the count up animation for the step count
+    func animateStepCount(to finalValue: Int) {
+        // Reset animatedStepCount to 0 for re-animation - need to only animate on first launch
+        //           animatedStepCount = 0
+        
+        // Determine the animation duration and step increment
+        let animationDuration = 1.0 // Total duration of the animation in seconds
+        let animationStep = 10 // Increment by this step
+        
+        // Calculate time per step
+        let timePerStep = animationDuration / Double(finalValue)
+        
+        // Use a timer to update animatedStepCount
+        Timer.scheduledTimer(withTimeInterval: timePerStep, repeats: true) { timer in
+            DispatchQueue.main.async {
+                if self.animatedStepCount < finalValue {
+                    self.animatedStepCount += animationStep
+                } else {
+                    timer.invalidate() // Stop the timer if we've reached the final value
+                }
+            }
+        }
+    }
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -92,22 +100,25 @@ class StepDataViewModel: ObservableObject {
         loadData(provider: pedometerDataProvider)
     }
     
+    
     func refreshData() {
-            // Assuming pedometerDataProvider has a method to manually refresh data
-            pedometerDataProvider.loadStepData { [weak self] logs, hourlyAvg, error in
-                DispatchQueue.main.async {
-                    if let error = error {
-                        self?.handleError(error)
-                        return
-                    }
-                    guard let todayLog = logs.first(where: { self?.isToday(log: $0) ?? false }) else {
-                        return
-                    }
-                    
-                    self?.updateDailyLogWith(log: todayLog)
+        guard shouldRefresh() else { return }
+        // Assuming pedometerDataProvider has a method to manually refresh data
+        pedometerDataProvider.loadStepData { [weak self] logs, hourlyAvg, error in
+            DispatchQueue.main.async {
+                self?.lastRefreshDate = Date()
+                if let error = error {
+                    self?.handleError(error)
+                    return
                 }
+                guard let todayLog = logs.first(where: { self?.isToday(log: $0) ?? false }) else {
+                    return
+                }
+                
+                self?.updateDailyLogWith(log: todayLog)
             }
         }
+    }
     
     func setUpSubscriptions(){
         //Error subscription
@@ -169,6 +180,7 @@ class StepDataViewModel: ObservableObject {
                 self.handleError(error)
             }
             DispatchQueue.main.async {
+                self.lastRefreshDate = Date()
                 self.stepDataList = logs
                 self.calculateCaloriesBurned()
                 self.calculateWeeklySteps()
@@ -201,8 +213,9 @@ class StepDataViewModel: ObservableObject {
             self.animateStepCount(to: Int(log.totalSteps))
             
             self.calculateCaloriesBurned()
-
+            
             self.userSettingsManager.updateDailyLog(with: self.todaySteps, calories: Int(self.caloriesBurned), date: Date())
+            self.lastRefreshDate = Date()
         }
         //TODO: Update any active challenges with dailylog steps here
     }
