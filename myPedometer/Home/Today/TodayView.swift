@@ -31,15 +31,18 @@ struct TodayView: View {
                 stepContent()
                     .background(Color.black.edgesIgnoringSafeArea(.all))
                     .tag(0)
+                    .onAppear(){
+                        spinIcon()
+                    }
                 calorieContent()
                     .background(Color.black.edgesIgnoringSafeArea(.all))
                     .tag(1)
+                    .onAppear(){
+                        spinIcon()
+                    }
             }
             .tabViewStyle(PageTabViewStyle())
             Spacer()
-        }
-        .onAppear(){
-            spinIcon()
         }
         .navigationBarItems(trailing:
                                 Button(action: {

@@ -792,6 +792,9 @@
 				INFOPLIST_FILE = myPedometer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Strider;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "\"This app may use Health Kit records to better determine step and calorie data.\"";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "\"This app may use Health Kit records to better determine step and calorie data and share that data to other users during a challenge.\"";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "\"This app may update Health Kit records with data gathered from usage with user permission.\"";
 				INFOPLIST_KEY_NSMotionUsageDescription = "\"This app requires access to motion usage to provide accurate data and effectively track your steps.\"";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -832,6 +835,9 @@
 				INFOPLIST_FILE = myPedometer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Strider;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "\"This app may use Health Kit records to better determine step and calorie data.\"";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "\"This app may use Health Kit records to better determine step and calorie data and share that data to other users during a challenge.\"";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "\"This app may update Health Kit records with data gathered from usage with user permission.\"";
 				INFOPLIST_KEY_NSMotionUsageDescription = "\"This app requires access to motion usage to provide accurate data and effectively track your steps.\"";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

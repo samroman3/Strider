@@ -22,9 +22,16 @@ struct PastChallengesView: View {
                 .padding(.leading)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(pastChallenges) { challenge in
-                        PastChallengeRow(challenge: challenge)
+                if pastChallenges.isEmpty {
+                    Text("No Active Challenges")
+                        .font(.subheadline)
+                        .padding(.leading)
+                        .foregroundStyle(.gray)
+                } else {
+                    HStack {
+                        ForEach(pastChallenges) { challenge in
+                            PastChallengeRow(challenge: challenge)
+                        }
                     }
                 }
             }

@@ -48,7 +48,7 @@ struct MainChallengeView: View {
         .background(.black)
         .onAppear {
             Task {
-                await challengeViewModel.loadPendingChallenges()
+                challengeViewModel.loadPendingChallenges()
             }
         }
     }

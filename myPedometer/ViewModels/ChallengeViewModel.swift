@@ -94,7 +94,7 @@ class ChallengeViewModel: ObservableObject {
                     print("Failed to create or share the challenge.")
                 }
             } catch {
-                AppState.shared.triggerAlert(title: "Error", message: "Error creating or sharing challenge. Please try again later.")
+                AppState.shared.triggerAlert(title: "Error", message: "Error creating or sharing challenge. Please try again later.\(error))")
                 print("Error creating or sharing challenge: \(error)")
             }
         }
