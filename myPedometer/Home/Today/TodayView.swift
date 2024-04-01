@@ -10,7 +10,8 @@ struct TodayView: View {
     
     @EnvironmentObject private var viewModel: StepDataViewModel
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
-    
+    @Environment(\.colorScheme) var colorScheme
+
     @State var profileViewIsPresented: Bool = false
     
     @State private var isSpinning = false
@@ -21,21 +22,21 @@ struct TodayView: View {
             HStack(alignment: .firstTextBaseline){
                 Text("\(Date(), formatter: itemFormatter)")
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 Spacer()
             }
             .padding([.horizontal])
-            .background(Color.black)
+            .foregroundColor(colorScheme == .dark ? .black : .white)
             TabView {
                 // First page
                 stepContent()
-                    .background(Color.black.edgesIgnoringSafeArea(.all))
+                    .background(colorScheme == .dark ? .black : .white).edgesIgnoringSafeArea(.all)
                     .tag(0)
                     .onAppear(){
                         spinIcon()
                     }
                 calorieContent()
-                    .background(Color.black.edgesIgnoringSafeArea(.all))
+                    .background(colorScheme == .dark ? .black : .white).edgesIgnoringSafeArea(.all)
                     .tag(1)
                     .onAppear(){
                         spinIcon()
@@ -50,7 +51,7 @@ struct TodayView: View {
             profileViewIsPresented.toggle()
         }) {
             Image(systemName: "gear")
-                .foregroundColor(.white)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
                 .font(.title2)
         })
         .sheet(isPresented: $profileViewIsPresented, content: {
@@ -87,10 +88,10 @@ struct TodayView: View {
                             }
                             Text("\(viewModel.animatedStepCount)")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .gray)
                             Text("steps")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .gray)
                             if viewModel.animatedStepCount < viewModel.dailyStepGoal {
                                 Text("\(viewModel.dailyStepGoal - Int(viewModel.animatedStepCount)) remaining")
                                     .font(.headline)
@@ -138,10 +139,10 @@ struct TodayView: View {
                                 .frame(width: 70, height: 70)
                             Text("\(Int(viewModel.caloriesBurned))")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .gray)
                             Text("calories")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .gray)
                             if Int(viewModel.caloriesBurned) < viewModel.dailyCalGoal {
                                 Text("\(viewModel.dailyCalGoal - Int(viewModel.caloriesBurned)) remaining")
                                     .font(.headline)

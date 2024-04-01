@@ -14,6 +14,7 @@ struct CustomShareView: View {
     @Binding var shareURL: URL?
     @Binding var details: ChallengeDetails?
     @Binding var isPresented: Bool
+    @Environment(\.colorScheme) var colorScheme
     
     @State private var isSharingPresented = false
     
@@ -28,11 +29,13 @@ struct CustomShareView: View {
                 VStack {
                     Text("Challenge: \(goalSteps) steps")
                         .fontWeight(.medium)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                     Text("End Time: \(endTime.formatted())")
                         .fontWeight(.medium)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                 }
                 .padding()
-                .background(AppTheme.darkerGray)
+                .background(colorScheme == .dark ? AppTheme.darkerGray : .white)
                 .cornerRadius(12)
                 .shadow(radius: 3)
             }
@@ -65,7 +68,6 @@ struct CustomShareView: View {
                 ActivityView(activityItems: [AnySharingItem(source: shareURL)], applicationActivities: nil)
             }
         }
-        .background(AppTheme.purpleGradient.opacity(0.03))
     }
 }
 

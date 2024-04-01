@@ -7,79 +7,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E37E1C2F-50E3-469F-AC2D-E20E367AFD94"
+            uuid = "802314D0-35AC-4BB9-91BB-6201DA03EB2E"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "myPedometer/Data Management/CoreMotion/PedometerManager.swift"
+            filePath = "myPedometer/ViewModels/ChallengeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
-            landmarkName = "fetchOrCreateLog(for:completion:)"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "createAndShareChallenge(goal:endTime:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E37E1C2F-50E3-469F-AC2D-E20E367AFD94 - b89eb95dd062e1c3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in myPedometer.PedometerManager.fetchOrCreateLog(for: Foundation.Date, completion: (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CoreMotion/PedometerManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "187"
-                  endingLineNumber = "187"
-                  offsetFromSymbolStart = "172">
-               </Location>
-               <Location
-                  uuid = "E37E1C2F-50E3-469F-AC2D-E20E367AFD94 - 9ceb0f222689ba63"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in myPedometer.PedometerManager.fetchOrCreateLog(for: Foundation.Date, completion: (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CoreMotion/PedometerManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "187"
-                  endingLineNumber = "187"
-                  offsetFromSymbolStart = "524">
-               </Location>
-               <Location
-                  uuid = "E37E1C2F-50E3-469F-AC2D-E20E367AFD94 - 9ceb0f222689ba63"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in myPedometer.PedometerManager.fetchOrCreateLog(for: Foundation.Date, completion: (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CoreMotion/PedometerManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "187"
-                  endingLineNumber = "187"
-                  offsetFromSymbolStart = "687">
-               </Location>
-               <Location
-                  uuid = "E37E1C2F-50E3-469F-AC2D-E20E367AFD94 - 9ceb0f222689c5e7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in myPedometer.PedometerManager.fetchOrCreateLog(for: Foundation.Date, completion: (myPedometer.DailyLog, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "myPedometer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/samroman/Documents/myPedometer/myPedometer/Data%20Management/CoreMotion/PedometerManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "191"
-                  endingLineNumber = "191"
-                  offsetFromSymbolStart = "524">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E9AE441E-32F4-441F-81F7-2D5A91593DBC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/ViewModels/ChallengeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "createAndShareChallenge(goal:endTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "55456E5B-471F-451F-BB11-D3C3F5BC7C80"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "myPedometer/ViewModels/ChallengeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "createAndShareChallenge(goal:endTime:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -8,9 +8,6 @@
 import SwiftUI
 import AuthenticationServices
 
-import SwiftUI
-import AuthenticationServices
-
 struct SignInView: View {
     @EnvironmentObject var userSettingsManager: UserSettingsManager
     @Environment(\.colorScheme) var colorScheme
@@ -70,6 +67,6 @@ struct SignInView: View {
             
             Spacer()
         }
-        .background(LinearGradient(gradient: Gradient(colors: [colorScheme == .dark ? .black : .white, colorScheme == .dark ? .gray : .blue]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
+        .background(LinearGradient(gradient: Gradient(colors: [colorScheme == .dark ? .black : .white, .gray]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
     }
 }

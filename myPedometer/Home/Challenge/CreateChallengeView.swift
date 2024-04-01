@@ -9,10 +9,10 @@ import SwiftUI
 
 struct CreateChallengeView: View {
     @EnvironmentObject var challengeViewModel: ChallengeViewModel
-    @State private var goal: Int = 0
+    @State private var goal: Int = 100
     @State private var endTime = Date()
     @Binding var isPresented: Bool
-    
+    @Environment(\.colorScheme) var colorScheme
     // States for inline alert messages
     @State private var goalAlertMessage: String? = nil
     @State private var endTimeAlertMessage: String? = nil
@@ -23,7 +23,7 @@ struct CreateChallengeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 10) {
                     goalSection
                     endTimeSection
                     
@@ -80,7 +80,7 @@ struct CreateChallengeView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .focused($isGoalTextFieldFocused)
                     .keyboardType(.numberPad)
-                    .background(AppTheme.darkerGray)
+                    .shadow(radius: 2, x: 2)
                 if isGoalTextFieldFocused {
                     Button("Done") {
                         isGoalTextFieldFocused = false
@@ -107,7 +107,9 @@ struct CreateChallengeView: View {
             }
             DatePicker("Select End Date and Time", selection: $endTime, in: Date()..., displayedComponents: [.date, .hourAndMinute])
                 .datePickerStyle(GraphicalDatePickerStyle())
-                .background(AppTheme.darkerGray)
+                .background(colorScheme == .dark ? AppTheme.darkerGray : .white)
+                .clipShape(.rect(cornerRadius: 10))
+                .shadow(radius: 2, x: 2)
             
             // Inline alert for end time validation
             if let message = endTimeAlertMessage {

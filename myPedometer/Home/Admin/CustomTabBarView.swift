@@ -12,6 +12,7 @@ struct CustomTabBarView: View {
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @EnvironmentObject private var stepViewModel: StepDataViewModel
     @EnvironmentObject private var challengeViewModel: ChallengeViewModel
+    @Environment(\.colorScheme) var colorScheme
     
     @State private var selectedTab: Tab = .today
 
@@ -49,7 +50,7 @@ struct CustomTabBarView: View {
             userSettingsManager.loadUserSettings()
 //            challengeViewModel.loadActiveChallenges()
         }
-        .background(.black)
+        .background(colorScheme == .dark ? .black : .white)
     }
 
     enum Tab {

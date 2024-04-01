@@ -9,8 +9,8 @@ import SwiftUI
 
 struct AwardsView: View {
     @EnvironmentObject var viewModel: StepDataViewModel
-    // Tracks the temporary animation state of awards, starting as false (gray)
     @State private var animateToGold: [Bool]
+    @Environment(\.colorScheme) var colorScheme
 
     init() {
         // Initialize animation states based on the number of awards
@@ -20,11 +20,12 @@ struct AwardsView: View {
     var body: some View {
         ScrollView {
             VStack {
-                SectionView(sectionTitle: "DAILY STEPS", personalBest: "Personal best: \(viewModel.stepsRecord)", items: stepAwards(), animateToGold: $animateToGold)
-                SectionView(sectionTitle: "DAILY CALORIES", personalBest: "Personal best: \(Int(viewModel.calRecord))", items: calorieAwards(), animateToGold: $animateToGold)
+                SectionView(sectionTitle: "DAILY STEPS", personalBest: "" /*"Personal best: \(viewModel.stepsRecord)"*/, items: stepAwards(), animateToGold: $animateToGold)
+                SectionView(sectionTitle: "DAILY CALORIES", personalBest: "" /*"Personal best: \(Int(viewModel.calRecord))"*/, items: calorieAwards(), animateToGold: $animateToGold)
             }
         }
-        .background(Color.black)
+        .background(colorScheme == .dark ? .black : .white)
+
         .onAppear {
             // Animate each award to gold one by one
             for index in animateToGold.indices {
@@ -92,7 +93,8 @@ struct SectionView: View {
     let personalBest: String
     let items: [(title: String, imageName: String, count: String)]
     @Binding var animateToGold: [Bool]
-    
+    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         VStack {
             HeaderView(sectionTitle: sectionTitle, personalBest: personalBest)
@@ -163,23 +165,22 @@ struct AwardGrid: View {
         return RoundedRectangle(cornerRadius: 10)
             .fill(isAchieved ? goldGradient : grayGradient)
             .shadow(color: isAchieved ? .yellow : .clear, radius: 10, x: 0, y: 10)
-            .overlay(isAchieved ? RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5) : nil)
     }
 
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 15), count: 3), spacing: 15) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 3), spacing: 15) {
             ForEach(items.indices, id: \.self) { index in
                 let isAchieved = animateToGold[index]
                 VStack {
                     Image(systemName: items[index].imageName)
                         .font(.largeTitle)
-                        .foregroundColor(isAchieved ? .black : .gray) // Use animateToGold state for color
+                        .foregroundColor(isAchieved ? .white : .gray) // Use animateToGold state for color
                     Text(items[index].title)
-                        .foregroundColor(.white)
+                        .foregroundColor(isAchieved ? .black : .white)
                         .font(.caption)
                         .multilineTextAlignment(.center)
                     Text(items[index].count)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white)
                         .padding(.top, 4)
                 }
                 .padding([.horizontal])

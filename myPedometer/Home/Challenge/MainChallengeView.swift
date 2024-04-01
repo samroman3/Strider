@@ -9,9 +9,8 @@ import SwiftUI
 
 struct MainChallengeView: View {
     @EnvironmentObject var challengeViewModel: ChallengeViewModel
-    
+    @Environment(\.colorScheme) var colorScheme
     @State private var isCreateViewPresented = false
-    
     @State private var isCustomShareViewPresented = false
     
     var body: some View {
@@ -36,7 +35,7 @@ struct MainChallengeView: View {
         }) {
             Image(systemName: "plus.circle")
                 .font(.title2)
-                .foregroundStyle(.white)
+                .foregroundStyle(colorScheme == .dark ? .white : .black)
         })
         .fullScreenCover(isPresented: $isCreateViewPresented) {
             CreateChallengeView(isPresented: $isCreateViewPresented)
@@ -45,7 +44,7 @@ struct MainChallengeView: View {
         .fullScreenCover(isPresented: $challengeViewModel.presentShareController, content: {
             CustomShareView(share: $challengeViewModel.share, shareURL: $challengeViewModel.shareURL, details: $challengeViewModel.details, isPresented: $challengeViewModel.presentShareController)
         })
-        .background(.black)
+        .background(colorScheme == .dark ? .black : .white)
         .onAppear {
             Task {
                 challengeViewModel.loadPendingChallenges()
