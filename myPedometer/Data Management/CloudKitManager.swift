@@ -74,9 +74,7 @@ class CloudKitManager: ObservableObject {
     func shareChallenge(_ challenge: Challenge, withParticipants participants: [Participant], creator: User) async throws -> (CKShare?, URL?) {
         
         try await createZoneIfNeeded()
-
-        let challengeRecordID = CKRecord.ID(recordName: challenge.recordId!, zoneID: recordZone.zoneID)
-        let challengeRecord = CKRecord(recordType: "Challenge", recordID: challengeRecordID)
+        let challengeRecord = challenge.toCKRecord()
         // Set challenge record properties
         challengeRecord["startTime"] = challenge.startTime
         challengeRecord["endTime"] = challenge.endTime
@@ -102,7 +100,7 @@ class CloudKitManager: ObservableObject {
         }
     }
     
-    func updateChallengeWithShareRecordID(_ challengeID: String, shareRecordID: String) {
+    func updateChallengeWithShareRecordID(_ challengeID: String, shareRecordID: String) async throws  {
         guard let context = self.context else { return }
         let fetchRequest: NSFetchRequest<Challenge> = Challenge.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "recordId == %@", challengeID)
@@ -115,6 +113,7 @@ class CloudKitManager: ObservableObject {
             }
         } catch {
             print("Updating Challenge with shareRecordID failed: \(error)")
+            throw error
         }
     }
     
@@ -208,7 +207,8 @@ class CloudKitManager: ObservableObject {
             throw ManagerError.challengeCreationFailed
         }
         let (share, shareURL) = try await shareChallenge(challenge, withParticipants: details.participants, creator: creator)
-        self.updateChallengeWithShareRecordID(challenge.recordId!, shareRecordID: (share?.recordID.recordName)!)
+        guard share == share, shareURL == shareURL else { throw ManagerError.sharingFailed }
+        try await self.updateChallengeWithShareRecordID(challenge.recordId!, shareRecordID: (share!.recordID.recordName))
         return (share, shareURL)
     }
     
@@ -323,7 +323,6 @@ class CloudKitManager: ObservableObject {
             let results = try context?.fetch(fetchRequest)
             if let challengeToDelete = results?.first {
                 context?.delete(challengeToDelete)
-                saveContext()
             }
         } catch {
             print("Error deleting challenge from CoreData: \(error)")
