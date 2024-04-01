@@ -59,8 +59,9 @@ extension Challenge : Identifiable {
 extension Challenge {
     func toCKRecord() -> CKRecord {
         let recordId = self.recordId ?? UUID().uuidString
-        self.recordId = recordId // Ensure the Challenge has a recordID
-        let record = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: recordId))
+        self.recordId = recordId 
+        let recordZone = CKRecordZone(zoneName: "Challenges")
+        let record = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: recordId, zoneID: recordZone.zoneID))
         record["startTime"] = startTime as CKRecordValue?
         record["endTime"] = endTime as CKRecordValue?
         record["goalSteps"] = goalSteps as CKRecordValue
