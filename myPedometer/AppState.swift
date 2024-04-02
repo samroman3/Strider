@@ -69,6 +69,7 @@ class AppState: ObservableObject {
                         DispatchQueue.main.async {
                             self.challengeInvitation = challengeDetails
                             self.challengeMetadata = metadata
+                            self.currentChallengeState = .invitation(challengeDetails)
                         }
                     }
                 } catch {
@@ -105,7 +106,7 @@ class AppState: ObservableObject {
                 //Challenge participants full, alert user and remove metadata
                 self.challengeMetadata = nil
                 self.challengeInvitation = nil
-                self.triggerAlert(title: "Challenge Full", message: "This challenge already has the maximum number of participants.")
+                self.triggerAlert(title: "Error Adding Participant", message: "This challenge may already have the maximum number of participants.")
             }
         } catch {
             print("Error accepting challenge: \(error)")
