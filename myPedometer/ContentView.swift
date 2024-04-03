@@ -53,10 +53,14 @@ struct ContentView: View {
 
     @ViewBuilder
     private func mainContentView() -> some View {
-        CustomTabBarView()
-            .alert(item: $appState.alertItem) { alertItem in
-                        Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
-                    }
+        ZStack {
+            CustomTabBarView()
+                       if let alertItem = appState.alertItem {
+                           CustomModalView(alertItem: alertItem) {
+                               appState.alertItem = nil
+                           }.presentationBackground(.thinMaterial)
+                       }
+        }
             .fullScreenCover(item: $appState.currentChallengeState) { challengeState in
                 switch challengeState {
                 case .invitation(let challengeDetails):
@@ -67,9 +71,7 @@ struct ContentView: View {
                     }, onDecline: {
                         appState.declineChallenge()
                     }).environmentObject(userSettingsManager)
-                        .presentationBackground(.ultraThinMaterial)
-
-                    //TODO: replace alerts with custom view
+                        .presentationBackground(.thinMaterial)
                 case .challengeActive(_):
                     EmptyView()
                 case .challengeCompleted(_):

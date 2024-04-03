@@ -83,7 +83,6 @@ class CloudKitManager: ObservableObject {
         challengeRecord["goalSteps"] = challenge.goalSteps
         challengeRecord["status"] = "Pending"
         challengeRecord["recordId"] = challenge.recordId
-        challengeRecord["recordId"] = challenge.recordId
         challengeRecord["creatorUserName"] = challenge.creatorUserName
         challengeRecord["creatorPhotoData"] = challenge.creatorPhotoData
         challengeRecord["creatorRecordID"] = challenge.creatorRecordID

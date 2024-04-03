@@ -25,11 +25,34 @@ enum ChallengeState: Identifiable {
 }
 struct AlertItem: Identifiable {
     let id = UUID()
-    let title: Text
-    let message: Text
+    let title: String
+    let message: String
     let dismissButton: Alert.Button
 }
 
+struct CustomModalView: View {
+    var alertItem: AlertItem
+    var onDismiss: () -> Void
+
+    var body: some View {
+        VStack(alignment: .center, spacing: 20) {
+            Text(alertItem.title)
+                .bold()
+                .foregroundStyle(.black)
+            Text(alertItem.message)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.black)
+            Button("OK", action: onDismiss)
+                .buttonStyle(AppButtonStyle(backgroundColor: AppTheme.greenGradient))
+        }
+        .padding()
+        .background(.primary)
+        .cornerRadius(15)
+        .shadow(radius: 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.opacity(0.4).edgesIgnoringSafeArea(.all))
+    }
+}
 
 class AppState: ObservableObject {
     static let shared = AppState()
@@ -47,7 +70,7 @@ class AppState: ObservableObject {
     @Published var alertItem: AlertItem?
     
     func triggerAlert(title: String, message: String) {
-        let alert = AlertItem(title: Text(title), message: Text(message), dismissButton: .default(Text("OK")))
+        let alert = AlertItem(title: title, message: message, dismissButton: .default(Text("OK")))
         DispatchQueue.main.async {
             self.alertItem = alert
         }
@@ -101,10 +124,12 @@ class AppState: ObservableObject {
             let acceptSuccess = await cloudKitManager.addCurrentUserToChallenge(challengeDetails: acceptedChallengeDetails!, record: record!)
             if acceptSuccess {
                 DispatchQueue.main.async{
-                    self.currentChallengeState = .challengeActive(acceptedChallengeDetails!)
+//                    self.currentChallengeState = .challengeActive(acceptedChallengeDetails!)
                     // Clear temporary storage after use
                     self.challengeMetadata = nil
                     self.challengeInvitation = nil
+                    self.currentChallengeState = nil
+                    self.triggerAlert(title: "Challenge", message: "Challenge Now Active!")
                 }
             }
             else {
@@ -112,12 +137,16 @@ class AppState: ObservableObject {
                     //Challenge participants full, alert user and remove metadata
                     self.challengeMetadata = nil
                     self.challengeInvitation = nil
-                    self.triggerAlert(title: "Error Adding Participant", message: "This challenge may already have the maximum number of participants.")
+                    self.currentChallengeState = nil
+                    self.triggerAlert(title: "Error", message: "This challenge may already have the maximum number of participants or is no longer available.")
                 }
             }
         } catch {
             print("Error accepting challenge: \(error)")
-            self.triggerAlert(title: "Error", message: "Error Accepting Challenge")
+            self.challengeMetadata = nil
+            self.challengeInvitation = nil
+            self.currentChallengeState = nil
+            self.triggerAlert(title: "Error", message: "Cannot Accept Challenge")
         }
     }
     
