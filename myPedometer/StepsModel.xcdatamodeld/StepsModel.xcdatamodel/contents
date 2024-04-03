@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23C64" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="Challenge" representedClassName="Challenge" syncable="YES">
+        <attribute name="creatorPhotoData" optional="YES" attributeType="Binary"/>
+        <attribute name="creatorRecordID" optional="YES" attributeType="String"/>
+        <attribute name="creatorSteps" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="creatorUserName" optional="YES" attributeType="String"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="goalSteps" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="participantPhotoData" optional="YES" attributeType="Binary"/>
+        <attribute name="participantRecordID" optional="YES" attributeType="String"/>
+        <attribute name="participantSteps" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="participantUserName" optional="YES" attributeType="String"/>
         <attribute name="recordId" optional="YES" attributeType="String"/>
         <attribute name="shareRecordID" optional="YES" attributeType="String"/>
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="winner" optional="YES" attributeType="String"/>
-        <relationship name="participants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="challenges" inverseEntity="User"/>
+        <relationship name="user" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="challenges" inverseEntity="User"/>
     </entity>
     <entity name="DailyLog" representedClassName="DailyLog" syncable="YES">
         <attribute name="calGoal" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -40,7 +48,7 @@
         <attribute name="stepGoal" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stepsRecord" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="userName" optional="YES" attributeType="String"/>
-        <relationship name="challenges" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Challenge" inverseName="participants" inverseEntity="Challenge"/>
+        <relationship name="challenges" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Challenge" inverseName="user" inverseEntity="Challenge"/>
         <relationship name="dailyLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DailyLog" inverseName="user" inverseEntity="DailyLog"/>
     </entity>
 </model>

@@ -28,31 +28,3 @@ struct ParticipantDetails: Identifiable, Equatable {
             self.steps = steps
         }
 }
-
-extension ParticipantDetails {
-    func toCKRecord() -> CKRecord {
-        //participant will have the same recordID as the User object it is init from 
-        let recordId = CKRecord.ID(recordName: self.id)
-        let record = CKRecord(recordType: "Participant", recordID: recordId)
-        
-        record["userName"] = self.userName ?? ""
-        record["photoData"] = self.photoData
-        record["steps"] = self.steps
-        
-        return record
-    }
-    
-    static func fromCKRecord(_ record: CKRecord) -> ParticipantDetails? {
-           guard let userName = record["userName"] as? String,
-                 let steps = record["steps"] as? Int else {
-               // These fields are essential; if they're missing, return nil
-               return nil
-           }
-           
-           // `photoData` can be nil if not set, so it's fine to directly try to cast it without a guard statement.
-           let photoData = record["photoData"] as? Data
-           let id = record.recordID.recordName
-
-           return ParticipantDetails(id: id, userName: userName, photoData: photoData, steps: steps)
-       }
-}

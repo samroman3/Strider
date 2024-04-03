@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 
 
 extension Challenge {
@@ -27,7 +28,7 @@ extension Challenge {
     @NSManaged public var creatorUserName: String?
     @NSManaged public var participantUserName: String?
     @NSManaged public var creatorRecordID: String?
-    @NSManaged public var participantRecordID: NSObject?
+    @NSManaged public var participantRecordID: String?
     @NSManaged public var creatorPhotoData: Data?
     @NSManaged public var creatorSteps: Int32
     @NSManaged public var participantSteps: Int32

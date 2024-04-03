@@ -29,9 +29,9 @@
 		3A4176732BA6053500F89254 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176722BA6053500F89254 /* CloudKitManager.swift */; };
 		3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */; };
 		3A4176832BA8E1D000F89254 /* CustomShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176822BA8E1D000F89254 /* CustomShareView.swift */; };
+		3A5C1AAA2BBC6161005DF4FD /* Challenge+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C1AA82BBC6161005DF4FD /* Challenge+CoreDataClass.swift */; };
+		3A5C1AAB2BBC6161005DF4FD /* Challenge+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C1AA92BBC6161005DF4FD /* Challenge+CoreDataProperties.swift */; };
 		3A65699A2BB661AB00E609D7 /* StepsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3A6569982BB661AB00E609D7 /* StepsModel.xcdatamodeld */; };
-		3A85835C2BB4A23B00B14956 /* Challenge+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */; };
-		3A85835D2BB4A23B00B14956 /* Challenge+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */; };
 		3A85835E2BB4A23B00B14956 /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */; };
 		3A85835F2BB4A23B00B14956 /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A85835B2BB4A23B00B14956 /* User+CoreDataProperties.swift */; };
 		3A870D252BAF8F25000F4D1E /* DismissKeyboardOnTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A870D242BAF8F25000F4D1E /* DismissKeyboardOnTap.swift */; };
@@ -54,7 +54,7 @@
 		3AC0CEC32B66CCB000A56554 /* CustomProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC22B66CCB000A56554 /* CustomProgressView.swift */; };
 		3AC0CEC52B66CE8F00A56554 /* GoalStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC42B66CE8F00A56554 /* GoalStatusView.swift */; };
 		3AC0CEC92B66D1B300A56554 /* DailyGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0CEC82B66D1B300A56554 /* DailyGoalView.swift */; };
-		3ACF747C2BAA1C8B00EB37A5 /* Participant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */; };
+		3ACF747C2BAA1C8B00EB37A5 /* ParticipantDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACF747B2BAA1C8B00EB37A5 /* ParticipantDetails.swift */; };
 		3ACF747E2BAA22C700EB37A5 /* SharedChallengeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACF747D2BAA22C700EB37A5 /* SharedChallengeDetailView.swift */; };
 		3ACFDA122B6814D70087DBA6 /* UserDefaultsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACFDA112B6814D70087DBA6 /* UserDefaultsHandler.swift */; };
 		3AD6F91B2B618FA700923DFC /* myPedometerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD6F91A2B618FA700923DFC /* myPedometerApp.swift */; };
@@ -120,9 +120,9 @@
 		3A4176722BA6053500F89254 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeDetails.swift; sourceTree = "<group>"; };
 		3A4176822BA8E1D000F89254 /* CustomShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShareView.swift; sourceTree = "<group>"; };
+		3A5C1AA82BBC6161005DF4FD /* Challenge+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3A5C1AA92BBC6161005DF4FD /* Challenge+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A6569992BB661AB00E609D7 /* StepsModel.xcdatamodel */ = {isa = PBXFileReference; explicitFileType = wrapper.xcdatamodel; path = StepsModel.xcdatamodel; sourceTree = "<group>"; };
-		3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3A85835B2BB4A23B00B14956 /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A870D242BAF8F25000F4D1E /* DismissKeyboardOnTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissKeyboardOnTap.swift; sourceTree = "<group>"; };
@@ -146,7 +146,7 @@
 		3AC0CEC42B66CE8F00A56554 /* GoalStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStatusView.swift; sourceTree = "<group>"; };
 		3AC0CEC82B66D1B300A56554 /* DailyGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyGoalView.swift; sourceTree = "<group>"; };
 		3AC0CECC2B6730DE00A56554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Participant.swift; sourceTree = "<group>"; };
+		3ACF747B2BAA1C8B00EB37A5 /* ParticipantDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantDetails.swift; sourceTree = "<group>"; };
 		3ACF747D2BAA22C700EB37A5 /* SharedChallengeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedChallengeDetailView.swift; sourceTree = "<group>"; };
 		3ACFDA112B6814D70087DBA6 /* UserDefaultsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHandler.swift; sourceTree = "<group>"; };
 		3AD6F9172B618FA700923DFC /* myPedometer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myPedometer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -292,8 +292,8 @@
 		3AC0CEC72B66D07A00A56554 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
-				3A8583582BB4A23B00B14956 /* Challenge+CoreDataClass.swift */,
-				3A8583592BB4A23B00B14956 /* Challenge+CoreDataProperties.swift */,
+				3A5C1AA82BBC6161005DF4FD /* Challenge+CoreDataClass.swift */,
+				3A5C1AA92BBC6161005DF4FD /* Challenge+CoreDataProperties.swift */,
 				3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */,
 				3A85835B2BB4A23B00B14956 /* User+CoreDataProperties.swift */,
 				3ABAB32C2B622AA400E174D3 /* HourlyStepData+CoreDataProperties.swift */,
@@ -394,7 +394,7 @@
 				3ABAB32F2B6230C600E174D3 /* HourlySteps.swift */,
 				3ABAFB7B2B63133600BC0C9F /* DetailData.swift */,
 				3A4176802BA8DC7300F89254 /* ChallengeDetails.swift */,
-				3ACF747B2BAA1C8B00EB37A5 /* Participant.swift */,
+				3ACF747B2BAA1C8B00EB37A5 /* ParticipantDetails.swift */,
 				3A870D2B2BB0FC1B000F4D1E /* DummyChallenge.swift */,
 			);
 			path = Models;
@@ -565,7 +565,7 @@
 				3A870D252BAF8F25000F4D1E /* DismissKeyboardOnTap.swift in Sources */,
 				3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */,
 				3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */,
-				3ACF747C2BAA1C8B00EB37A5 /* Participant.swift in Sources */,
+				3ACF747C2BAA1C8B00EB37A5 /* ParticipantDetails.swift in Sources */,
 				3AB190652BB609B20049D672 /* HapticFeedbackProvider.swift in Sources */,
 				3A4176702BA603F700F89254 /* ChallengeViewModel.swift in Sources */,
 				3A870D2C2BB0FC1B000F4D1E /* DummyChallenge.swift in Sources */,
@@ -596,10 +596,9 @@
 				3A870D302BB0FCAD000F4D1E /* ActiveChallengesView.swift in Sources */,
 				3AD6F94B2B61901300923DFC /* WeekView.swift in Sources */,
 				3A8F0D6E2BAB4EA9004D1AE8 /* AppDelegate.swift in Sources */,
-				3A85835C2BB4A23B00B14956 /* Challenge+CoreDataClass.swift in Sources */,
+				3A5C1AAB2BBC6161005DF4FD /* Challenge+CoreDataProperties.swift in Sources */,
 				3A85835F2BB4A23B00B14956 /* User+CoreDataProperties.swift in Sources */,
 				3A4176642BA3936D00F89254 /* UserSettingsManager.swift in Sources */,
-				3A85835D2BB4A23B00B14956 /* Challenge+CoreDataProperties.swift in Sources */,
 				3A2320702BA26CF400D1851F /* MainChallengeView.swift in Sources */,
 				3A4176622BA3915A00F89254 /* AppState.swift in Sources */,
 				3AD6F9672B61AC7800923DFC /* PedometerDataStore.swift in Sources */,
@@ -614,6 +613,7 @@
 				3A4176812BA8DC7300F89254 /* ChallengeDetails.swift in Sources */,
 				3A870D362BB0FD54000F4D1E /* CreateChallengeView.swift in Sources */,
 				3AD6F9712B62029900923DFC /* MockPedometerDataProvider.swift in Sources */,
+				3A5C1AAA2BBC6161005DF4FD /* Challenge+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
