@@ -12,21 +12,16 @@ struct ContentView: View {
     @EnvironmentObject var userSettingsManager: UserSettingsManager
     @EnvironmentObject var cloudKitManager: CloudKitManager
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
-
-    @State private var showSignInView = false
-
+    
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
         self.pedometerDataProvider = pedometerDataProvider
     }
 
     var body: some View {
         Group {
-            // Determine the view based on the onboarding and sign-in status
+            // Determine the view based on the onboarding status
             if !userSettingsManager.hasCompletedOnboarding {
                 OnboardingView(onOnboardingComplete: handleOnboardingComplete)
-                    .environmentObject(userSettingsManager)
-            } else if showSignInView {
-                SignInView(isPresented: $showSignInView, onSignInComplete: handleSignInComplete)
                     .environmentObject(userSettingsManager)
             } else {
                 mainContentView()
@@ -41,14 +36,7 @@ struct ContentView: View {
     private func handleOnboardingComplete() {
         userSettingsManager.checkiCloudAvailability { available in
             userSettingsManager.hasCompletedOnboarding = true
-            if available && !userSettingsManager.hasSignedIn {
-                showSignInView = true
-            }
         }
-    }
-
-    private func handleSignInComplete() {
-        userSettingsManager.hasSignedIn = true
     }
 
     @ViewBuilder

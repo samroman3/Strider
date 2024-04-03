@@ -56,8 +56,6 @@ struct WelcomeScreen: View {
     var body: some View {
         ZStack {
             // Background gradient
-            LinearGradient(gradient: Gradient(colors: [AppTheme.darkGray, AppTheme.darkerGray]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 20) {
                 Spacer()
@@ -70,32 +68,21 @@ struct WelcomeScreen: View {
                                       .frame(width: 300, height: 400)
                                       .shadow(radius: 10)
                               )
-                // App Name
-                Text("STRIDER")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .shadow(radius: 5)
-                
                 // Features Description
                 VStack(spacing: 10) {
                     Text("Track steps.")
                         .multilineTextAlignment(.center)
                         .font(.title3)
-                        .foregroundColor(.white)
                     
                     Text("Challenge friends.")
                         .multilineTextAlignment(.center)
                         .font(.title3)
-                        .foregroundColor(.white)
                     Text("Reach your goals together.")
                         .multilineTextAlignment(.center)
                         .font(.title3)
-                        .foregroundColor(.white)
                 }
                 .padding(.vertical, 5)
                 .padding(.horizontal, 20)
-//                .background(Color.black.opacity(0.5))
                 .cornerRadius(15)
                 
                 // Get Started Button
@@ -152,17 +139,6 @@ struct ConsentView: View {
                         Text("Your data is securely stored in iCloud, ensuring it's private and accessible across all your devices. We use iCloud to keep data in sync and secure.")
                             .foregroundStyle(.primary)
                             .padding(.bottom)
-
-                        HStack {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(.red)
-                                .imageScale(.large)
-                            Text("HealthKit Integration")
-                                .font(.headline)
-                                .foregroundStyle(.primary)
-                        }
-                        Text("With your consent, we access HealthKit to track relevant health data such as activity levels, calories burned and steps taken. This data and all calculations remain on your device to maintain your privacy.")
-                            .foregroundStyle(.primary)
                     }
                     .padding()
 
@@ -191,7 +167,7 @@ struct ConsentView: View {
 struct ConsentAgreementText: View {
     var body: some View {
         Text("""
-            By continuing, you acknowledge and agree to the use of iCloud for storage and HealthKit for health data integration as outlined above. Your privacy is our top priority, and you have full control over your data.
+            By continuing, you acknowledge and agree to the use of iCloud for storage and data integration as outlined above. Your privacy is our top priority, and you have full control over your data.
             """)
             .font(.callout)
             .foregroundStyle(.primary)
