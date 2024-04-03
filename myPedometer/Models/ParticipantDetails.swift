@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-struct Participant: Identifiable, Equatable {
+struct ParticipantDetails: Identifiable, Equatable {
     let id: String
     let userName: String?
     let photoData: Data?
@@ -29,7 +29,7 @@ struct Participant: Identifiable, Equatable {
         }
 }
 
-extension Participant {
+extension ParticipantDetails {
     func toCKRecord() -> CKRecord {
         //participant will have the same recordID as the User object it is init from 
         let recordId = CKRecord.ID(recordName: self.id)
@@ -42,7 +42,7 @@ extension Participant {
         return record
     }
     
-    static func fromCKRecord(_ record: CKRecord) -> Participant? {
+    static func fromCKRecord(_ record: CKRecord) -> ParticipantDetails? {
            guard let userName = record["userName"] as? String,
                  let steps = record["steps"] as? Int else {
                // These fields are essential; if they're missing, return nil
@@ -53,8 +53,6 @@ extension Participant {
            let photoData = record["photoData"] as? Data
            let id = record.recordID.recordName
 
-           return Participant(id: id, userName: userName, photoData: photoData, steps: steps)
+           return ParticipantDetails(id: id, userName: userName, photoData: photoData, steps: steps)
        }
-    
-    
 }

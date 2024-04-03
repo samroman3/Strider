@@ -57,7 +57,7 @@ struct ContentView: View {
             .alert(item: $appState.alertItem) { alertItem in
                         Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
                     }
-            .sheet(item: $appState.currentChallengeState) { challengeState in
+            .fullScreenCover(item: $appState.currentChallengeState) { challengeState in
                 switch challengeState {
                 case .invitation(let challengeDetails):
                     SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {
@@ -66,7 +66,8 @@ struct ContentView: View {
                         }
                     }, onDecline: {
                         appState.declineChallenge()
-                    })
+                    }).environmentObject(userSettingsManager)
+                        .presentationBackground(.ultraThinMaterial)
 
                     //TODO: replace alerts with custom view
                 case .challengeActive(_):

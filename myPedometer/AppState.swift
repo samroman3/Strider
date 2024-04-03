@@ -67,10 +67,12 @@ class AppState: ObservableObject {
                 do {
                     if let challengeDetails = try await self.cloudKitManager.acceptShareAndFetchChallenge(metadata: metadata) {
                         DispatchQueue.main.async {
-                            self.challengeInvitation = challengeDetails
+                            self.challengeInvitation = challengeDetails.0
                             self.challengeMetadata = metadata
-                            self.currentChallengeState = .invitation(challengeDetails)
+                            self.currentChallengeState = .invitation(challengeDetails.0!)
                         }
+                    } else {
+                        self.triggerAlert(title: "Error", message: "Invalid Challenge Details")
                     }
                 } catch {
                     print("Error handling incoming share: \(error)")
@@ -84,6 +86,7 @@ class AppState: ObservableObject {
         DispatchQueue.main.async {
             self.challengeInvitation = nil
             self.challengeMetadata = nil
+            self.currentChallengeState = nil
             self.triggerAlert(title: "Challenge", message: "Challenge Declined")
         }
     }
@@ -94,19 +97,23 @@ class AppState: ObservableObject {
         
         do {
             // Use the stored metadata to accept the challenge
-            guard let acceptedChallengeDetails = try await cloudKitManager.acceptShareAndFetchChallenge(metadata: metadata) else { return  }
-            let acceptSuccess = await cloudKitManager.addCurrentUserToChallengeIfPossible(challengeDetails: acceptedChallengeDetails)
+            guard let (acceptedChallengeDetails,record) = try await cloudKitManager.acceptShareAndFetchChallenge(metadata: metadata) else { return  }
+            let acceptSuccess = await cloudKitManager.addCurrentUserToChallenge(challengeDetails: acceptedChallengeDetails!, record: record!)
             if acceptSuccess {
-                self.currentChallengeState = .challengeActive(acceptedChallengeDetails)
-                // Clear temporary storage after use
-                self.challengeMetadata = nil
-                self.challengeInvitation = nil
+                DispatchQueue.main.async{
+                    self.currentChallengeState = .challengeActive(acceptedChallengeDetails!)
+                    // Clear temporary storage after use
+                    self.challengeMetadata = nil
+                    self.challengeInvitation = nil
+                }
             }
             else {
-                //Challenge participants full, alert user and remove metadata
-                self.challengeMetadata = nil
-                self.challengeInvitation = nil
-                self.triggerAlert(title: "Error Adding Participant", message: "This challenge may already have the maximum number of participants.")
+                DispatchQueue.main.async{
+                    //Challenge participants full, alert user and remove metadata
+                    self.challengeMetadata = nil
+                    self.challengeInvitation = nil
+                    self.triggerAlert(title: "Error Adding Participant", message: "This challenge may already have the maximum number of participants.")
+                }
             }
         } catch {
             print("Error accepting challenge: \(error)")
@@ -147,7 +154,6 @@ class AppState: ObservableObject {
     }
     
     func challengeDenied(challengeDetails: ChallengeDetails) {
-        // Update UI and alert user about the denied challenge.
     }
     
     func participantAdded(challengeDetails: ChallengeDetails) {
