@@ -31,7 +31,6 @@
 		3A4176832BA8E1D000F89254 /* CustomShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4176822BA8E1D000F89254 /* CustomShareView.swift */; };
 		3A5C1AAA2BBC6161005DF4FD /* Challenge+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C1AA82BBC6161005DF4FD /* Challenge+CoreDataClass.swift */; };
 		3A5C1AAB2BBC6161005DF4FD /* Challenge+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C1AA92BBC6161005DF4FD /* Challenge+CoreDataProperties.swift */; };
-		3A5C1AAE2BBDFF9A005DF4FD /* GoalUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C1AAD2BBDFF9A005DF4FD /* GoalUpdateView.swift */; };
 		3A65699A2BB661AB00E609D7 /* StepsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3A6569982BB661AB00E609D7 /* StepsModel.xcdatamodeld */; };
 		3A85835E2BB4A23B00B14956 /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */; };
 		3A85835F2BB4A23B00B14956 /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A85835B2BB4A23B00B14956 /* User+CoreDataProperties.swift */; };
@@ -124,7 +123,6 @@
 		3A5C1AA82BBC6161005DF4FD /* Challenge+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3A5C1AA92BBC6161005DF4FD /* Challenge+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Challenge+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3A5C1AAC2BBDE0D1005DF4FD /* myPedometerDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = myPedometerDebug.entitlements; sourceTree = "<group>"; };
-		3A5C1AAD2BBDFF9A005DF4FD /* GoalUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalUpdateView.swift; sourceTree = "<group>"; };
 		3A6569992BB661AB00E609D7 /* StepsModel.xcdatamodel */ = {isa = PBXFileReference; explicitFileType = wrapper.xcdatamodel; path = StepsModel.xcdatamodel; sourceTree = "<group>"; };
 		3A85835A2BB4A23B00B14956 /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3A85835B2BB4A23B00B14956 /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -252,7 +250,6 @@
 			isa = PBXGroup;
 			children = (
 				3A2320682B9FBB5D00D1851F /* TodayView.swift */,
-				3A5C1AAD2BBDFF9A005DF4FD /* GoalUpdateView.swift */,
 				3A41766B2BA503B100F89254 /* ProfileView.swift */,
 				3A41766D2BA503DA00F89254 /* ImagePicker.swift */,
 			);
@@ -568,7 +565,6 @@
 				3AC0CEC12B66CC5900A56554 /* HourlyStepsChart.swift in Sources */,
 				3A0BB5AC2B6933BF008C616E /* PedometerDataProcessor.swift in Sources */,
 				3A870D252BAF8F25000F4D1E /* DismissKeyboardOnTap.swift in Sources */,
-				3A5C1AAE2BBDFF9A005DF4FD /* GoalUpdateView.swift in Sources */,
 				3ABAB3302B6230C600E174D3 /* HourlySteps.swift in Sources */,
 				3AD6F94D2B61902800923DFC /* DetailView.swift in Sources */,
 				3ACF747C2BAA1C8B00EB37A5 /* ParticipantDetails.swift in Sources */,

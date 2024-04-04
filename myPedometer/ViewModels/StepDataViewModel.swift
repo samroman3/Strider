@@ -33,7 +33,6 @@ class StepDataViewModel: ObservableObject {
     @Published var calRecord: Int = 0
     
     //Steps
-    @Published var threeKStepsReached: Bool = false
     @Published var fiveKStepsReached: Bool = false
     @Published var tenKStepsReached: Bool = false
     @Published var twentyKStepsReached: Bool = false
@@ -184,8 +183,23 @@ class StepDataViewModel: ObservableObject {
                 self.stepDataList = logs
                 self.calculateCaloriesBurned()
                 self.calculateWeeklySteps()
+                self.checkAndUpdateMilestones()
             }
         }
+    }
+    
+    func checkAndUpdateMilestones() {
+        // Step Milestones
+        fiveKStepsReached = todaySteps >= 5_000
+        tenKStepsReached = todaySteps >= 10_000
+        twentyKStepsReached = todaySteps >= 20_000
+        thirtyKStepsReached = todaySteps >= 30_000
+        fortyKStepsReached = todaySteps >= 40_000
+        fiftyKStepsReached = todaySteps >= 50_000
+
+        // Calorie Milestones
+        fiveHundredCalsReached = caloriesBurned >= 500
+        thousandCalsReached = caloriesBurned >= 1_000
     }
     
     // Calculate weekly average steps
@@ -213,7 +227,7 @@ class StepDataViewModel: ObservableObject {
             self.animateStepCount(to: Int(log.totalSteps))
             
             self.calculateCaloriesBurned()
-            
+            self.checkAndUpdateMilestones()
             self.userSettingsManager.updateDailyLog(with: self.todaySteps, calories: Int(self.caloriesBurned), date: Date())
             self.lastRefreshDate = Date()
         }

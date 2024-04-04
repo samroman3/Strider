@@ -12,9 +12,7 @@ struct TodayView: View {
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @Environment(\.colorScheme) var colorScheme
     
-    @State var profileViewIsPresented = false
-    @State private var goalUpdateViewisPresented = false
-    
+    @State var profileViewIsPresented = false    
     @State private var isSpinning = false
     
     
