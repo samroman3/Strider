@@ -152,18 +152,10 @@ struct ConsentView: View {
                     
                     ConsentAgreementText()
                     
-                    Button("Accept", action: onConsentGiven)
+                    Button("Continue", action: onConsentGiven)
+                        .buttonStyle(AppButtonStyle(backgroundColor: AppTheme.greenGradient))
                         .font(.headline)
-                        .foregroundColor(.primary)
                         .padding()
-                        .background(Material.ultraThin)
-                        .cornerRadius(10)
-                    Button("Deny", action: onConsentGiven)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .padding()
-                        .background(Material.ultraThin)
-                        .cornerRadius(10)
                 }
             }
         }
@@ -231,13 +223,6 @@ struct ConsentView_Previews: PreviewProvider {
         ConsentView(consentGiven: .constant(false), onConsentGiven: {})
     }
 }
-
-//
-//struct OnboardingView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        OnboardingView(onOnboardingComplete: {})
-//    }
-//}
 
 struct WelcomeScreen_Previews: PreviewProvider {
     static var previews: some View {

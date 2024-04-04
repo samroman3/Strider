@@ -13,6 +13,7 @@ struct SetUpProfileView: View {
     
     @State private var newStepGoal: String = ""
     @State private var newCalGoal: String = ""
+    @State private var userName: String  = ""
     @State private var isUpdating: Bool = false
     @State private var showingImagePicker: Bool = false
     @State private var inputImage: UIImage?
@@ -20,8 +21,9 @@ struct SetUpProfileView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("Set Daily Goals and Profile")
-                .font(.largeTitle)
+            Text("Profile")
+                .font(.title)
+                .multilineTextAlignment(.center)
                 .foregroundColor(.primary)
                 .padding(.bottom)
             
@@ -39,7 +41,11 @@ struct SetUpProfileView: View {
                     .frame(width: 100, height: 100)
                     .onTapGesture { showingImagePicker = true }
             }
-            
+            Text("Daily Goals")
+                .font(.title2)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.primary)
+                .padding(.bottom)
             goalInputField(iconName: "shoe", placeholder: "Step Goal", binding: $newStepGoal)
             goalInputField(iconName: "flame", placeholder: "Calorie Goal", binding: $newCalGoal, isCalorie: true)
             
@@ -55,6 +61,7 @@ struct SetUpProfileView: View {
         .onAppear {
             self.newStepGoal = "\(self.userSettingsManager.dailyStepGoal)"
             self.newCalGoal = "\(self.userSettingsManager.dailyCalGoal)"
+            self.userName = "\(self.userSettingsManager.userName)"
         }
         .padding()
         .background(.clear)
@@ -71,7 +78,7 @@ struct SetUpProfileView: View {
     private func updateGoals() {
         isUpdating = true
         if let stepGoal = Int(newStepGoal), let calGoal = Int(newCalGoal), let photoData = userSettingsManager.photoData {
-            userSettingsManager.updateUserDetails(image: UIImage(data: photoData), userName: userSettingsManager.userName, stepGoal: stepGoal, calGoal: calGoal, updateImage: true)
+            userSettingsManager.updateUserDetails(image: UIImage(data: photoData), userName: String(userName), stepGoal: stepGoal, calGoal: calGoal, updateImage: true)
         }
         isUpdating = false
        onConfirm()
@@ -105,22 +112,14 @@ struct SetUpProfileView: View {
     func confirmButton() -> some View {
         Button(action: updateGoals) {
             Text("Confirm")
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-        }
+        }.buttonStyle(AppButtonStyle(backgroundColor: AppTheme.greenGradient))
         .padding(.bottom)
     }
     
     func autoCalculateCalorieGoal() {
-        // Show feedback that the goal was auto-calculated
-        withAnimation {
-            let dailyStepGoal = self.newStepGoal
-            self.newStepGoal = String(Int((Double(dailyStepGoal) ?? 1) * 0.04))
-            self.newCalGoal = String(self.newCalGoal)
-        }
-    }
+           guard let stepGoal = Int(newStepGoal) else { return }
+           let calculatedCalGoal = Int(Double(stepGoal) * 0.04)
+           newCalGoal = String(calculatedCalGoal)
+       }
 
 }

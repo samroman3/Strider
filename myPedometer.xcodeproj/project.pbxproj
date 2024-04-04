@@ -208,6 +208,7 @@
 				3A41765C2BA3909500F89254 /* OnboardingView.swift */,
 				3A4176652BA3ADD500F89254 /* SignInView.swift */,
 				3A0ADE452B9F901100A2D9D4 /* CustomTabBarView.swift */,
+				3AC0CEC82B66D1B300A56554 /* SetUpProfileView.swift */,
 			);
 			path = Admin;
 			sourceTree = "<group>";
@@ -251,7 +252,6 @@
 			isa = PBXGroup;
 			children = (
 				3A2320682B9FBB5D00D1851F /* TodayView.swift */,
-				3AC0CEC82B66D1B300A56554 /* SetUpProfileView.swift */,
 				3A5C1AAD2BBDFF9A005DF4FD /* GoalUpdateView.swift */,
 				3A41766B2BA503B100F89254 /* ProfileView.swift */,
 				3A41766D2BA503DA00F89254 /* ImagePicker.swift */,
