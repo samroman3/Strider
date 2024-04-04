@@ -49,7 +49,7 @@ struct ContentView: View {
                            }.presentationBackground(.thinMaterial)
                        }
         }
-            .fullScreenCover(item: $appState.currentChallengeState) { challengeState in
+        .fullScreenCover(item: $appState.currentChallengeState) { challengeState in
                 switch challengeState {
                 case .invitation(let challengeDetails):
                     SharedChallengeDetailView(challengeDetails: challengeDetails, onAccept: {

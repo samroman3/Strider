@@ -68,9 +68,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             completionHandler(.noData)
         }
     }
+    
+    private func registerKeyValueStoreObserver() {
+            NotificationCenter.default.addObserver(self, selector: #selector(keyValueStoreDidUpdate), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
+            NSUbiquitousKeyValueStore.default.synchronize()
+        }
+        
+        @objc func keyValueStoreDidUpdate(notification: Notification) {
+            // Reload key value store settings and update UserSettingsManager accordingly
+            let userSettingsManager = UserSettingsManager.shared
+            userSettingsManager.reloadKeyValueStoreSettings()
+        }
+
 
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        registerKeyValueStoreObserver()
         registerForPushNotifications()
         return true
     }

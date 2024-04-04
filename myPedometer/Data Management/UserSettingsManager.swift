@@ -28,31 +28,21 @@ class UserSettingsManager: ObservableObject {
     
     
     @Published var hasCompletedOnboarding: Bool {
-        didSet { updateUserDefaults(key: "hasCompletedOnboarding", value: hasCompletedOnboarding) }
+        didSet { updateUbiquitousKeyValueStore(key: "hasCompletedOnboarding", value: hasCompletedOnboarding)}
     }
     
     @Published var iCloudConsentGiven: Bool {
         didSet { updateUbiquitousKeyValueStore(key: "iCloudConsentGiven", value: iCloudConsentGiven) }
     }
+
+    @Published var dailyStepGoal: Int = 0
     
-    @Published var hasSignedIn: Bool {
-        didSet { updateUserDefaults(key: "hasSignedIn", value: hasSignedIn) }
-    }
-    
-    @Published var dailyStepGoal: Int {
-        didSet { updateUserDefaults(key: "dailyStepGoal", value: dailyStepGoal) }
-    }
-    
-    @Published var dailyCalGoal: Int {
-        didSet { updateUserDefaults(key: "dailyCalGoal", value: dailyCalGoal) }
-    }
+    @Published var dailyCalGoal: Int = 0
+
     
     init() {
-        hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-        iCloudConsentGiven = UserDefaults.standard.bool(forKey: "iCloudConsentGiven")
-        hasSignedIn = UserDefaults.standard.bool(forKey: "hasSignedIn")
-        dailyStepGoal = UserDefaults.standard.integer(forKey: "dailyStepGoal")
-        dailyCalGoal = UserDefaults.standard.integer(forKey: "dailyCalGoal")
+        hasCompletedOnboarding = NSUbiquitousKeyValueStore.default.bool(forKey: "hasCompletedOnboarding")
+        iCloudConsentGiven = NSUbiquitousKeyValueStore.default.bool(forKey: "iCloudConsentGiven")
     }
     
     deinit {
@@ -61,30 +51,15 @@ class UserSettingsManager: ObservableObject {
     
     //MARK: Key Value iCloud Markers
     
-    private func updateUserDefaults<T>(key: String, value: T) {
-        UserDefaults.standard.set(value, forKey: key)
-    }
+    func reloadKeyValueStoreSettings() {
+            DispatchQueue.main.async {
+                self.hasCompletedOnboarding = NSUbiquitousKeyValueStore.default.bool(forKey: "hasCompletedOnboarding")
+                self.iCloudConsentGiven = NSUbiquitousKeyValueStore.default.bool(forKey: "iCloudConsentGiven")
+            }
+        }
     
     private func updateUbiquitousKeyValueStore<T>(key: String, value: T) {
         NSUbiquitousKeyValueStore.default.set(value, forKey: key)
-        NSUbiquitousKeyValueStore.default.synchronize()
-    }
-    func saveOnboardingCompletedFlag(isCompleted: Bool) {
-        NSUbiquitousKeyValueStore.default.set(isCompleted, forKey: "onboardingCompleted")
-        NSUbiquitousKeyValueStore.default.synchronize()
-    }
-    
-    func saveConsentFlag(isGiven: Bool) {
-        NSUbiquitousKeyValueStore.default.set(isGiven, forKey: "consentGiven")
-        NSUbiquitousKeyValueStore.default.synchronize()
-    }
-    
-    func isOnboardingCompleted() -> Bool {
-        return NSUbiquitousKeyValueStore.default.bool(forKey: "onboardingCompleted")
-    }
-    
-    func isConsentGiven() -> Bool {
-        return NSUbiquitousKeyValueStore.default.bool(forKey: "consentGiven")
     }
     
     // MARK: Apple Sign In
@@ -133,11 +108,6 @@ class UserSettingsManager: ObservableObject {
                 print("Error fetching current user's CloudKit record ID: \(error.localizedDescription)")
             }
         }
-    }
-    
-    func saveAppleSignInFlag() {
-        NSUbiquitousKeyValueStore.default.set(hasSignedInWithApple, forKey: "hasSignedInWithApple")
-        NSUbiquitousKeyValueStore.default.synchronize()
     }
     
     

@@ -38,19 +38,16 @@ struct CustomModalView: View {
         VStack(alignment: .center, spacing: 20) {
             Text(alertItem.title)
                 .bold()
-                .foregroundStyle(.black)
             Text(alertItem.message)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.black)
             Button("OK", action: onDismiss)
                 .buttonStyle(AppButtonStyle(backgroundColor: AppTheme.greenGradient))
         }
         .padding()
-        .background(.primary)
         .cornerRadius(15)
+        .background(Color(.systemBackground))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black.opacity(0.4).edgesIgnoringSafeArea(.all))
     }
 }
 

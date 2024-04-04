@@ -11,8 +11,9 @@ struct TodayView: View {
     @EnvironmentObject private var viewModel: StepDataViewModel
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @Environment(\.colorScheme) var colorScheme
-
-    @State var profileViewIsPresented: Bool = false
+    
+    @State var profileViewIsPresented = false
+    @State private var goalUpdateViewisPresented = false
     
     @State private var isSpinning = false
     
@@ -46,16 +47,19 @@ struct TodayView: View {
             Spacer()
         }
         .navigationBarItems(trailing:
-                                Button(action: {
-            HapticFeedbackProvider.impact()
-            profileViewIsPresented.toggle()
-        }) {
-            Image(systemName: "gear")
-                .foregroundColor(colorScheme == .dark ? .white : .black)
-                .font(.title2)
-        })
+            Button(action: {
+                HapticFeedbackProvider.impact()
+                profileViewIsPresented.toggle()
+            }) {
+                Image(systemName: "person.crop.circle")
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .font(.title2)
+            }
+        )
         .sheet(isPresented: $profileViewIsPresented, content: {
-            ProfileSetupView().environmentObject(userSettingsManager)
+            ProfileView()
+                .presentationBackground(.ultraThinMaterial)
+                .environmentObject(userSettingsManager)
         })
     }
     
@@ -75,7 +79,7 @@ struct TodayView: View {
                                 // Trigger the refresh data action in your viewModel
                                 viewModel.refreshData()
                                 
-                              spinIcon()
+                                spinIcon()
                             }) {
                                 AppTheme.greenGradient
                                     .mask(
@@ -136,7 +140,7 @@ struct TodayView: View {
                                     .rotation3DEffect(.degrees(isSpinning ? 360 : 0), axis: (x: 0, y: 1, z: 0))
                                     .frame(width: 70, height: 70)
                             }
-                                .frame(width: 70, height: 70)
+                            .frame(width: 70, height: 70)
                             Text("\(Int(viewModel.caloriesBurned))")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .gray)

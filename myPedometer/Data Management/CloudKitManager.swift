@@ -84,16 +84,23 @@ class CloudKitManager: ObservableObject {
         challengeRecord["status"] = "Pending"
         challengeRecord["recordId"] = challenge.recordId
         challengeRecord["creatorUserName"] = challenge.creatorUserName
-        challengeRecord["creatorPhotoData"] = challenge.creatorPhotoData
         challengeRecord["creatorRecordID"] = challenge.creatorRecordID
         
-            let share = CKShare(rootRecord: challengeRecord)
-            share[CKShare.SystemFieldKey.title] = "Join My Challenge on Strider!"
-            share.publicPermission = .readWrite
+        if let imageData = challenge.creatorPhotoData,
+           let image = UIImage(data: imageData) {
+            let compressedImageData = image.jpegData(compressionQuality: 0.5)
+            challengeRecord["creatorPhotoData"] = compressedImageData
+        }
+        
+        _ = try await self.cloudKitContainer.privateCloudDatabase.save(challengeRecord)
+                
+        let share = CKShare(rootRecord: challengeRecord)
+        share[CKShare.SystemFieldKey.title] = "Join My Challenge on Strider!"
+        share.publicPermission = .readWrite
             
-            let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
-            self.cloudKitContainer.privateCloudDatabase.add(operation)
-            return try await waitForShareOperation(operation, withShare: share)
+        let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
+        self.cloudKitContainer.privateCloudDatabase.add(operation)
+        return try await waitForShareOperation(operation, withShare: share)
 
     }
     
@@ -230,9 +237,13 @@ class CloudKitManager: ObservableObject {
         do {
             if challengeDetails.participants.count < 2 {
                 record["participantRecordID"] = userSettingsManager?.user?.recordId
-                record["participantPhotoData"] = userSettingsManager?.photoData
                 record["participantUserName"] = userSettingsManager?.userName
-
+                
+                if let imageData = userSettingsManager?.photoData,
+                   let image = UIImage(data: imageData) {
+                    let compressedImageData = image.jpegData(compressionQuality: 0.5)
+                    record["participantPhotoData"] = compressedImageData
+                }
                 // Set the challenge status to active
                 record["status"] = "Active"
 

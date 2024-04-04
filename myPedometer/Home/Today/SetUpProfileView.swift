@@ -1,5 +1,5 @@
 //
-//  DailyGoalView.swift
+//  SetUpProfileView.swift
 //  myPedometer
 //
 //  Created by Sam Roman on 1/28/24.

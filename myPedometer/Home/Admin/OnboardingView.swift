@@ -11,44 +11,53 @@ struct OnboardingView: View {
     @EnvironmentObject var userSettingsManager: UserSettingsManager
     @State private var showConsent = false
     @State private var consentGiven = false
-    @State private var consentDenied = false
+    @State private var showGoalSetup = false // Controlled state for showing goal setup
     @State private var iCloudAvailable: Bool = false
     
     var onOnboardingComplete: () -> Void
     
     var body: some View {
-           VStack {
-               if iCloudAvailable {
-                   if !showConsent {
-                       WelcomeScreen(onGetStarted: {
-                           withAnimation(.spring()) {
-                               showConsent = true
-                           }
-                       })
-                       .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-                   } else {
-                       // Show the consent view only if it needs to be shown and iCloud is available
-                       ConsentView(consentGiven: $consentGiven, onConsentGiven: {
-                           withAnimation(.spring()) {
-                               consentGiven = true
-                               onOnboardingComplete()
-                           }
-                       })
-                       .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-                   }
-               } else {
-                   // Show the iCloud required view if iCloud is not available
-                   iCloudRequiredView()
-               }
-           }
-           .onAppear {
-               // Check iCloud availability here
-               userSettingsManager.checkiCloudAvailability { available in
-                   iCloudAvailable = available
-               }
-           }
-       }
-   }
+        VStack {
+            if iCloudAvailable {
+                if !showConsent {
+                    WelcomeScreen(onGetStarted: {
+                        withAnimation(.spring()) {
+                            showConsent = true
+                        }
+                    })
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                } else if !consentGiven {
+                    ConsentView(consentGiven: $consentGiven, onConsentGiven: {
+                        withAnimation(.spring()) {
+                            consentGiven = true
+                            showGoalSetup = true // Transition to goal setup after consent
+                        }
+                    })
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                }
+                
+                if showGoalSetup {
+                    SetUpProfileView(onConfirm:{
+                        withAnimation(.spring()) {
+                            onOnboardingComplete() // Complete the onboarding after goals are set
+                        }
+                    }
+                    )
+                    .environmentObject(userSettingsManager)
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                }
+            } else {
+                iCloudRequiredView()
+            }
+        }
+        .onAppear {
+            userSettingsManager.checkiCloudAvailability { available in
+                iCloudAvailable = available
+            }
+        }
+    }
+}
+
 
 struct WelcomeScreen: View {
     var onGetStarted: () -> Void
@@ -56,18 +65,17 @@ struct WelcomeScreen: View {
     var body: some View {
         ZStack {
             // Background gradient
-            
             VStack(spacing: 20) {
                 Spacer()
                 //Icon
                 AppTheme.greenGradient
-                              .mask(
-                                  Image(systemName: "shoe.circle")
-                                      .resizable()
-                                      .aspectRatio(contentMode: .fit)
-                                      .frame(width: 300, height: 400)
-                                      .shadow(radius: 10)
-                              )
+                    .mask(
+                        Image(systemName: "shoe.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 300, height: 400)
+                            .shadow(radius: 10)
+                    )
                 // Features Description
                 VStack(spacing: 10) {
                     Text("Track steps.")
@@ -92,7 +100,7 @@ struct WelcomeScreen: View {
                             .fontWeight(.medium)
                             .font(.title)
                             .foregroundColor(.white)
-
+                        
                         Image(systemName: "arrow.right.circle.fill")
                             .foregroundColor(.white)
                     }.background(
@@ -100,7 +108,7 @@ struct WelcomeScreen: View {
                         AppTheme.greenGradient
                             .cornerRadius(20)
                             .frame(minWidth: 300)
-
+                        
                     )
                     .padding()
                     .shadow(radius: 10)
@@ -117,7 +125,7 @@ struct WelcomeScreen: View {
 struct ConsentView: View {
     @Binding var consentGiven: Bool
     var onConsentGiven: () -> Void
-
+    
     var body: some View {
         VStack {
             ScrollView {
@@ -126,7 +134,7 @@ struct ConsentView: View {
                         .font(.title)
                         .foregroundColor(.primary)
                         .padding()
-
+                    
                     VStack(alignment: .leading) {
                         HStack {
                             Image(systemName: "icloud.fill")
@@ -141,9 +149,9 @@ struct ConsentView: View {
                             .padding(.bottom)
                     }
                     .padding()
-
+                    
                     ConsentAgreementText()
-
+                    
                     Button("Accept", action: onConsentGiven)
                         .font(.headline)
                         .foregroundColor(.primary)
@@ -169,9 +177,9 @@ struct ConsentAgreementText: View {
         Text("""
             By continuing, you acknowledge and agree to the use of iCloud for storage and data integration as outlined above. Your privacy is our top priority, and you have full control over your data.
             """)
-            .font(.callout)
-            .foregroundStyle(.primary)
-            .padding()
+        .font(.callout)
+        .foregroundStyle(.primary)
+        .padding()
     }
 }
 
