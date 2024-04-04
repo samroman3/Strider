@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ProfileSetupView: View {
+struct ProfileView: View {
     @EnvironmentObject private var userSettingsManager: UserSettingsManager
     @State private var isEditMode = false
     @State private var showingImagePicker = false
@@ -43,7 +43,7 @@ struct ProfileSetupView: View {
                     } else {
                         HStack {
                             Image(systemName: "shoe")
-                                .foregroundColor(.green)
+                                .foregroundColor(.blue)
                             Text("Steps: \(userSettingsManager.dailyStepGoal)")
                         }
                         HStack {
@@ -61,7 +61,7 @@ struct ProfileSetupView: View {
                             self.editingStepGoal = "\(self.userSettingsManager.dailyStepGoal)"
                             self.editingCalGoal = "\(self.userSettingsManager.dailyCalGoal)"
                         }
-            .navigationBarTitle("Profile", displayMode: .inline)
+            .navigationBarTitle("Profile", displayMode: .large)
             .navigationBarItems(trailing: editButton)
             .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
                 ImagePicker(image: self.$inputImage)
@@ -106,7 +106,7 @@ struct ProfileSetupView: View {
     func goalInputField(iconName: String, placeholder: String, binding: Binding<String>, isCalorie: Bool = false) -> some View {
         HStack {
             Image(systemName: iconName)
-                .foregroundColor(isCalorie ? .red : .green)
+                .foregroundColor(isCalorie ? .red : .blue)
             TextField(binding.wrappedValue, text: binding)
                 .keyboardType(.numberPad)
         }
