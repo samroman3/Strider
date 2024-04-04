@@ -81,8 +81,6 @@ extension Challenge : Identifiable {
             record["participantUserName"] = participantUserName as CKRecordValue?
             record["creatorRecordID"] = creatorRecordID as CKRecordValue?
             record["participantRecordID"] = participantRecordID as CKRecordValue?
-            record["creatorPhotoData"] = creatorPhotoData as CKRecordValue?
-            record["participantPhotoData"] = participantPhotoData as CKRecordValue?
             record["creatorSteps"] = creatorSteps as CKRecordValue
             record["participantSteps"] = participantSteps as CKRecordValue
 

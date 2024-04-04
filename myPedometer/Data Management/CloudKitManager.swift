@@ -85,11 +85,14 @@ class CloudKitManager: ObservableObject {
         challengeRecord["recordId"] = challenge.recordId
         challengeRecord["creatorUserName"] = challenge.creatorUserName
         challengeRecord["creatorRecordID"] = challenge.creatorRecordID
-        
-        if let imageData = challenge.creatorPhotoData,
-           let image = UIImage(data: imageData) {
-            let compressedImageData = image.jpegData(compressionQuality: 0.5)
-            challengeRecord["creatorPhotoData"] = compressedImageData
+    
+        if let imageData = challenge.creatorPhotoData {
+            // Compress the image to fit within the size constraints
+            if let image = UIImage(data: imageData) {
+                if let compressedImageData = compressImage(image, targetKB: 200 ) {
+                    challengeRecord["creatorPhotoData"] = compressedImageData
+                }
+            }
         }
         
         _ = try await self.cloudKitContainer.privateCloudDatabase.save(challengeRecord)
@@ -102,6 +105,17 @@ class CloudKitManager: ObservableObject {
         self.cloudKitContainer.privateCloudDatabase.add(operation)
         return try await waitForShareOperation(operation, withShare: share)
 
+    }
+    
+    // Method to compress the image data to fit within a specific byte size limit
+    func compressImage(_ image: UIImage, targetKB: Int) -> Data? {
+        var compression: CGFloat = 1.0
+        var imageData = image.jpegData(compressionQuality: compression)
+        while let data = imageData, data.count > targetKB * 1024 && compression > 0 {
+            compression -= 0.05 // Decrease compression in small steps
+            imageData = image.jpegData(compressionQuality: compression)
+        }
+        return imageData
     }
     
     func updateChallengeWithShareRecordID(_ challengeID: String, shareRecordID: String) async throws  {
@@ -239,10 +253,13 @@ class CloudKitManager: ObservableObject {
                 record["participantRecordID"] = userSettingsManager?.user?.recordId
                 record["participantUserName"] = userSettingsManager?.userName
                 
-                if let imageData = userSettingsManager?.photoData,
-                   let image = UIImage(data: imageData) {
-                    let compressedImageData = image.jpegData(compressionQuality: 0.5)
-                    record["participantPhotoData"] = compressedImageData
+                if let imageData = userSettingsManager?.user?.photoData {
+                    // Compress the image to fit within the size constraints
+                    if let image = UIImage(data: imageData) {
+                        if let compressedImageData = compressImage(image, targetKB: 200 ) {
+                            record["participantPhotoData"] = compressedImageData
+                        }
+                    }
                 }
                 // Set the challenge status to active
                 record["status"] = "Active"
