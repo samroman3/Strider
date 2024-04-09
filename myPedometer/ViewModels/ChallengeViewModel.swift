@@ -10,7 +10,7 @@ import CloudKit
 import CoreData
 import Combine
 
-class ChallengeViewModel: ObservableObject {
+final class ChallengeViewModel: ObservableObject {
     var cloudKitManager: CloudKitManager
     var userSettingsManager: UserSettingsManager
     

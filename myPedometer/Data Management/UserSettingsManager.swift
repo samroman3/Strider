@@ -10,7 +10,7 @@ import CoreData
 import AuthenticationServices
 import CloudKit
 
-class UserSettingsManager: ObservableObject {
+final class UserSettingsManager: ObservableObject {
     static let shared = UserSettingsManager()
     
     
@@ -51,7 +51,7 @@ class UserSettingsManager: ObservableObject {
     
     //MARK: Key Value iCloud Markers
     
-    func reloadKeyValueStoreSettings() {
+   func reloadKeyValueStoreSettings() {
             DispatchQueue.main.async {
                 self.hasCompletedOnboarding = NSUbiquitousKeyValueStore.default.bool(forKey: "hasCompletedOnboarding")
                 self.iCloudConsentGiven = NSUbiquitousKeyValueStore.default.bool(forKey: "iCloudConsentGiven")
@@ -64,7 +64,7 @@ class UserSettingsManager: ObservableObject {
     
     // MARK: Apple Sign In
     
-    func checkAppleIDCredentialState(userID: String, completion: @escaping (Bool) -> Void) {
+    private func checkAppleIDCredentialState(userID: String, completion: @escaping (Bool) -> Void) {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         appleIDProvider.getCredentialState(forUserID: userID) { (credentialState, error) in
             DispatchQueue.main.async {
@@ -208,7 +208,8 @@ class UserSettingsManager: ObservableObject {
             self.userName = userName
             // Only update photoData if updateImage flag is true and a new image is provided
             if updateImage, let newImage = image {
-                self.photoData = newImage.jpegData(compressionQuality: 0.5)
+                let compressedImageData = compressImage(newImage, targetKB: 200) 
+                self.photoData = compressedImageData
             }
             // Proceed to update step goal and calorie goal only if new values are provided
             if let stepGoal = stepGoal {
@@ -249,7 +250,38 @@ class UserSettingsManager: ObservableObject {
             self.saveContext()
         }
     }
+    private func compressImage(_ originalImage: UIImage, targetKB: Int, maximumCompression: CGFloat = 0.1) -> Data? {
+        // First, estimate the compression quality to reduce dimensions if necessary
+        let maxSizeBytes = targetKB * 1024
+        var compressionQuality: CGFloat = 1.0
+        var imageData = originalImage.jpegData(compressionQuality: compressionQuality)
+        
+        // Check if image needs resizing
+        if let data = imageData, data.count > maxSizeBytes {
+            // Calculate resize factor
+            let resizeFactor = sqrt(CGFloat(maxSizeBytes) / CGFloat(data.count))
+            if let resizedImage = resizeImage(originalImage, factor: resizeFactor) {
+                imageData = resizedImage.jpegData(compressionQuality: compressionQuality)
+            }
+        }
+        
+        // Apply further compression if necessary
+        while let data = imageData, data.count > maxSizeBytes && compressionQuality > maximumCompression {
+            compressionQuality -= 0.05 // Decrease compression in small steps
+            imageData = originalImage.jpegData(compressionQuality: compressionQuality)
+        }
+        
+        return imageData
+    }
 
+    private func resizeImage(_ image: UIImage, factor: CGFloat) -> UIImage? {
+        let newSize = CGSize(width: image.size.width * factor, height: image.size.height * factor)
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return resizedImage
+    }
     
     func writeImageDataToFile(_ imageData: Data) -> URL? {
         let temporaryDirectory = FileManager.default.temporaryDirectory
@@ -313,7 +345,6 @@ class UserSettingsManager: ObservableObject {
                             return
                         }
 
-                        // Assuming 'userName', 'stepGoal', and 'calGoal' are the keys used in your CloudKit record
                         if let userName = record["userName"] as? String {
                             self.userName = userName
                         }

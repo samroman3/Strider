@@ -8,7 +8,6 @@ import SwiftUI
 
 struct WeekView: View {
     @EnvironmentObject var viewModel: StepDataViewModel
-//    @State private var dailyGoalViewIsPresented: Bool = false
     
     var body: some View {
         NavigationView {

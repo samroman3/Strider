@@ -112,13 +112,13 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
             
             fetchOrCreateLog(for: date) { log, error in
                 if let error = error {
-                    fetchError = error // Capture the error
+                    fetchError = error
                 }
                 fetchedLogs.append(log)
                 dispatchGroup.leave()
             }
         }
-        
+
         dispatchGroup.notify(queue: DispatchQueue.main) {
             if let fetchError = fetchError {
                 completion([], [], fetchError) // Pass the fetch error to the caller

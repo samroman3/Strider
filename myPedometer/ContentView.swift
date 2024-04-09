@@ -47,6 +47,7 @@ struct ContentView: View {
                            CustomModalView(alertItem: alertItem) {
                                appState.alertItem = nil
                            }.presentationBackground(.thinMaterial)
+
                        }
         }
         .fullScreenCover(item: $appState.currentChallengeState) { challengeState in
@@ -61,6 +62,7 @@ struct ContentView: View {
                     }).environmentObject(userSettingsManager)
                         .presentationBackground(.thinMaterial)
                 case .challengeActive(_):
+               // TODO: Implement active and completed views - or delegate to appstate.triggeralert
                     EmptyView()
                 case .challengeCompleted(_):
                     EmptyView()

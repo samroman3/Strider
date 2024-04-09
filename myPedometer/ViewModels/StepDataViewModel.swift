@@ -9,7 +9,7 @@ import Foundation
 import CoreMotion
 import Combine
 
-class StepDataViewModel: ObservableObject {
+final class StepDataViewModel: ObservableObject {
     
     private var userSettingsManager: UserSettingsManager
     
@@ -51,13 +51,13 @@ class StepDataViewModel: ObservableObject {
     private var lastRefreshDate: Date?
     
     // Method to check if we should refresh
-    func shouldRefresh() -> Bool {
+    private func shouldRefresh() -> Bool {
         guard let lastRefreshDate = lastRefreshDate else { return true }
         return Date().timeIntervalSince(lastRefreshDate) > 30 // 30 seconds
     }
     
     // Trigger the count up animation for the step count
-    func animateStepCount(to finalValue: Int) {
+    private func animateStepCount(to finalValue: Int) {
         // Reset animatedStepCount to 0 for re-animation - need to only animate on first launch
         //           animatedStepCount = 0
         
@@ -102,7 +102,6 @@ class StepDataViewModel: ObservableObject {
     
     func refreshData() {
         guard shouldRefresh() else { return }
-        // Assuming pedometerDataProvider has a method to manually refresh data
         pedometerDataProvider.loadStepData { [weak self] logs, hourlyAvg, error in
             DispatchQueue.main.async {
                 self?.lastRefreshDate = Date()
@@ -119,7 +118,7 @@ class StepDataViewModel: ObservableObject {
         }
     }
     
-    func setUpSubscriptions(){
+    private func setUpSubscriptions(){
         //Error subscription
         pedometerDataProvider.errorPublisher
             .compactMap { $0 } // Filter out nil errors
@@ -173,7 +172,7 @@ class StepDataViewModel: ObservableObject {
     }
     
     //Load initial data
-    func loadData(provider: PedometerDataProvider & PedometerDataObservable) {
+    private func loadData(provider: PedometerDataProvider & PedometerDataObservable) {
         pedometerDataProvider.loadStepData { logs, hours, error in
             if let error = error {
                 self.handleError(error)
@@ -188,7 +187,7 @@ class StepDataViewModel: ObservableObject {
         }
     }
     
-    func checkAndUpdateMilestones() {
+    private func checkAndUpdateMilestones() {
         // Step Milestones
         fiveKStepsReached = todaySteps >= 5_000
         tenKStepsReached = todaySteps >= 10_000
@@ -196,21 +195,21 @@ class StepDataViewModel: ObservableObject {
         thirtyKStepsReached = todaySteps >= 30_000
         fortyKStepsReached = todaySteps >= 40_000
         fiftyKStepsReached = todaySteps >= 50_000
-
+        
         // Calorie Milestones
         fiveHundredCalsReached = caloriesBurned >= 500
         thousandCalsReached = caloriesBurned >= 1_000
     }
     
     // Calculate weekly average steps
-    func calculateWeeklySteps() {
+    private func calculateWeeklySteps() {
         let totalSteps = stepDataList.reduce(0) { $0 + Int($1.totalSteps) }
         let averageSteps = totalSteps / max(stepDataList.count, 1)
         self.weeklyAverageSteps = averageSteps
     }
     
     // Calculate approximate calories burned
-    func calculateCaloriesBurned() {
+    private func calculateCaloriesBurned() {
         self.caloriesBurned = Double(todaySteps) * 0.04
     }
     
