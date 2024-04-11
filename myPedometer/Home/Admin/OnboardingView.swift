@@ -178,7 +178,7 @@ struct ConsentAgreementText: View {
 struct iCloudRequiredView: View {
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "icloud.and.arrow.up") // An iCloud-related symbol
+            Image(systemName: "icloud.and.arrow.up")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 100, height: 100)

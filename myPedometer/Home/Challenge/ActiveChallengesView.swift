@@ -33,15 +33,22 @@ struct ActiveChallengesView: View {
 
 struct ActiveChallengeRow: View {
     var challenge: ChallengeDetails
-    
+    // Creating dates
+    var twoDaysFromNow: Date?
+    var todayAtTenThirty: Date?
+    var tomorrowAtTenThirty: Date?
     var body: some View {
         NavigationLink(destination: LiveChallengeView(challengeDetails: challenge)) {
             VStack {
                 Spacer()
-                HStack {
+                HStack(spacing: 10) {
                     let leadingParticipantID = challenge.participants.max(by: { $0.steps < $1.steps })?.id
                     ForEach(challenge.participants, id: \.id) { participant in
                         VStack {
+                            Text(participant.userName ?? "Unknown")
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .padding(.horizontal)
                             ZStack{
                                 Circle()
                                     .frame(width: 50, height: 50)
@@ -55,18 +62,21 @@ struct ActiveChallengeRow: View {
 
                                 // Highlight the current winner with a ring
                                 if participant.id == leadingParticipantID {
-                                    Circle().stroke(Color.yellow, lineWidth: 3)
+                                    Circle().stroke(Color.purple, lineWidth: 3)
                                         .frame(width: 58, height: 58)
                                     }
                             }
-                            Text(participant.userName ?? "Unknown")
                             Text("\(participant.steps) steps")
                         }
                     }
                 }
                 Spacer()
-                Text("Goal: \(challenge.goalSteps)")
-                    .padding()
+                VStack{
+                    Text("Goal: \(challenge.goalSteps) steps")
+                    Text("\(DateFormatterService.shared.relativeTimeLeftFormatter(date: challenge.details")
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
             }
             .frame(width: 200, height: 250)
             .background(Color.gray.opacity(0.2))
@@ -75,4 +85,5 @@ struct ActiveChallengeRow: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+    
 }

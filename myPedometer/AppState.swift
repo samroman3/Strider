@@ -120,7 +120,6 @@ class AppState: ObservableObject {
             let acceptSuccess = await cloudKitManager.addCurrentUserToChallenge(challengeDetails: acceptedChallengeDetails!, record: record!)
             if acceptSuccess {
                 DispatchQueue.main.async{
-//                    self.currentChallengeState = .challengeActive(acceptedChallengeDetails!)
                     // Clear temporary storage after use
                     self.challengeMetadata = nil
                     self.challengeInvitation = nil
