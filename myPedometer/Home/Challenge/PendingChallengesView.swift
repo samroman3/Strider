@@ -15,9 +15,7 @@ struct PendingChallengesView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Pending")
                 .font(.headline)
-                .padding([.leading, .top])
-                .foregroundStyle(colorScheme == .dark ? .white : .black)
-            
+                .padding([.leading, .top])            
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
                     ForEach($challengeViewModel.pendingChallenges) { challenge in

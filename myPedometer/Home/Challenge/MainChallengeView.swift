@@ -23,9 +23,7 @@ struct MainChallengeView: View {
                 }
                 ActiveChallengesView()
                     .environmentObject(challengeViewModel)
-                    .padding(.vertical)
                 PastChallengesView()
-                    .padding(.vertical)
                 Spacer()
             }
         }
