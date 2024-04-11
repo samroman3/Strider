@@ -56,7 +56,6 @@ class AppState: ObservableObject {
     
     @Published var isHandlingShare = false
     @Published var challengeCompleted = false
-    @Published var participantAddedToChallenge = false
     @Published var challengeInvitation: ChallengeDetails?
     var challengeMetadata: CKShare.Metadata?
     @Published var currentChallengeState: ChallengeState? = nil
@@ -175,16 +174,8 @@ class AppState: ObservableObject {
     
     func challengeCompleted(challengeDetails: ChallengeDetails) {
         DispatchQueue.main.async {
-            self.currentChallengeState = .challengeCompleted(challengeDetails)
+            AppState.shared.triggerAlert(title: "Challenge Completed", message: "Challenge Completed! Winner: \(challengeDetails.winner ?? ""), Goal: \(challengeDetails.goalSteps), End Time: \(challengeDetails.endTime.formatted())")
         }
     }
     
-    func challengeDenied(challengeDetails: ChallengeDetails) {
-    }
-    
-    func participantAdded(challengeDetails: ChallengeDetails) {
-        DispatchQueue.main.async {
-            self.currentChallengeState = .challengeActive(challengeDetails)
-        }
-    }
 }

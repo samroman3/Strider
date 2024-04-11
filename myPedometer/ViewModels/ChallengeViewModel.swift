@@ -15,9 +15,8 @@ final class ChallengeViewModel: ObservableObject {
     var userSettingsManager: UserSettingsManager
     
     @Published var challenges: [ChallengeDetails] = []
-    @Published var pendingChallenges: [PendingChallenge] = [] // For challenges awaiting acceptance
+    @Published var pendingChallenges: [PendingChallenge] = []
     @Published var activeChallenges: [ChallengeDetails] = []
-    @Published var noActiveChallengesText = "No active challenges. Invite Striders to begin!"
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -27,48 +26,54 @@ final class ChallengeViewModel: ObservableObject {
     @Published var shareURL: URL?
     @Published var details: ChallengeDetails?
     
+    
     var container: CKContainer?
     
     init(userSettingsManager: UserSettingsManager, cloudKitManager: CloudKitManager){
         self.userSettingsManager = userSettingsManager
         self.cloudKitManager = cloudKitManager
         self.container = cloudKitManager.cloudKitContainer
-        
-        cloudKitManager.$challengeUpdates
-            .sink { [weak self] updates in
-                self?.processUpdates(updates)
-            }
-            .store(in: &cancellables)
+        // Subscribe to challenge updates
+            cloudKitManager.challengeUpdatesPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] challengeDetails in
+                    self?.processChallengeUpdate(challengeDetails)
+                }
+                .store(in: &cancellables)
     }
     
-    func loadPendingChallenges() {
-        let loadedChallenges = cloudKitManager.loadPendingChallenges()
+    private func processChallengeUpdate(_ newDetails: ChallengeDetails) {
         DispatchQueue.main.async {
-            self.pendingChallenges = loadedChallenges
+            // Directly add or update challenges in their respective arrays
+            switch newDetails.status {
+            case "Active":
+                // Move challenge from pending to active, if present
+                if let index = self.pendingChallenges.firstIndex(where: { $0.challengeDetails.recordId == newDetails.recordId }) {
+                    self.pendingChallenges.remove(at: index)
+                }
+                if !self.activeChallenges.contains(where: { $0.recordId == newDetails.recordId }) {
+                    self.activeChallenges.append(newDetails)
+                }
+            case "Completed":
+                // Remove from active, move to past if needed
+                if let index = self.activeChallenges.firstIndex(where: { $0.recordId == newDetails.recordId }) {
+                    self.activeChallenges.remove(at: index)
+                }
+            default:
+                break
+            }
         }
     }
     
-    private func processUpdates(_ updates: [ChallengeDetails]) {
-        DispatchQueue.main.async{
-            for update in updates {
-                if let index = self.challenges.firstIndex(where: { $0.recordId == update.recordId }) {
-                    self.challenges[index] = update
-                } else {
-                    self.challenges.append(update)
-                }
-                // Transition challenges from pending to active if their status has changed
-                if let pendingIndex = self.pendingChallenges.firstIndex(where: { $0.challengeDetails.recordId == update.recordId && update.status == "Active" }) {
-                    // Move the challenge to active challenges
-                    let pendingChallenge = self.pendingChallenges.remove(at: pendingIndex)
-                    self.activeChallenges.append(pendingChallenge.challengeDetails)
-                }
+    func fetchChallenges() {
+        self.pendingChallenges = cloudKitManager.loadPendingChallenges()
+        Task {
+             cloudKitManager.fetchActiveChallenges() { [weak self] activeChallenges in
+                self?.activeChallenges = activeChallenges
             }
-
-            }
-            
-            // filter challenges based on their status.
-            self.activeChallenges = self.challenges.filter { $0.status == "Active" }
         }
+    }
+    
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
         Task {

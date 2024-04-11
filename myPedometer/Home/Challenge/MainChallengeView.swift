@@ -46,9 +46,7 @@ struct MainChallengeView: View {
         })
         .background(colorScheme == .dark ? .black : .white)
         .onAppear {
-            Task {
-                challengeViewModel.loadPendingChallenges()
-            }
+                challengeViewModel.fetchChallenges()
         }
     }
 }
