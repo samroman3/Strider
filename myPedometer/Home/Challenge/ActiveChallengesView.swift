@@ -26,6 +26,7 @@ struct ActiveChallengesView: View {
                     HStack(spacing: 20) {
                         ForEach(challengeViewModel.activeChallenges, id: \.recordId) { challenge in
                             ActiveChallengeCard(challenge: challenge)
+                                .environmentObject(challengeViewModel)
                         }
                     }
                     .padding()
@@ -38,9 +39,10 @@ struct ActiveChallengesView: View {
 struct ActiveChallengeCard: View {
     var challenge: ChallengeDetails
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var challengeViewModel: ChallengeViewModel
 
     var body: some View {
-        NavigationLink(destination: LiveChallengeView(challengeDetails: challenge)) {
+        NavigationLink(destination: LiveChallengeView(challengeDetails: challenge).environmentObject(challengeViewModel)) {
             VStack {
                 // Display the leading participant
                 if let leadingParticipant = leadingParticipant {

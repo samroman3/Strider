@@ -339,7 +339,7 @@ final class CloudKitManager: ObservableObject {
     func cancelChallenge(challenge: PendingChallenge) async {
         do {
             // Delete the corresponding entity from CoreData.
-            deleteChallengeFromCoreData(challengeID: challenge.id)
+            deleteChallengeFromCoreData(challengeID: challenge.challengeDetails.recordId)
             
             // Delete the share associated with the challenge.
             let shareRecordID = challenge.shareRecordID
@@ -358,6 +358,7 @@ final class CloudKitManager: ObservableObject {
             let results = try context?.fetch(fetchRequest)
             if let challengeToDelete = results?.first {
                 context?.delete(challengeToDelete)
+                self.saveContext()
             }
         } catch {
             print("Error deleting challenge from CoreData: \(error)")

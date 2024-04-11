@@ -8,58 +8,85 @@
 import SwiftUI
 
 struct LiveChallengeView: View {
-    // Dummy data TODO: Setup with live data
-    let mySteps: Int = 10300
-    let theirSteps: Int = 5989
-    let goal: Int = 10000
-            
+    @EnvironmentObject var challengeViewModel: ChallengeViewModel
     var challengeDetails: ChallengeDetails
 
+    private var currentUser: ParticipantDetails? {
+        challengeDetails.participants.first { $0.id == challengeViewModel.userSettingsManager.user?.recordId }
+    }
+
+    private var competitor: ParticipantDetails? {
+        challengeDetails.participants.first { $0.id != challengeViewModel.userSettingsManager.user?.recordId }
+    }
+
     var body: some View {
-        VStack {
-            Text("GOAL: \(goal)")
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding(.top, 4)
-
-            Text("ENDS: Today @ 10 PM")
-                .foregroundColor(.gray)
-                .padding(.bottom, 30)
-
+        VStack(spacing: 10) {
+            goalSection
+            
             HStack(spacing: 0) {
-                // Bar for the other participant
-                BarGoalView(challengeDetails: challengeDetails, alignLeft: false)
+                // Bar for the current user
+                if let currentUser = currentUser {
+                    BarGoalView(challengeDetails: challengeDetails, alignLeft: false, otherParticipant: nil)
+                }
 
                 // Divider between the bars
                 Divider()
-                    .background(Color.white)
+                    .background(.secondary)
 
-                // Bar for the current user
-                BarGoalView(challengeDetails: challengeDetails, alignLeft: true)
-            }
-
-            // User info and steps
-            HStack {
-                VStack {
-                    // Other participant info and steps
-                    Text("\(mySteps)")
-                        .font(.title)
-                        .foregroundColor(.white)
-                    Text("Me")
-                        .foregroundColor(.gray)
-                }
-                Spacer()
-                VStack {
-                    // Current user info and steps
-                    Text("\(theirSteps)")
-                        .font(.title)
-                        .foregroundColor(.white)
-                    Text("Max")
-                        .foregroundColor(.gray)
+                // Bar for the other participant
+                if let otherParticipant = competitor {
+                    BarGoalView(challengeDetails: challengeDetails, alignLeft: true, otherParticipant: otherParticipant)
                 }
             }
             .padding(.horizontal)
+
+            participantInfo
         }
-        .background(Color.black)
+        .cornerRadius(20)
+        .shadow(radius: 10)
+        .onAppear {
+            challengeViewModel.updateStepsAndInfo(for: challengeDetails)
+        }
+    }
+
+    private var goalSection: some View {
+        VStack {
+            Text(DateFormatterService.shared.relativeTimeLeftFormatter(date: challengeDetails.endTime))
+                .bold()
+                .foregroundColor(AppTheme.darkGray)
+            Text("Goal: \(challengeDetails.goalSteps) steps")
+                .font(.headline)
+
+            Text("Ends: \(challengeDetails.endTime, formatter: DateFormatterService.shared.shortItemFormatter())")
+        }
+    }
+
+    private var participantInfo: some View {
+        HStack {
+            Spacer()
+            participantView(participant: currentUser, label: "Me")
+            Spacer()
+            participantView(participant: competitor, label: competitor?.userName ?? "Competitor")
+            Spacer()
+        }
+    }
+
+    private func participantView(participant: ParticipantDetails?, label: String) -> some View {
+        VStack {
+            if let participant = participant, let image = UIImage(data: participant.photoData ?? Data()) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 60, height: 60)
+                    .clipShape(Circle())
+            }
+            Text(label)
+                .font(.title)
+                .padding(.top, 2)
+            Text("\(participant?.steps ?? 0)")
+                .font(.headline)
+            Text("steps")
+                .font(.headline)
+        }
     }
 }

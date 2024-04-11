@@ -13,6 +13,7 @@ struct BarGoalView: View {
     var challengeDetails: ChallengeDetails?
     var alignLeft: Bool
     var layers: Int = 10
+    var otherParticipant: ParticipantDetails?
     
     private var goalValue: Double {
            if let challengeDetails = challengeDetails {
@@ -25,11 +26,10 @@ struct BarGoalView: View {
        // Computed property to determine target value based on whether it's a challenge and which side it's on
        private var targetValue: Double {
            if let challengeDetails = challengeDetails {
-               if alignLeft {
-                   return Double(stepDataViewModel.todaySteps) // Your steps for the challenge
+               if !alignLeft {
+                   return Double(stepDataViewModel.todaySteps)
                } else {
-                   // Assume other participant is first in the array; adjust if necessary
-                   return Double(challengeDetails.participants.first?.steps ?? 0)
+                return Double(otherParticipant?.steps ?? 0)
                }
            } else {
                return alignLeft ? Double(stepDataViewModel.caloriesBurned) : Double(stepDataViewModel.todaySteps)
@@ -56,10 +56,10 @@ struct BarGoalView: View {
             }
         }
         .onAppear { animateProgress() }
-        .onChange(of: stepDataViewModel.todaySteps) { _ in animateProgress() }
-        .onChange(of: stepDataViewModel.caloriesBurned) { _ in animateProgress() }
-         //TODO: Handle changes for challenge data. participant steps etc
-        .onChange(of: challengeDetails?.goalSteps) { _ in animateProgress() }
+//        .onChange(of: stepDataViewModel.todaySteps) { _ in animateProgress() }
+//        .onChange(of: stepDataViewModel.caloriesBurned) { _ in animateProgress() }
+//         //TODO: Handle changes for challenge data. participant steps etc
+//        .onChange(of: challengeDetails?.goalSteps) { _ in animateProgress() }
     }
 }
 

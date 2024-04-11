@@ -15,14 +15,15 @@ struct PendingChallengesView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Pending")
                 .font(.headline)
-                .padding([.leading, .top])            
+                .padding([.leading, .top])
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
                     ForEach($challengeViewModel.pendingChallenges) { challenge in
-                        PendingChallengeRow(challenge: challenge, userRecord: (challengeViewModel.userSettingsManager.user?.recordId)!, onCancel: { challengeViewModel.cancelChallenge(challenge.wrappedValue) }, onResend: {
-                            Task { await challengeViewModel.resendChallenge(challenge.wrappedValue)}
-                        })
-                            .padding(.bottom, 5)
+                        PendingChallengeRow(challenge: challenge,
+                                            userRecord: (challengeViewModel.userSettingsManager.user?.recordId)!,
+                                            onCancel: { Task { await challengeViewModel.cancelChallenge(challenge.wrappedValue)}},
+                                            onResend: { Task { await challengeViewModel.resendChallenge(challenge.wrappedValue)}})
+                        .padding(.bottom, 5)
                     }
                 }
                 .padding(.leading)

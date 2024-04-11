@@ -44,7 +44,7 @@ struct MainChallengeView: View {
         })
         .background(colorScheme == .dark ? .black : .white)
         .onAppear {
-                challengeViewModel.fetchChallenges()
+        challengeViewModel.fetchChallenges()
         }
     }
 }

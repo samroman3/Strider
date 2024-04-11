@@ -26,7 +26,14 @@ final class ChallengeViewModel: ObservableObject {
     @Published var shareURL: URL?
     @Published var details: ChallengeDetails?
     
+    // Properties to hold the steps for the current user and their competitor
     
+    @Published var myInfo: ParticipantDetails?
+    @Published var competitorInfo: ParticipantDetails?
+
+    @Published var mySteps: Int = 0
+    @Published var theirSteps: Int = 0
+
     var container: CKContainer?
     
     init(userSettingsManager: UserSettingsManager, cloudKitManager: CloudKitManager){
@@ -73,7 +80,22 @@ final class ChallengeViewModel: ObservableObject {
             }
         }
     }
-    
+
+      func updateStepsAndInfo(for challengeDetails: ChallengeDetails) {
+          guard let userID = userSettingsManager.user?.recordId else { return }
+          
+          for participant in challengeDetails.participants {
+              if participant.id == userID {
+                  // Update current user's info and steps
+                  myInfo = participant
+                  mySteps = participant.steps // Assuming steps is part of ParticipantDetails
+              } else {
+                  // Update competitor's info and steps
+                  competitorInfo = participant
+                  theirSteps = participant.steps // Assuming steps is part of ParticipantDetails
+              }
+          }
+      }
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
         Task {
@@ -126,9 +148,9 @@ final class ChallengeViewModel: ObservableObject {
     func resendChallenge(_ challenge: PendingChallenge) async {
         let now = Date()
         if challenge.challengeDetails.endTime < now {
+            await cancelChallenge(challenge)
             // Challenge has expired
             AppState.shared.triggerAlert(title: "Challenge Expired", message: "This challenge has expired and cannot be resent. Please create a new challenge.")
-            cancelChallenge(challenge)
             print("Challenge has expired, deleting challenge")
         }
         do {
@@ -136,14 +158,15 @@ final class ChallengeViewModel: ObservableObject {
                 self.presentCloudShareView(share: share, url: share.url!, details: challenge.challengeDetails)
             }
         } catch {
+            await cancelChallenge(challenge)
             AppState.shared.triggerAlert(title: "Invalid Challenge", message: "Challenge has either expired or is no longer valid, please create a new challenge.")
-            cancelChallenge(challenge)
             print("invalid share url, cancel challenge and create new one")
         }
 
     }
     
-    func cancelChallenge(_ challenge: PendingChallenge) {
+    func cancelChallenge(_ challenge: PendingChallenge) async {
+        await cloudKitManager.cancelChallenge(challenge: challenge)
         // Find the index of the challenge to be cancelled
         if let index = pendingChallenges.firstIndex(where: { $0.id == challenge.id }) {
             // Remove the challenge from pendingChallenges with animation
@@ -153,10 +176,6 @@ final class ChallengeViewModel: ObservableObject {
                 }
             }
         }
-               Task {
-            do {
-                await cloudKitManager.cancelChallenge(challenge: challenge)
-            }
-        }
     }
+    
 }
