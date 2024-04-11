@@ -12,7 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var userSettingsManager: UserSettingsManager
     @EnvironmentObject var cloudKitManager: CloudKitManager
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
-    
+    let tabBar = CustomTabBarView()
     init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable) {
         self.pedometerDataProvider = pedometerDataProvider
     }
@@ -42,11 +42,11 @@ struct ContentView: View {
     @ViewBuilder
     private func mainContentView() -> some View {
         ZStack {
-            CustomTabBarView()
-                       if let alertItem = appState.alertItem {
-                           CustomModalView(alertItem: alertItem) {
+            tabBar
+            if let alertItem = appState.alertItem {
+                           CustomModalView(alertItem: alertItem, onDismiss: {
                                appState.alertItem = nil
-                           }.presentationBackground(.thinMaterial)
+                           }).presentationBackground(.thinMaterial)
 
                        }
         }

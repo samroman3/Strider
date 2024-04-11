@@ -14,7 +14,7 @@ struct CustomTabBarView: View {
     @EnvironmentObject private var challengeViewModel: ChallengeViewModel
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var selectedTab: Tab = .today
+    @State var selectedTab: Tab = .today
 
     var body: some View {
         VStack {
@@ -48,7 +48,7 @@ struct CustomTabBarView: View {
         }
         .onAppear(){
             userSettingsManager.loadUserSettings()
-//            challengeViewModel.loadActiveChallenges()
+            challengeViewModel.fetchChallenges()
         }
         .background(colorScheme == .dark ? .black : .white)
     }
