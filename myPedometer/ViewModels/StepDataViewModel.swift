@@ -10,7 +10,7 @@ import CoreMotion
 import Combine
 
 final class StepDataViewModel: ObservableObject {
-    
+    private var cloudKitManager: CloudKitManager
     private var userSettingsManager: UserSettingsManager
     
     //Today View
@@ -86,10 +86,10 @@ final class StepDataViewModel: ObservableObject {
     var pedometerDataProvider: PedometerDataProvider & PedometerDataObservable
     
     // Initializer
-    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, userSettingsManager: UserSettingsManager) {
+    init(pedometerDataProvider: PedometerDataProvider & PedometerDataObservable, userSettingsManager: UserSettingsManager, cloudKitManager: CloudKitManager) {
         self.userSettingsManager = userSettingsManager
         self.pedometerDataProvider = pedometerDataProvider
-        
+        self.cloudKitManager = cloudKitManager
         //Retrieve and set the daily goal
         self.dailyStepGoal = userSettingsManager.dailyStepGoal
         self.dailyCalGoal = userSettingsManager.dailyCalGoal
@@ -230,6 +230,9 @@ final class StepDataViewModel: ObservableObject {
             self.userSettingsManager.updateDailyLog(with: self.todaySteps, calories: Int(self.caloriesBurned), date: Date())
             self.lastRefreshDate = Date()
         }
-        //TODO: Update any active challenges with dailylog steps here
+        
+        Task {
+            await self.cloudKitManager.updateAllActiveChallenges(newSteps: self.todaySteps)
+        }
     }
 }

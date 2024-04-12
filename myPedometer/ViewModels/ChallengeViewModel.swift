@@ -50,21 +50,22 @@ final class ChallengeViewModel: ObservableObject {
     }
     
     private func processChallengeUpdate(_ newDetails: ChallengeDetails) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
             // Directly add or update challenges in their respective arrays
             switch newDetails.status {
             case "Active":
                 // Move challenge from pending to active, if present
-                if let index = self.pendingChallenges.firstIndex(where: { $0.challengeDetails.recordId == newDetails.recordId }) {
-                    self.pendingChallenges.remove(at: index)
+                if let index = self?.pendingChallenges.firstIndex(where: { $0.challengeDetails.recordId == newDetails.recordId }) {
+                    self?.pendingChallenges.remove(at: index)
+                    self?.cloudKitManager.deleteChallengeFromCoreData(challengeID: newDetails.recordId)
                 }
-                if !self.activeChallenges.contains(where: { $0.recordId == newDetails.recordId }) {
-                    self.activeChallenges.append(newDetails)
+                if !(self?.activeChallenges.contains(where: { $0.recordId == newDetails.recordId }))! {
+                    self?.activeChallenges.append(newDetails)
                 }
             case "Completed":
                 // Remove from active, move to past if needed
-                if let index = self.activeChallenges.firstIndex(where: { $0.recordId == newDetails.recordId }) {
-                    self.activeChallenges.remove(at: index)
+                if let index = self?.activeChallenges.firstIndex(where: { $0.recordId == newDetails.recordId }) {
+                    self?.activeChallenges.remove(at: index)
                 }
             default:
                 break
@@ -73,10 +74,17 @@ final class ChallengeViewModel: ObservableObject {
     }
     
     func fetchChallenges() {
-        self.pendingChallenges = cloudKitManager.loadPendingChallenges()
-        Task {
-             cloudKitManager.fetchActiveChallenges() { [weak self] activeChallenges in
-                self?.activeChallenges = activeChallenges
+        DispatchQueue.main.async {
+            self.pendingChallenges = self.cloudKitManager.loadPendingChallenges()
+            Task {
+                do {
+                    self.activeChallenges = try await self.cloudKitManager.fetchActiveChallenges()
+                }
+                catch {
+                    let message = "Error fetching active challenges: \(error)"
+                    AppState.shared.triggerAlert(title: "Error", message: message)
+                    print(message)
+                }
             }
         }
     }
@@ -88,11 +96,11 @@ final class ChallengeViewModel: ObservableObject {
               if participant.id == userID {
                   // Update current user's info and steps
                   myInfo = participant
-                  mySteps = participant.steps // Assuming steps is part of ParticipantDetails
+                  mySteps = participant.steps
               } else {
                   // Update competitor's info and steps
                   competitorInfo = participant
-                  theirSteps = participant.steps // Assuming steps is part of ParticipantDetails
+                  theirSteps = participant.steps 
               }
           }
       }

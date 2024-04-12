@@ -68,6 +68,7 @@ class PedometerManager: ObservableObject, PedometerDataProvider, PedometerDataOb
                 }
                 self.stepDataList = logs
                 self.dailyAverageHourlySteps = hourlyAvg
+                self.loadTodayLog()
             }
         }
         UserDefaultsHandler.shared.storeLastOpenedDate(currentDate)

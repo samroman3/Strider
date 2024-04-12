@@ -25,7 +25,7 @@ struct ContentView: View {
                     .environmentObject(userSettingsManager)
             } else {
                 mainContentView()
-                    .environmentObject(StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager))
+                    .environmentObject(StepDataViewModel(pedometerDataProvider: pedometerDataProvider, userSettingsManager: userSettingsManager, cloudKitManager: cloudKitManager))
                     .environmentObject(ChallengeViewModel(userSettingsManager: userSettingsManager, cloudKitManager: cloudKitManager))
                     .environmentObject(userSettingsManager)
                 
