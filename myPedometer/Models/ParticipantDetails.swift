@@ -12,7 +12,7 @@ struct ParticipantDetails: Identifiable, Equatable {
     let id: String
     let userName: String?
     let photoData: Data?
-    var steps: Int
+    var steps: Int?
     
     init(user: User, recordId: String) {
         self.id = recordId

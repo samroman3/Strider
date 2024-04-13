@@ -62,11 +62,10 @@ extension Challenge : Identifiable {
            return now >= startTime && now <= endTime
        }
     
-    func toCKRecord() -> CKRecord {
+    func toCKRecord(zone: CKRecordZone) -> CKRecord {
             let recordId = self.recordId ?? UUID().uuidString
             self.recordId = recordId
-            let recordZone = CKRecordZone(zoneName: "Challenges")
-            let record = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: recordId, zoneID: recordZone.zoneID))
+            let record = CKRecord(recordType: "Challenge", recordID: CKRecord.ID(recordName: recordId, zoneID: zone.zoneID))
             
             record["startTime"] = startTime as CKRecordValue?
             record["endTime"] = endTime as CKRecordValue?
@@ -75,7 +74,6 @@ extension Challenge : Identifiable {
             record["recordId"] = recordId as CKRecordValue
             record["winner"] = winner as CKRecordValue?
             record["shareRecordID"] = shareRecordID as CKRecordValue?
-
             // Creator and participant
             record["creatorUserName"] = creatorUserName as CKRecordValue?
             record["participantUserName"] = participantUserName as CKRecordValue?
@@ -83,7 +81,7 @@ extension Challenge : Identifiable {
             record["participantRecordID"] = participantRecordID as CKRecordValue?
             record["creatorSteps"] = creatorSteps as CKRecordValue
             record["participantSteps"] = participantSteps as CKRecordValue
-
+            
             return record
         }
 }

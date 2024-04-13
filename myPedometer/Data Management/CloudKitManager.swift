@@ -57,7 +57,7 @@ final class CloudKitManager: ObservableObject {
     
     // MARK: Challenge Management
     
-   private func saveChallengeToCoreData(with details: ChallengeDetails, creator: User) async throws -> Challenge? {
+   private func saveOwnedChallengeToCoreData(with details: ChallengeDetails, creator: User) async throws -> Challenge? {
         let challenge = Challenge(context: context!)
         challenge.startTime = details.startTime
         challenge.endTime = details.endTime
@@ -67,15 +67,40 @@ final class CloudKitManager: ObservableObject {
         challenge.creatorUserName = userSettingsManager?.userName
         challenge.creatorPhotoData = userSettingsManager?.photoData
         challenge.creatorRecordID = userSettingsManager?.user?.recordId
+       challenge.creatorSteps = 0
         creator.addToChallenges(challenge)
         self.saveContext()
         return challenge
     }
     
+    private func saveSharedChallengeToCoreData(with details: ChallengeDetails) async throws -> Challenge? {
+         print("Challenge accepted and saved: \(details)")
+         let challenge = Challenge(context: context!)
+         challenge.startTime = details.startTime
+         challenge.endTime = details.endTime
+         challenge.goalSteps = details.goalSteps
+         challenge.status = "Active"
+         challenge.recordId = details.recordId
+         challenge.creatorUserName = details.creatorUserName
+         challenge.creatorPhotoData = details.creatorPhotoData
+         challenge.creatorRecordID = details.creatorRecordID
+         challenge.creatorSteps = 0
+         challenge.participantSteps = 0
+         challenge.participantRecordID = userSettingsManager?.user?.recordId
+         challenge.participantUserName = userSettingsManager?.userName
+         challenge.participantPhotoData = userSettingsManager?.photoData
+         challenge.winner = ""
+         self.userSettingsManager?.user?.addToChallenges(challenge)
+         self.saveContext()
+         return challenge
+     }
+     
+
+    
     func shareChallenge(_ challenge: Challenge) async throws -> (CKShare?, URL?) {
         
         try await createZoneIfNeeded()
-        let challengeRecord = challenge.toCKRecord()
+        let challengeRecord = challenge.toCKRecord(zone: self.recordZone)
         // Set challenge record properties
         challengeRecord["startTime"] = challenge.startTime
         challengeRecord["endTime"] = challenge.endTime
@@ -88,7 +113,7 @@ final class CloudKitManager: ObservableObject {
         if let imageData = challenge.creatorPhotoData {
             // Compress the image to fit within the size constraints
             if let image = UIImage(data: imageData) {
-                if let compressedImageData = compressImage(image, targetKB: 200 ) {
+                if let compressedImageData = compressImage(image, targetKB: 50 ) {
                     challengeRecord["creatorPhotoData"] = compressedImageData
                 }
             }
@@ -99,11 +124,11 @@ final class CloudKitManager: ObservableObject {
         let share = CKShare(rootRecord: challengeRecord)
         share[CKShare.SystemFieldKey.title] = "Join My Challenge on Strider!"
         share.publicPermission = .readWrite
-            
+        challengeRecord["recordId"] = share.recordID.recordName
+        challengeRecord["zoneID"] = share.recordID.zoneID.zoneName
         let operation = CKModifyRecordsOperation(recordsToSave: [challengeRecord, share], recordIDsToDelete: nil)
         self.cloudKitContainer.privateCloudDatabase.add(operation)
         return try await waitForShareOperation(operation, withShare: share)
-
     }
     
     // Method to compress the image data to fit within a specific byte size limit
@@ -151,8 +176,13 @@ final class CloudKitManager: ObservableObject {
                     endTime: challenge.endTime ?? Date(),
                     goalSteps: challenge.goalSteps,
                     status: challenge.status ?? "Pending",
-                    participants: [],
-                    recordId: recordId
+                    recordId: recordId,
+                    creatorUserName: challenge.creatorUserName,
+                    creatorPhotoData: challenge.creatorPhotoData,
+                    creatorSteps: 0,
+                    participantUserName: "",
+                    participantPhotoData: nil,
+                    participantSteps: 0
                 )
                 let pendingChallenge = PendingChallenge(
                     id: recordId,
@@ -171,20 +201,79 @@ final class CloudKitManager: ObservableObject {
     func fetchActiveChallenges() async throws -> [ChallengeDetails] {
         //Check for expired records
         let _ = await deleteExpiredChallengeRecords()
+        let _ = try await createZoneIfNeeded()
         let predicate = NSPredicate(format: "status == %@", "Active")
         let query = CKQuery(recordType: "Challenge", predicate: predicate)
-        
         let results = try await cloudKitContainer.privateCloudDatabase.records(matching: query, inZoneWith: self.recordZone.zoneID)
         var challenges = [ChallengeDetails]()
-        for record in results{
+        for record in results {
                 if let challengeDetail = convertToChallengeDetails(record: record) {
                     challenges.append(challengeDetail)
                 }
+        }
+        let shared = try await fetchSharedChallenges()
+        challenges.append(contentsOf: shared)
+        return challenges
+    }
+    
+    private func fetchSharedChallengeRecordsFromCoreData() -> [Challenge] {
+        let fetchRequest: NSFetchRequest<Challenge> = Challenge.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "status == %@", "Active")
+           do {
+               if let context = context {
+                   return try context.fetch(fetchRequest)
+               }
+           } catch {
+               print("Error fetching from CoreData: \(error)")
+               return []
+           }
+        return []
+       }
+    
+    func fetchSharedChallenges() async throws -> [ChallengeDetails] {
+        // First fetch all available zones in the shared database to know where to look for records
+        let zones = try await fetchAllRecordZonesFromSharedDatabase()
+        var challenges = [ChallengeDetails]()
+        
+        // Iterate over each zone and fetch challenges
+        for zone in zones {
+            let records = try await fetchRecordsFrom(zone: zone.zoneID)
+            let details = records.compactMap { convertToChallengeDetails(record: $0) }
+            challenges.append(contentsOf: details)
         }
         
         return challenges
     }
 
+    private func fetchAllRecordZonesFromSharedDatabase() async throws -> [CKRecordZone] {
+        return try await withCheckedThrowingContinuation { continuation in
+            CKContainer.default().sharedCloudDatabase.fetchAllRecordZones { (zones, error) in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let zones = zones {
+                    continuation.resume(returning: zones)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "CustomError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error fetching record zones"]))
+                }
+            }
+        }
+    }
+
+    private func fetchRecordsFrom(zone zoneID: CKRecordZone.ID) async throws -> [CKRecord] {
+        let predicate = NSPredicate(value: true)
+        let query = CKQuery(recordType: "Challenge", predicate: predicate)
+        return try await withCheckedThrowingContinuation { continuation in
+            CKContainer.default().sharedCloudDatabase.perform(query, inZoneWith: zoneID) { (records, error) in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let records = records {
+                    continuation.resume(returning: records)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "CustomError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error fetching records"]))
+                }
+            }
+        }
+    }
     
     func fetchActiveChallengeRecords() async throws -> [CKRecord] {
         let predicate = NSPredicate(format: "status == %@", "Active")
@@ -197,17 +286,17 @@ final class CloudKitManager: ObservableObject {
     
 
     func updateAllActiveChallenges(newSteps: Int) async {
-        do {
-            let activeChallenges = try await fetchActiveChallengeRecords()
-            for challenge in activeChallenges {
-                let participantID = userSettingsManager?.user?.recordId ?? ""
-                let isCreator = (challenge["creatorRecordID"] == participantID)
-                
-                try await updateSteps(forChallenge: challenge.recordID.recordName, newSteps: newSteps, isCreator: isCreator)
-            }
-        } catch {
-            print("Error updating active challenges: \(error)")
-        }
+//        do {
+//            let activeChallenges = try await fetchActiveChallengeRecords()
+//            for challenge in activeChallenges {
+//                let participantID = userSettingsManager?.user?.recordId ?? ""
+//                let isCreator = (challenge["creatorRecordID"] == participantID)
+//                
+//                try await updateSteps(forChallenge: challenge.recordID.recordName, newSteps: newSteps, isCreator: isCreator)
+//            }
+//        } catch {
+//            print("Error updating active challenges: \(error)")
+//        }
     }
     
     func updateSteps(forChallenge challengeID: String, newSteps: Int, isCreator: Bool) async throws {
@@ -286,7 +375,7 @@ final class CloudKitManager: ObservableObject {
     }
     
     func createChallenge(with details: ChallengeDetails, creator: User) async throws -> (CKShare?, URL?) {
-        guard let challenge = try await saveChallengeToCoreData(with: details, creator: creator) else {
+        guard let challenge = try await saveOwnedChallengeToCoreData(with: details, creator: creator) else {
             throw ManagerError.challengeCreationFailed
         }
         let (share, shareURL) = try await shareChallenge(challenge)
@@ -297,13 +386,23 @@ final class CloudKitManager: ObservableObject {
     
     func deleteExpiredChallengeRecords() async {
 
-        let predicate = NSPredicate(format: "expirationDate <= %@", NSDate())
+        let predicate = NSPredicate(format: "endTime <= %@", NSDate())
         let query = CKQuery(recordType: "Challenge", predicate: predicate)
-        
+        //TODO: check if saved to coredata and set to "completed" before deletion
+        //alert user challenge has ended and set winner
         do {
-            
-            let results = try await cloudKitContainer.privateCloudDatabase.perform(query, inZoneWith: nil)
-            for record in results {
+            //delete shared records
+            let shared = try await fetchSharedChallenges()
+            for record in shared {
+                if record.endTime < Date(){
+                    deleteChallengeFromCoreData(challengeID: record.recordId)
+                }
+            }
+            //delete expired owned records
+            let owned = try await cloudKitContainer.privateCloudDatabase.perform(query, inZoneWith: self.recordZone.zoneID)
+            for record in owned {
+                deleteChallengeFromCoreData(challengeID: record.recordID.recordName)
+                
                 _ = try await cloudKitContainer.privateCloudDatabase.deleteRecord(withID: record.recordID)
             }
             print("Expired challenge records deleted successfully.")
@@ -314,23 +413,25 @@ final class CloudKitManager: ObservableObject {
     
     func addCurrentUserToChallenge(challengeDetails: ChallengeDetails, record: CKRecord) async -> Bool {
         do {
-            if challengeDetails.participants.count < 2 {
+            if challengeDetails.participantUserName == nil || challengeDetails.participantRecordID == nil {
                 record["participantRecordID"] = userSettingsManager?.user?.recordId
                 record["participantUserName"] = userSettingsManager?.userName
                 
                 if let imageData = userSettingsManager?.user?.photoData {
                     // Compress the image to fit within the size constraints
                     if let image = UIImage(data: imageData) {
-                        if let compressedImageData = compressImage(image, targetKB: 200 ) {
+                        if let compressedImageData = compressImage(image, targetKB: 50 ) {
                             record["participantPhotoData"] = compressedImageData
                         }
                     }
                 }
                 // Set the challenge status to active
                 record["status"] = "Active"
-
+                
                 // Save the updated challenge record
                 _ = try await cloudKitContainer.sharedCloudDatabase.save(record)
+                //Save shared record to CoreData
+                _ = try await self.saveSharedChallengeToCoreData(with: challengeDetails)
                 return true
             } else {
                 return false // Maximum number of participants reached.
@@ -430,19 +531,18 @@ final class CloudKitManager: ObservableObject {
             return nil
         }
 
-        var participants: [ParticipantDetails] = []
+        var participant: ParticipantDetails?
 
         // Creator
         let creatorPhotoData = record["creatorPhotoData"] as? Data
         let creatorSteps = record["creatorSteps"] as? Int32 ?? 0
-        participants.append(ParticipantDetails(id: creatorRecordID, userName: creatorUserName, photoData: creatorPhotoData, steps: Int(creatorSteps)))
 
         // Participant
         if let participantUserName = record["participantUserName"] as? String,
            let participantRecordID = record["participantRecordID"] as? String,
            let participantPhotoData = record["participantPhotoData"] as? Data,
            let participantSteps = record["participantSteps"] as? Int32 {
-            participants.append(ParticipantDetails(id: participantRecordID, userName: participantUserName, photoData: participantPhotoData, steps: Int(participantSteps)))
+            participant = ParticipantDetails(id: participantRecordID, userName: participantUserName, photoData: participantPhotoData, steps: Int(participantSteps))
         }
 
         let recordId = record.recordID.recordName
@@ -452,9 +552,15 @@ final class CloudKitManager: ObservableObject {
             endTime: endTime,
             goalSteps: goalSteps,
             status: status,
-            participants: participants,
-            recordId: recordId
-        )
+            recordId: recordId,
+            creatorUserName: creatorUserName,
+            creatorPhotoData: creatorPhotoData,
+            creatorSteps: Int(creatorSteps),
+            creatorRecordID: creatorRecordID,
+            participantUserName: participant != nil ? participant?.userName : nil,
+            participantPhotoData: participant != nil ? participant?.photoData : nil,
+            participantSteps:participant != nil ? participant?.steps : nil,
+            participantRecordID: participant != nil ? participant?.id : nil)
     }
 
     private func createZoneIfNeeded() async throws {
@@ -528,13 +634,13 @@ final class CloudKitManager: ObservableObject {
 
     // Handle the asynchronous logic separately
     private func handleUpdatesForChallenge(newDetails: ChallengeDetails, currentDetails: ChallengeDetails) async {
-        if currentDetails.status != newDetails.status {
-            // Significant status change
-            handleStatusChange(from: currentDetails, to: newDetails)
-        } else if currentDetails.participants != newDetails.participants {
-            // Steps might have been updated; check for goal achievement.
-//            await checkForStepGoalAchievement(challengeID: newDetails.id)
-        }
+//        if currentDetails.status != newDetails.status {
+//            // Significant status change
+//            handleStatusChange(from: currentDetails, to: newDetails)
+//        } else if currentDetails.participants != newDetails.participants {
+//            // Steps might have been updated; check for goal achievement.
+////            await checkForStepGoalAchievement(challengeID: newDetails.id)
+//        }
     }
 
     private func handleStatusChange(from currentDetails: ChallengeDetails, to newDetails: ChallengeDetails) {

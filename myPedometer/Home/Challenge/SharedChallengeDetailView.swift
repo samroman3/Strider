@@ -31,7 +31,7 @@ struct SharedChallengeDetailView: View {
             // Display the challenge
             HStack(alignment: .center, spacing: 20) {
                 // Challenger
-                participantView(participant: challengeDetails.participants.first)
+                participantView(participant:ParticipantDetails(id: challengeDetails.creatorRecordID ?? "", userName: challengeDetails.creatorUserName, photoData: challengeDetails.creatorPhotoData, steps: challengeDetails.creatorSteps ?? 0))
 
                 Image(systemName: "flag.2.crossed")
                     .foregroundStyle(.purple)
@@ -115,7 +115,7 @@ struct SharedChallengeDetailView: View {
     }
 }
 
-
-#Preview {
-    SharedChallengeDetailView(challengeDetails: ChallengeDetails(id: "", startTime: Date(), endTime: Date(), goalSteps: 3000, status: "Active" , participants: [], recordId: ""), onAccept: {}, onDecline: {})
-}
+//
+//#Preview {
+//    SharedChallengeDetailView(challengeDetails: ChallengeDetails(id: "", startTime: Date(), endTime: Date(), goalSteps: 3000, status: "Active" , participants: [], recordId: ""), onAccept: {}, onDecline: {})
+//}

@@ -12,11 +12,11 @@ struct LiveChallengeView: View {
     var challengeDetails: ChallengeDetails
 
     private var currentUser: ParticipantDetails? {
-        challengeDetails.participants.first { $0.id == challengeViewModel.userSettingsManager.user?.recordId }
+        ParticipantDetails(id: challengeDetails.creatorRecordID ?? "", userName: challengeDetails.creatorUserName, photoData: challengeDetails.creatorPhotoData, steps: challengeDetails.creatorSteps ?? 0)
     }
 
     private var competitor: ParticipantDetails? {
-        challengeDetails.participants.first { $0.id != challengeViewModel.userSettingsManager.user?.recordId }
+        ParticipantDetails(id: challengeDetails.participantRecordID ?? "", userName: challengeDetails.participantUserName, photoData: challengeDetails.participantPhotoData, steps: challengeDetails.participantSteps ?? 0)
     }
 
     var body: some View {
@@ -45,7 +45,7 @@ struct LiveChallengeView: View {
         .cornerRadius(20)
         .shadow(radius: 10)
         .onAppear {
-            challengeViewModel.updateStepsAndInfo(for: challengeDetails)
+//            challengeViewModel.updateStepsAndInfo(for: challengeDetails)
         }
     }
 

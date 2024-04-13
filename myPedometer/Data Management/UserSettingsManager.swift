@@ -208,7 +208,7 @@ final class UserSettingsManager: ObservableObject {
             self.userName = userName
             // Only update photoData if updateImage flag is true and a new image is provided
             if updateImage, let newImage = image {
-                let compressedImageData = compressImage(newImage, targetKB: 200) 
+                let compressedImageData = compressImage(newImage, targetKB: 50)
                 self.photoData = compressedImageData
             }
             // Proceed to update step goal and calorie goal only if new values are provided

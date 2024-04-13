@@ -89,27 +89,27 @@ final class ChallengeViewModel: ObservableObject {
         }
     }
 
-      func updateStepsAndInfo(for challengeDetails: ChallengeDetails) {
-          guard let userID = userSettingsManager.user?.recordId else { return }
-          
-          for participant in challengeDetails.participants {
-              if participant.id == userID {
-                  // Update current user's info and steps
-                  myInfo = participant
-                  mySteps = participant.steps
-              } else {
-                  // Update competitor's info and steps
-                  competitorInfo = participant
-                  theirSteps = participant.steps 
-              }
-          }
-      }
+//      func updateStepsAndInfo(for challengeDetails: ChallengeDetails) {
+//          guard let userID = userSettingsManager.user?.recordId else { return }
+//          
+//          for participant in challengeDetails.participants {
+//              if participant.id == userID {
+//                  // Update current user's info and steps
+//                  myInfo = participant
+//                  mySteps = participant.steps ?? 0
+//              } else {
+//                  // Update competitor's info and steps
+//                  competitorInfo = participant
+//                  theirSteps = participant.steps ?? 0
+//              }
+//          }
+//      }
     
     func createAndShareChallenge(goal: Int32, endTime: Date) {
         Task {
             do {
                 let uuid = UUID().uuidString
-                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Pending", participants: [], recordId: uuid)
+                let details = ChallengeDetails(id: uuid, startTime: Date(), endTime: endTime, goalSteps: goal, status: "Pending", recordId: uuid, creatorPhotoData: nil, participantUserName: nil, participantPhotoData: nil, participantRecordID: nil)
                 
                 guard let user = userSettingsManager.user, let _ = user.recordId else {
                     print("User information missing")

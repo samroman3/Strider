@@ -14,29 +14,21 @@ struct ChallengeDetails: Identifiable {
     var endTime: Date
     var goalSteps: Int32
     var status: String
-    var participants: [ParticipantDetails]
     var recordId: String
     var winner: String?
-}
-extension ChallengeDetails {
+    var creatorUserName: String?
+    let creatorPhotoData: Data?
+    var creatorSteps: Int?
+    var creatorRecordID: String?
+    var participantUserName: String?
+    let participantPhotoData: Data?
+    var participantSteps: Int?
+    var participantRecordID: String?
     
-    static func fromCKRecord(_ record: CKRecord) -> ChallengeDetails? {
-        guard let startTime = record["startTime"] as? Date,
-              let endTime = record["endTime"] as? Date,
-              let goalSteps = record["goalSteps"] as? Int,
-              let status = record["status"] as? String,
-              let participants = record["participants"] as? [ParticipantDetails],
-              let recordId = record["recordId"] as? String,
-              let winner = record["winner"] as? String?
-        else {
-            return nil
-        }
-            
-        
-        return ChallengeDetails(id: recordId, startTime: startTime, endTime: endTime, goalSteps: Int32(goalSteps), status: status, participants: participants, recordId: recordId, winner: winner)
-    }
+    
     
 }
+
 
 struct PendingChallenge: Identifiable {
     var id: String

@@ -76,13 +76,24 @@ struct ActiveChallengeCard: View {
     
     // Compute the leading participant
     var leadingParticipant: ParticipantDetails? {
-        challenge.participants.max(by: { $0.steps < $1.steps })
+        // Compare steps of creator and participant
+
+        if challenge.creatorSteps ?? 0 >= challenge.participantSteps ?? 0 {
+            return ParticipantDetails(id: challenge.creatorRecordID ?? "", userName: challenge.creatorUserName, photoData: challenge.creatorPhotoData, steps: challenge.creatorSteps ?? 0)
+        } else {
+            return ParticipantDetails(id: challenge.participantRecordID ?? "", userName: challenge.participantUserName, photoData: challenge.participantPhotoData, steps: challenge.participantSteps ?? 0)
+        }
     }
     
     // Compute the non-leading participants
     var nonLeadingParticipants: [ParticipantDetails] {
-        guard let leading = leadingParticipant else { return challenge.participants }
-        return challenge.participants.filter { $0.id != leading.id }
+        guard let leading = leadingParticipant else { return [] }
+        
+        if leading.id == challenge.creatorRecordID {
+            return [ParticipantDetails(id: challenge.participantRecordID ?? "", userName: challenge.participantUserName, photoData: challenge.participantPhotoData, steps: challenge.participantSteps ?? 0)]
+        } else {
+            return [ParticipantDetails(id: challenge.creatorRecordID ?? "", userName: challenge.creatorUserName, photoData: challenge.creatorPhotoData, steps: challenge.creatorSteps ?? 0)]
+        }
     }
 }
 
@@ -115,14 +126,14 @@ struct ParticipantIconView: View {
             Spacer()
             if isLeading {
                 VStack(alignment: .trailing) {
-                    Text("\(participant.steps) steps")
+                    Text("\(participant.steps ?? 0) steps")
                         .font(.headline)
                     Text("Leading")
                         .font(.caption)
                         .foregroundColor(.purple)
                 }
             } else {
-                Text("\(participant.steps) steps")
+                Text("\(participant.steps ?? 0) steps")
                     .font(.headline)
             }
         }
