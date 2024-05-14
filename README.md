@@ -1,7 +1,8 @@
 # Strider
-<img src="https://github.com/samroman3/myPedometer/assets/52180475/7135cd79-e180-4bdc-8d33-0f4da325df1a"  width="200" height="200">
+<img src="https://github.com/samroman3/Strider/assets/52180475/5c16dd58-25ac-4903-a87d-2adbac2621d0"  width="200" height="200">
 
-**Lightweight step tracking app built with SwiftUI, CMPedometer, CloudKit and Core Data.**
+**Step tracking app built with SwiftUI, CMPedometer, CloudKit and Core Data.**
+
 ## How to Run
 
 1. Clone the repository.
